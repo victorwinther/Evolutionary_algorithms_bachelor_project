@@ -11,16 +11,16 @@ import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.util.Objects;
-
+// make a forloop
 
 public class main extends Application {
     double x,y = 0;
 
     @Override
     public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/home.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
         Scene scene = new Scene(root);
-        stage.initStyle(StageStyle.UNDECORATED); // no border
+        //stage.initStyle(StageStyle.UNDECORATED); // no border
 
         Platform.runLater(root::requestFocus); // don't focus any element initially
 
