@@ -7,6 +7,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -15,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="735.0" prefWidth="1071.0" style="-fx-background-color: #353941;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="735.0" prefWidth="1071.0" style="-fx-background-color: #353941;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.mainController">
    <left>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #26282B;" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -142,7 +143,7 @@
                <children>
                   <Button alignment="TOP_LEFT" contentDisplay="TOP" mnemonicParsing="false" prefHeight="26.0" prefWidth="64.0" text="Button" />
                   <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="78.0" text="Button" />
-                  <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="89.0" text="Button" />
+                  <Button fx:id="startButton" mnemonicParsing="false" onAction="#startEvolution" prefHeight="26.0" prefWidth="89.0" text="START" />
                   <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="78.0" text="Button" />
                   <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="78.0" text="Button" />
                </children>
@@ -194,7 +195,7 @@
                   <Insets left="40.0" />
                </HBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="158.0" style="-fx-background-color: #353941;" stylesheets="@../../../css/styling.css" text="Create blueprint" textFill="#fffdfd" />
+            <Button fx:id="createBlueprintBtn" mnemonicParsing="false" onAction="#createBlueprintHandler" prefHeight="40.0" prefWidth="158.0" style="-fx-background-color: #353941;" stylesheets="@../../../css/styling.css" text="Create blueprint" textFill="#fffdfd" />
             <Button mnemonicParsing="false" styleClass="button-59" stylesheets="@../../../css/buttonStyle.css" text="Button" />
          </children>
       </HBox>
@@ -204,6 +205,9 @@
          <BorderPane.margin>
             <Insets bottom="17.0" left="15.0" right="17.0" top="15.0" />
          </BorderPane.margin>
+         <center>
+            <TextArea fx:id="solutionArea" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+         </center>
       </BorderPane>
    </center>
 </BorderPane>
