@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
@@ -25,6 +26,9 @@ public class mainController {
 
     @FXML
     private BorderPane mainBorderPane;
+
+    @FXML
+    private Label problemLabel, algorithmLabel, selectionLabel,crossoverLabel, mutationLabel;
 
     private Stage stage;
     private Scene scene;
@@ -73,6 +77,15 @@ public class mainController {
         root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/" + page + ".fxml")));
         mainBorderPane.setCenter(root);
     }
+
+     void setLabels(){
+        blueprintController blueprintController = new blueprintController();
+        problemLabel.setText(blueprintController.getSearchspaceSelector());
+        algorithmLabel.setText(blueprintController.getAlgorithmSelector());
+        selectionLabel.setText("Selection: Random");
+        crossoverLabel.setText("Crossover: N/A");
+        mutationLabel.setText("Mutation: Bit flip");
+    }
     @FXML
     private Button startButton;
     @FXML
@@ -96,7 +109,7 @@ public class mainController {
         int finalBestFitness = bestFitness;
         Platform.runLater(() -> solutionArea.appendText("Initial Solution: " + finalParent + " with fitness: " + finalBestFitness + "\n"));
 
-        int maxGenerations = 100;
+        int maxGenerations = 500;
         for (int generation = 1; generation <= maxGenerations; generation++) {
             String offspring = mutate(parent);
             int offspringFitness = fitness(offspring);

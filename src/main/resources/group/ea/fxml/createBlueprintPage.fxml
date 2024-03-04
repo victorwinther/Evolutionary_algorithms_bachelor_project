@@ -16,7 +16,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <BorderPane fx:id="mainBorderPane" prefHeight="584.0" prefWidth="787.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.blueprintController">
    <left>
       <VBox prefHeight="348.0" prefWidth="119.0" style="-fx-background-color: #26282B;" BorderPane.alignment="CENTER">
@@ -173,7 +172,7 @@
                               </HBox>
                               <HBox alignment="TOP_RIGHT" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Button mnemonicParsing="false" stylesheets="@../../../css/buttonStyle.css" text="Save" textFill="WHITE">
+                                    <Button fx:id="saveButton" mnemonicParsing="false" onAction="#startMainPage" stylesheets="@../../../css/buttonStyle.css" text="Save" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="12.0" />
                                        </font>

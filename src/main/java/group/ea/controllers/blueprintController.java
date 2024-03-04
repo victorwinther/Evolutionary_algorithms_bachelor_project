@@ -1,13 +1,22 @@
 package group.ea.controllers;
 
+import group.ea.main;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 
@@ -23,6 +32,11 @@ public class blueprintController implements Initializable {
     private ComboBox<String> algorithmSelector;
     @FXML
     private ComboBox<String> stoppingcriteriaSelector;
+
+    @FXML
+    Button saveButton;
+
+
 
 
     private final String[] searchspaces = {"Bit strings", "Permutations"};
@@ -69,5 +83,42 @@ public class blueprintController implements Initializable {
         Platform.exit();
     }
 
+    @FXML
+    void startMainPage(ActionEvent event) throws IOException {
+        // Load the home page FXML file
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
+        Parent root = loader.load();
 
+        // Here you would get the controller if you need to call methods on it
+        mainController controller = loader.getController();
+        controller.setLabels(); // Call methods on the controller if needed
+
+        // Set the scene to the home page
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+        // Optional: If you need the home page to gain focus or perform additional setup
+        Platform.runLater(() -> {
+            root.requestFocus();
+            // Any additional setup can go here
+        });
+
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public String getSearchspaceSelector() {
+        return searchspaceSelector.getValue();
+    }
+    public String getProblemSelector() {
+        return problemSelector.getValue();
+    }
+    public String getAlgorithmSelector() {
+        return algorithmSelector.getValue();
+    }
+    /*
+    public String getSelectioncriteriaSelector() {
+        return stoppingcriteriaSelector.getValue();
+    }
+*/
 }

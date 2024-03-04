@@ -53,7 +53,12 @@
                               <Label text="Algorithm:" textFill="#fffdfd" GridPane.rowIndex="1" />
                               <Label text="Selection operater:" textFill="WHITE" GridPane.rowIndex="2" />
                               <Label text="Crossover operator:" textFill="#fffdfd" GridPane.rowIndex="3" />
-                              <Label text="Mutation operater" textFill="WHITE" GridPane.rowIndex="4" />
+                              <Label text="Mutation operater:" textFill="WHITE" GridPane.rowIndex="4" />
+                              <Label fx:id="problemLabel" textFill="WHITE" GridPane.columnIndex="1" />
+                              <Label fx:id="algorithmLabel" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label fx:id="selectionLabel" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label fx:id="mutationLabel" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Label fx:id="crossoverLabel" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                            </children>
                         </GridPane>
                         <Label prefHeight="40.0" prefWidth="173.0" text="BATCH INFORMATION" textFill="WHITE" />
