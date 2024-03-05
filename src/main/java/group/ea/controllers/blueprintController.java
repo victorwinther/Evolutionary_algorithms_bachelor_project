@@ -43,6 +43,7 @@ public class blueprintController implements Initializable {
     private final String[] problems = {"OneMax", "LeadingOnes", "BinVal", "Trap", "Jump_k"};
     private final String[] algorithms = {"(1+1) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System"};
     private final String[] criterias = {"Optimum reached", "Fitness bound", "Iteration bound"};
+    private Stage stage;
 
 
 
@@ -79,9 +80,14 @@ public class blueprintController implements Initializable {
         }
     }
     @FXML
-    void closeProgram(ActionEvent event) {
-        Platform.exit();
-    }
+    void returnHome(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
+        Scene scene = new Scene(root);
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+
+        Platform.runLater(root::requestFocus);
+        stage.setScene(scene);
+        stage.show();}
 
     @FXML
     void startMainPage(ActionEvent event) throws IOException {
