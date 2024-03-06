@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="735.0" prefWidth="1071.0" style="-fx-background-color: #353941;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.mainController">
+   <left>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #26282B;" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <children>
+            <ScrollPane layoutX="-22.0" layoutY="16.0" prefHeight="427.0" prefWidth="190.0" style="-fx-background-color: #353941;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0">
+               <content>
+                  <VBox fx:id="generalSettings" alignment="TOP_CENTER" prefHeight="665.0" prefWidth="189.0" style="-fx-background-color: #26282B;">
+                     <children>
+                        <Label prefHeight="40.0" prefWidth="173.0" text="GENERAL SETTINGS" textFill="WHITE" />
+                        <Separator prefWidth="200.0">
+                           <padding>
+                              <Insets left="5.0" right="20.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets bottom="5.0" />
+                           </VBox.margin>
+                        </Separator>
+                        <GridPane fx:id="gridGeneralSettings" prefHeight="100.0" prefWidth="189.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="118.1370620727539" minWidth="10.0" prefWidth="118.1370620727539" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="90.80224609375" minWidth="10.0" prefWidth="70.8629379272461" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label text="Problem:" textFill="WHITE" />
+                              <Label text="Algorithm:" textFill="#fffdfd" GridPane.rowIndex="1" />
+                              <Label text="Selection operater:" textFill="WHITE" GridPane.rowIndex="2" />
+                              <Label text="Crossover operator:" textFill="#fffdfd" GridPane.rowIndex="3" />
+                              <Label text="Mutation operater:" textFill="WHITE" GridPane.rowIndex="4" />
+                              <Label fx:id="problemLabel" textFill="WHITE" GridPane.columnIndex="1" />
+                              <Label fx:id="algorithmLabel" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label fx:id="selectionLabel" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label fx:id="mutationLabel" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Label fx:id="crossoverLabel" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                           </children>
+                        </GridPane>
+                        <Label prefHeight="40.0" prefWidth="173.0" text="BATCH INFORMATION" textFill="WHITE" />
+                        <Separator prefWidth="200.0">
+                           <padding>
+                              <Insets left="5.0" right="20.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets bottom="5.0" />
+                           </VBox.margin>
+                        </Separator>
+                        <GridPane prefHeight="50.0" prefWidth="189.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label text="Batch Number:" textFill="WHITE" />
+                              <Label text="Run number:" textFill="WHITE" GridPane.rowIndex="1" />
+                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="2" />
+                           </children>
+                        </GridPane>
+                        <Label prefHeight="40.0" prefWidth="173.0" text="STATISTICS OF CURRENT BRANCH" textFill="WHITE" />
+                        <Separator prefWidth="200.0">
+                           <padding>
+                              <Insets left="5.0" right="20.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets bottom="5.0" />
+                           </VBox.margin>
+                        </Separator>
+                        <GridPane prefWidth="189.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="126.0" minWidth="10.0" prefWidth="126.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="90.0" minWidth="10.0" prefWidth="63.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="Max no. iterations" textFill="WHITE" />
+                              <Label text="Avg no. iterations" textFill="WHITE" GridPane.rowIndex="1" />
+                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="2" />
+                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="3" />
+                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="4" />
+                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="5" />
+                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="6" />
+                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="7" />
+                           </children>
+                        </GridPane>
+                     </children>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </ScrollPane>
+         </children>
+      </AnchorPane>
+   </left>
+   <bottom>
+      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="66.0" text="Button">
+               <HBox.margin>
+                  <Insets left="30.0" />
+               </HBox.margin>
+            </Button>
+            <Separator orientation="VERTICAL" prefHeight="200.0">
+               <HBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </HBox.margin>
+            </Separator>
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="363.0" spacing="5.0">
+               <children>
+                  <Button alignment="TOP_LEFT" contentDisplay="TOP" mnemonicParsing="false" prefHeight="26.0" prefWidth="64.0" text="Button" />
+                  <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="78.0" text="Button" />
+                  <Button fx:id="startButton" mnemonicParsing="false" onAction="#startEvolution" prefHeight="26.0" prefWidth="89.0" text="START" />
+                  <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="78.0" text="Button" />
+                  <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="78.0" text="Button" />
+               </children>
+            </HBox>
+            <Separator orientation="VERTICAL" prefHeight="200.0">
+               <HBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </HBox.margin>
+            </Separator>
+            <VBox alignment="CENTER" prefHeight="100.0" prefWidth="156.0" spacing="6.0">
+               <children>
+                  <Label text="Speed" textFill="WHITE" />
+                  <Slider prefHeight="26.0" prefWidth="129.0" showTickMarks="true" />
+               </children>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="200.0">
+               <HBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </HBox.margin>
+            </Separator>
+            <GridPane prefHeight="100.0" prefWidth="315.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.67095947265625" minWidth="10.0" prefWidth="128.3731689453125" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="186.6268310546875" minWidth="10.0" prefWidth="186.6268310546875" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" text="Stop at the end" textFill="WHITE" />
+                  <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" text="Expand label" textFill="WHITE" GridPane.rowIndex="1" />
+                  <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" text="Stepwise mode" textFill="WHITE" GridPane.rowIndex="2" />
+                  <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="145.0" text="Display temperature" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+               </children>
+               <padding>
+                  <Insets bottom="5.0" top="5.0" />
+               </padding>
+            </GridPane>
+         </children>
+      </HBox>
+   </bottom>
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="75.0" prefWidth="1071.0" spacing="20.0" style="-fx-background-color: #26282B;" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="107.0" style="-fx-background-color: #353941;" stylesheets="@../../../css/styling.css" text="Load Schedule" textFill="#fffdfd">
+               <HBox.margin>
+                  <Insets left="40.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="createBlueprintBtn" mnemonicParsing="false" onAction="#createBlueprintHandler" prefHeight="40.0" prefWidth="158.0" style="-fx-background-color: #353941;" stylesheets="@../../../css/styling.css" text="Create blueprint" textFill="#fffdfd" />
+            <Button mnemonicParsing="false" styleClass="button-59" stylesheets="@../../../css/buttonStyle.css" text="Button" />
+         </children>
+      </HBox>
+   </top>
+   <center>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="17.0" left="15.0" right="17.0" top="15.0" />
+         </BorderPane.margin>
+         <center>
+            <TextArea fx:id="solutionArea" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+         </center>
+      </BorderPane>
+   </center>
+</BorderPane>
