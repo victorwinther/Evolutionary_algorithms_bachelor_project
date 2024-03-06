@@ -97,7 +97,7 @@ public class mainController {
     @FXML
     private void startEvolution() {
         solutionArea.clear(); // Clear previous solutions
-        new Thread(this::runEvolution).start(); // Run EA in a separate thread
+        new Thread(this::runEvolutionSA).start(); // Run EA in a separate thread
     }
 
     // EA logic adapted from OnePlusOneEAOneMax
@@ -128,6 +128,62 @@ public class mainController {
             }
         }
     }
+
+
+
+
+    private void runEvolutionSA(){
+        double initTemp = 2;
+        double tempReduction = 0.99;
+        String parent = initializeIndividual(stringLength);
+        int bestFitness = fitness(parent);
+
+        String finalParent = parent;
+        int finalBestFitness = bestFitness;
+        Platform.runLater(() -> solutionArea.appendText("Initial Solution: " + finalParent + " with fitness: " + finalBestFitness + "\n"));
+
+        double currentTemp = initTemp;
+        int maxGen = 500;
+        int currentGen = 0;
+        while(currentTemp > 0.00001 && currentGen < maxGen) {
+
+            String offspring = mutate(parent);
+            int offspringFitness = fitness(offspring);
+
+            if (offspringFitness > bestFitness) {
+                parent = offspring;
+                bestFitness = offspringFitness;
+                String solutionText = "Generation " + currentGen + ": New solution found: " + parent + " with fitness: " + bestFitness + " tempature is " + currentTemp + "\n";
+                Platform.runLater(() -> solutionArea.appendText(solutionText));
+            }
+            else if ( offspringFitness == bestFitness) {
+                parent = offspring;
+            }
+            else {
+                double SARate = Math.random();
+                double SAEnergy = Math.exp((offspringFitness - bestFitness) / currentTemp);
+
+                if(SAEnergy > SARate){
+                    parent = offspring;
+                    bestFitness = offspringFitness;
+                    String solutionText = "Generation " + currentGen + ": New SA found: " + parent + " with fitness: " + bestFitness + " tempature is " + currentTemp + "\n";
+                    Platform.runLater(() -> solutionArea.appendText(solutionText));
+
+                }
+            }
+
+
+            if (bestFitness == stringLength) {
+                int finalGeneration = currentGen;
+                Platform.runLater(() -> solutionArea.appendText("Perfect solution found in generation " + finalGeneration + "\n"));
+                break;
+            }
+            currentTemp *= tempReduction;
+            currentGen++;
+
+        }
+    }
+
 
     // Fitness function
     private int fitness(String individual) {
