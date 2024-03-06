@@ -44,6 +44,7 @@ public class blueprintController implements Initializable {
     private final String[] algorithms = {"(1+1) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System"};
     private final String[] criterias = {"Optimum reached", "Fitness bound", "Iteration bound"};
     private Stage stage;
+    public String[] blueprintChoices = new String[5];
 
 
 

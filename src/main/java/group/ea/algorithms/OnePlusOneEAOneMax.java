@@ -1,4 +1,4 @@
-package group.ea.controllers;
+package group.ea.algorithms;
 
 public class OnePlusOneEAOneMax {
 

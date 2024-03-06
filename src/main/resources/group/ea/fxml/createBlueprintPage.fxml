@@ -8,7 +8,6 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -17,53 +16,6 @@
 <?import javafx.scene.text.Font?>
 
 <BorderPane fx:id="mainBorderPane" prefHeight="520.0" prefWidth="887.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.blueprintController">
-   <left>
-      <VBox prefHeight="537.0" prefWidth="140.0" style="-fx-background-color: #26282B;" BorderPane.alignment="CENTER">
-         <children>
-            <Button fx:id="viewPlotBtn" alignment="BASELINE_LEFT" graphicTextGap="13.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="146.0" stylesheets="@../../../css/styling.css" text="Bit strings" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-               <graphic>
-                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../css/icons/binary.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <padding>
-                  <Insets left="15.0" />
-               </padding>
-               <VBox.margin>
-                  <Insets top="20.0" />
-               </VBox.margin>
-            </Button>
-            <Button fx:id="viewConnectBtn" alignment="BASELINE_LEFT" graphicTextGap="13.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="145.0" stylesheets="@../../../css/styling.css" text="Permutations" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-               <padding>
-                  <Insets left="15.0" />
-               </padding>
-               <graphic>
-                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../css/icons/permutations.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <VBox.margin>
-                  <Insets top="5.0" />
-               </VBox.margin>
-            </Button>
-            <ToggleButton mnemonicParsing="false" prefHeight="37.0" prefWidth="140.0" stylesheets="@../../../css/buttonStyle.css" text="Bit strings" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </ToggleButton>
-         </children>
-      </VBox>
-   </left>
    <top>
       <HBox prefHeight="53.0" prefWidth="600.0" style="-fx-background-color: #26282B;" BorderPane.alignment="CENTER">
          <children>
