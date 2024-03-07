@@ -1,4 +1,4 @@
-package group.ea.structure.searchspace;
+/*package group.ea.structure.searchspace;
 
 public class Permutation extends SearchSpace{
 
@@ -6,3 +6,4 @@ public class Permutation extends SearchSpace{
         name = "Permutation";
     }
 }
+*/

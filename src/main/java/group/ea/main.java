@@ -44,12 +44,7 @@ public class main extends Application {
     }
 
     public static void main(String[] args) {
-        SearchSpace bitStringSearchSpace = new BitString(100);
-        Problem oneMaxProblem = new OneMax(bitStringSearchSpace);
-        Algorithm onePlusOneEA = new RLS(bitStringSearchSpace, oneMaxProblem);
 
-        // Running the algorithm
-        onePlusOneEA.runAlgorithm();
         launch(args);
     }
 }

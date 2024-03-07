@@ -11,10 +11,10 @@ public class OneMax extends Problem {
     }
 
     @Override
-    public double computeFitness(BitString bitString) {
+    public double computeFitness(String string) {
         int count = 0;
-        for (int i = 0; i < bitString.getLength(); i++) {
-            if (bitString.getBitString().charAt(i) == '1') {
+        for (int i = 0; i < string.length(); i++) {
+            if (string.charAt(i) == '1') {
                 count++;
             }
         }

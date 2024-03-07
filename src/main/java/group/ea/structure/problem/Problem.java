@@ -7,7 +7,7 @@ public abstract class Problem {
     public String name;
     SearchSpace searchSpace;
 
-    public abstract double computeFitness(BitString bitString);
+    public abstract double computeFitness(String string);
 
     void init() {}
 }

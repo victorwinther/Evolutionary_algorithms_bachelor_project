@@ -17,6 +17,10 @@ public abstract class Algorithm {
     public abstract boolean stoppingCriteriaMet();
     public abstract void runAlgorithm();
 
+    public abstract void updateGraphics();
+
+    public abstract void performSingleUpdate();
+
 }
 
 

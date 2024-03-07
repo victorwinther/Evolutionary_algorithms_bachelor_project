@@ -1,21 +1,23 @@
 package group.ea.structure.searchspace;
 
 public class BitString extends SearchSpace {
-    private int length;
     private String bitString;
 
     public BitString(int length){
         super(length);
+        this.bitString = new String();
         name = "Bitstring";
+
     }
 
     @Override
-    void init() {
+    public String init() {
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
             sb.append(Math.random() > 0.5 ? '1' : '0');
         }
         bitString = sb.toString();
+        return bitString;
     }
 
     public int getLength() {return length;}

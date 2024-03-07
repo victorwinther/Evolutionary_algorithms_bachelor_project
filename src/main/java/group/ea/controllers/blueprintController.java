@@ -93,12 +93,21 @@ public class blueprintController implements Initializable {
     @FXML
     void startMainPage(ActionEvent event) throws IOException {
         // Load the home page FXML file
+        //make an array where you fill it with the chosen combobox values
+        blueprintChoices[0] = searchspaceSelector.getValue();
+        blueprintChoices[1] = problemSelector.getValue();
+        blueprintChoices[2] = algorithmSelector.getValue();
+        blueprintChoices[3] = stoppingcriteriaSelector.getValue();
+        blueprintChoices[4] = "Random";
+
+
+
         FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
         Parent root = loader.load();
 
         // Here you would get the controller if you need to call methods on it
         mainController controller = loader.getController();
-        controller.setLabels(); // Call methods on the controller if needed
+        controller.recieveArray(blueprintChoices); // Call methods on the controller if needed
 
         // Set the scene to the home page
         Scene scene = new Scene(root);
