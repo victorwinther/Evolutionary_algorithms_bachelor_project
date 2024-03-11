@@ -22,5 +22,4 @@ public class BitString extends SearchSpace {
 
     public int getLength() {return length;}
 
-    public String getBitString() {return bitString;}
 }

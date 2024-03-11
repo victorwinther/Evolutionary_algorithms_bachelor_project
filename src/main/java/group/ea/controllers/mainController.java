@@ -3,8 +3,11 @@ package group.ea.controllers;
 import group.ea.main;
 import group.ea.structure.algorithm.Algorithm;
 import group.ea.structure.algorithm.RLS;
+import group.ea.structure.algorithm.SA;
 import group.ea.structure.problem.OneMax;
+import group.ea.structure.problem.LeadingOnes;
 import group.ea.structure.problem.Problem;
+
 import group.ea.structure.searchspace.BitString;
 import group.ea.structure.searchspace.SearchSpace;
 import javafx.animation.AnimationTimer;
@@ -137,7 +140,7 @@ public class mainController {
         //new Thread(this::runEvolution).start(); // Run EA in a separate thread
         SearchSpace searchSpace = null;
         if ("Bit strings".equals(blueprintChoices[0])) {
-            searchSpace = new BitString(300);
+            searchSpace = new BitString(30);
             System.out.println("is here");
         } else if ("Permutation".equals(blueprintChoices[0])) {
             //searchSpace = new Permutation(100);
@@ -147,10 +150,16 @@ public class mainController {
         if("OneMax".equals(blueprintChoices[1])){
             problem = new OneMax(searchSpace);
         }
+        else if("LeadingOnes".equals(blueprintChoices[1])){
+            problem = new LeadingOnes(searchSpace);
+        }
 
         if(blueprintChoices[2].equals("RLS")){
             algorithm = new RLS(searchSpace, problem, this);
-        } else {
+        }
+        else if(blueprintChoices[2].equals("Simulated Annealing")){
+            algorithm = new SA(searchSpace, problem, this);
+        } else{
             algorithm = null;
         }
         if(algorithm != null){
