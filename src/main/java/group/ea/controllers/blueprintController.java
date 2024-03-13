@@ -43,6 +43,8 @@ public class blueprintController implements Initializable {
     private final String[] problems = {"OneMax", "LeadingOnes", "BinVal", "Trap", "Jump_k"};
     private final String[] algorithms = {"(1+1) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System"};
     private final String[] criterias = {"Optimum reached", "Fitness bound", "Iteration bound"};
+    private Stage stage;
+    public String[] blueprintChoices = new String[5];
 
 
 
@@ -79,19 +81,33 @@ public class blueprintController implements Initializable {
         }
     }
     @FXML
-    void closeProgram(ActionEvent event) {
-        Platform.exit();
-    }
+    void returnHome(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
+        Scene scene = new Scene(root);
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+
+        Platform.runLater(root::requestFocus);
+        stage.setScene(scene);
+        stage.show();}
 
     @FXML
     void startMainPage(ActionEvent event) throws IOException {
         // Load the home page FXML file
+        //make an array where you fill it with the chosen combobox values
+        blueprintChoices[0] = searchspaceSelector.getValue();
+        blueprintChoices[1] = problemSelector.getValue();
+        blueprintChoices[2] = algorithmSelector.getValue();
+        blueprintChoices[3] = stoppingcriteriaSelector.getValue();
+        blueprintChoices[4] = "Random";
+
+
+
         FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
         Parent root = loader.load();
 
         // Here you would get the controller if you need to call methods on it
         mainController controller = loader.getController();
-        controller.setLabels(); // Call methods on the controller if needed
+        controller.recieveArray(blueprintChoices); // Call methods on the controller if needed
 
         // Set the scene to the home page
         Scene scene = new Scene(root);

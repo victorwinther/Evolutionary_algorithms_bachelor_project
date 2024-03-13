@@ -7,4 +7,6 @@ module group.ea {
     exports group.ea;
     exports group.ea.controllers;
     opens group.ea.controllers to javafx.fxml;
+    exports group.ea.algorithms;
+    opens group.ea.algorithms to javafx.fxml;
 }

@@ -1,5 +1,11 @@
 package group.ea;
 
+import group.ea.structure.algorithm.Algorithm;
+import group.ea.structure.algorithm.RLS;
+import group.ea.structure.problem.OneMax;
+import group.ea.structure.problem.Problem;
+import group.ea.structure.searchspace.BitString;
+import group.ea.structure.searchspace.SearchSpace;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -38,6 +44,7 @@ public class main extends Application {
     }
 
     public static void main(String[] args) {
+
         launch(args);
     }
 }
