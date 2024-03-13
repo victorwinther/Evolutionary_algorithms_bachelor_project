@@ -9,86 +9,39 @@ import java.util.ArrayList;
 
 public class RLS extends Algorithm{
     String bitString;
-    private final mainController thismainController;
-    private boolean stoppingMet;
 
-    int generation;
-
-    ArrayList<String> solutionList = new ArrayList<>();
 
 
     public RLS(SearchSpace searchSpace, Problem problem, mainController mainController) {
-        super(searchSpace, problem);
-        thismainController = mainController;
+        super(searchSpace, problem, mainController);
+        bestFitness = (int) problem.computeFitness(bitString);
+
     }
     @Override
     public void initialize() {
         bitString = searchSpace.init();
-        System.out.println("bitstring is" + bitString);
+        System.out.println("bitstring is" + bitString + "\n");
+        solutionList = new ArrayList<>();
+        _mainController.solutionArea.appendText( ("Initial Solution: " + bitString + " with fitness: " + bestFitness + "\n"));
+
     }
 
     @Override
-    public void iterate() {
-        int bestFitness = (int) problem.computeFitness(bitString);
-
-        String finalParent = bitString;
-        int finalBestFitness = bestFitness;
-       solutionList.add( ("Initial Solution: " + finalParent + " with fitness: " + finalBestFitness + "\n"));
-        thismainController.solutionArea.appendText("Initial Solution: " + finalParent + " with fitness: " + finalBestFitness + "\n");
-        int maxGenerations = 50000;
-        for (int generation = 1; generation <= maxGenerations; generation++) {
-            if(!thismainController.isRunning) break;
-            String offspring = mutate(bitString);
-            int offspringFitness = (int) problem.computeFitness(offspring);
-
-            if (offspringFitness > bestFitness) {
-                bitString = offspring;
-                bestFitness = offspringFitness;
-                String solutionText = "Generation " + generation + ": New solution found: " + bitString + " with fitness: " + bestFitness + "\n";
-                solutionList.add(solutionText);
-            }
-            if (bestFitness == bitString.length()) {
-                int finalGeneration = generation;
-                solutionList.add( ("Perfect solution found in generation " + finalGeneration + "\n"));
-                break;
-            }
-        }
-        stoppingMet = true;
-    }
-
-
-    @Override
-    public void performSingleUpdate() {
-        int bestFitness = (int) problem.computeFitness(bitString);
-        String finalParent = bitString;
-        int finalBestFitness = bestFitness;
+    public void performSingleUpdate(int generation) {
         String offspring = mutate(bitString);
         int offspringFitness = (int) problem.computeFitness(offspring);
+
 
         if (offspringFitness > bestFitness) {
             bitString = offspring;
             bestFitness = offspringFitness;
-            thismainController.solutionArea.appendText( "Generation " + generation + ": New solution found: " + bitString + " with fitness: " + bestFitness + "\n");
+            _mainController.solutionArea.appendText( "Generation " + generation + ": New solution found: " + bitString + " with fitness: " + bestFitness + "\n");
 
         }
         if (bestFitness == bitString.length()) {
-            int finalGeneration = generation;
-            thismainController.solutionArea.appendText("Perfect solution found in generation " + finalGeneration + "\n");
+            _mainController.solutionArea.appendText("Perfect solution found in generation " + generation + "\n");
             stoppingMet = true;
-            thismainController.stopAlgorithm();
-        }
-        generation++;
-    }
-    int i = 0;
-    @Override
-    public void updateGraphics() {
-        if(i < solutionList.size()-1) {
-            Platform.runLater(() -> {
-                thismainController.solutionArea.appendText(solutionList.get(i));
-            });
-            i++;
-        } else {
-            thismainController.stopAlgorithm();
+            _mainController.stopAlgorithm();
         }
     }
 
@@ -99,16 +52,5 @@ public class RLS extends Algorithm{
         return new String(chars);
     }
 
-    @Override
-    public boolean stoppingCriteriaMet() {
-        return stoppingMet;
-    }
 
-    @Override
-    public void runAlgorithm() {
-        this.initialize();
-        while (!this.stoppingCriteriaMet()) {
-            this.iterate();
-        }
-    }
 }
