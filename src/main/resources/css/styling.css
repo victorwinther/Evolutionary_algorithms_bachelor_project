@@ -14,7 +14,7 @@
     -fx-background-color : #26282B ;
 }
 .button:focused {
-    -fx-background-color: #26282B;
+    -fx-background-color: #90B8F8;
     -fx-border-color: #CDD1D6;
     -fx-border-width: 0px 0px 0px 3px;
     -fx-font-weight: 700; /*bold*/
