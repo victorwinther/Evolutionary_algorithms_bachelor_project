@@ -54,6 +54,11 @@ public class blueprintController implements Initializable {
         problemSelector.getItems().addAll(problems);
         algorithmSelector.getItems().addAll(algorithms);
         stoppingcriteriaSelector.getItems().addAll(criterias);
+        searchspaceSelector.setValue("Bit strings");
+        problemSelector.setValue("OneMax");
+        algorithmSelector.setValue("RLS");
+        stoppingcriteriaSelector.setValue("Optimum reached");
+
 
         explainingLabel.setWrapText(true);
     }

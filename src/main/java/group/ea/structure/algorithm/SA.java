@@ -41,12 +41,16 @@ public class SA extends  Algorithm {
         if (offspringFitness > bestFitness) {
             bitString = offspring;
             bestFitness = offspringFitness;
-            _mainController.solutionArea.appendText( "Generation " + generation + ": New solution found: " + bitString + " with fitness: " + bestFitness + " tempature is " + currentTemp + "\n");
+            //_mainController.solutionArea.appendText( "Generation " + generation + ": New solution found: " + bitString + " with fitness: " + bestFitness + " tempature is " + currentTemp + "\n");
+            // add to solution list
+            String solutionText = "Generation " + generation + ": New solution found: " + bitString + " with fitness: " + bestFitness + " tempature is " + currentTemp + "\n";
+            solutionList.add(solutionText);
 
             if (bestFitness == bitString.length()) {
-                _mainController.solutionArea.appendText("Perfect solution found in generation " + generation + "\n");
+                //_mainController.solutionArea.appendText("Perfect solution found in generation " + generation + "\n");
+                solutionList.add( ("Perfect solution found in generation " + generation + "\n"));
                 stoppingMet = true;
-                _mainController.stopAlgorithm();
+                //_mainController.stopAlgorithm();
             }
         }
         else if ( offspringFitness == bestFitness) {
