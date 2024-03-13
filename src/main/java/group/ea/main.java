@@ -21,7 +21,6 @@ import java.util.Objects;
 
 public class main extends Application {
     double x,y = 0;
-
     @Override
     public void start(Stage stage) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));

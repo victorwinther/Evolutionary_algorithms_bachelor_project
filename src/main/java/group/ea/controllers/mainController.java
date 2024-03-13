@@ -63,21 +63,15 @@ public class mainController {
            @Override
            public void handle(long l) {
                //algorithm.performSingleUpdate();
-
                if (l - lastUpdate >= duration) { // Update every second
                    algorithm.updateGraphics();
-                   String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-                   timeLabel.setText("Current time: " + time);
                    lastUpdate = l;
-
-                   double speed = sliderSpeed.getValue();
+                    double speed = sliderSpeed.getValue();
                     duration =  (TimeUnit.MILLISECONDS.toNanos(1000) * (1 - speed / sliderSpeed.getMax()));
                }
            }
        };
     }
-
-
 
     @FXML
     void createBlueprintHandler(ActionEvent event) throws IOException{
