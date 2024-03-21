@@ -2,6 +2,7 @@ package group.ea.controllers;
 
 import group.ea.main;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
