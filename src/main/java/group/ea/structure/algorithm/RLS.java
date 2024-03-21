@@ -25,7 +25,6 @@ public class RLS extends Algorithm{
         graphList = new ArrayList<>();
         graphList.add(new Pair<>(0, bestFitness));
        // _mainController.solutionArea.appendText( ("Initial Solution: " + bitString + " with fitness: " + bestFitness + "\n"));
-        solutionList.add("hej");
         solutionList.add(("Initial Solution: " + bitString + " with fitness: " + bestFitness + "\n"));
     }
 

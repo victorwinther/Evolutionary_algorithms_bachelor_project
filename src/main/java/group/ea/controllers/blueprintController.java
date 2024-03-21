@@ -9,9 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -34,6 +32,12 @@ public class blueprintController implements Initializable {
     private ComboBox<String> stoppingcriteriaSelector;
 
     @FXML
+    private CheckBox optimumCheck, fitnessCheck, iterationCheck;
+
+    @FXML
+    private ChoiceBox<String> choiceBox;
+
+    @FXML
     Button saveButton;
 
 
@@ -43,6 +47,8 @@ public class blueprintController implements Initializable {
     private final String[] problems = {"OneMax", "LeadingOnes", "BinVal", "Trap", "Jump_k"};
     private final String[] algorithms = {"(1+1) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System"};
     private final String[] criterias = {"Optimum reached", "Fitness bound", "Iteration bound"};
+
+    private final String[] stopping = {"Optimum reached", "Fitness bound", "Iteration bound"};
     private Stage stage;
     public String[] blueprintChoices = new String[5];
 
@@ -54,6 +60,7 @@ public class blueprintController implements Initializable {
         problemSelector.getItems().addAll(problems);
         algorithmSelector.getItems().addAll(algorithms);
         stoppingcriteriaSelector.getItems().addAll(criterias);
+        //choiceBox.getItems().addAll(stopping);
         searchspaceSelector.setValue("Bit strings");
         problemSelector.setValue("OneMax");
         algorithmSelector.setValue("RLS");

@@ -17,11 +17,8 @@ public abstract class Algorithm {
     protected boolean stoppingMet = false;
     protected ArrayList<String> solutionList;
 
-    protected List<Pair<Integer,Integer>> graphList;
+    protected List<Pair<Integer, Integer>> graphList;
     // create arraylist with string and integers
-
-
-
 
 
     protected int bestFitness;
@@ -32,61 +29,81 @@ public abstract class Algorithm {
         _mainController = controller;
         this.initialize();
     }
+
     public abstract void performSingleUpdate(int generation);
 
     public abstract void initialize();
-    public void iterate(int generations){
-        for(int i = 0; i < generations; i++){
+
+    public void iterate(int generations) {
+        for (int i = 0; i < generations; i++) {
             performSingleUpdate(i);
-            if(stoppingMet){
+            if (stoppingMet) {
                 break;
             }
         }
         stoppingMet = true;
 
     }
-    public boolean stoppingCriteriaMet(){
+
+    public boolean stoppingCriteriaMet() {
         return stoppingMet;
     }
-    public void runAlgorithm(){
+
+    public void runAlgorithm() {
         while (!this.stoppingCriteriaMet()) {
             this.iterate(1000);
         }
     }
-/*
-    public void updateGraphics(){
-        for(String solution : solutionList ) {
-            Platform.runLater(() -> {
-                _mainController.solutionArea.appendText(solution);
-            });
+
+    /*
+        public void updateGraphics(){
+            for(String solution : solutionList ) {
+                Platform.runLater(() -> {
+                    _mainController.solutionArea.appendText(solution);
+                });
+            }
+            _mainController.stopAlgorithm();
         }
-        _mainController.stopAlgorithm();
-    }
-*/
+    */
     int i = 0;
+
     public void updateGraphics() {
-        if(i < solutionList.size()-1) {
+        if (i == 0) {
             Platform.runLater(() -> {
-                _mainController.solutionArea.appendText(solutionList.get(i));
+                _mainController.solutionArea.appendText(solutionList.get(0));
             });
             i++;
-        } else {
+        }
+        if (i < solutionList.size()) {
+            final int currentIndex = i;
+            Platform.runLater(() -> {
+                _mainController.solutionArea.appendText(solutionList.get(currentIndex));
+            });
+            i++;
+        }
+        if (i == solutionList.size() && y == graphList.size()) {
             _mainController.stopGraphics();
         }
     }
+    int y =0;
 
-    int y = 0;
-    public void graphGraphics(){
-        if(y < graphList.size()-1) {
+    public void graphGraphics() {
+        if (y == 0) {
             Platform.runLater(() -> {
-                //_mainController.makeGraphics(graphList.get(i).getKey(), graphList.get(i).getValue());
-                _mainController.series.getData().add(new XYChart.Data<>(graphList.get(y).getKey(), graphList.get(y).getValue()));
+                _mainController.series.getData().add(new XYChart.Data<>(graphList.get(0).getKey(), graphList.get(0).getValue()));
             });
             y++;
-        } else {
+        }
+        if (y < graphList.size()) {
+            final int currentIndex = y;
+            Platform.runLater(() -> {
+                _mainController.series.getData().add(new XYChart.Data<>(graphList.get(currentIndex).getKey(), graphList.get(currentIndex).getValue()));
+            });
+            y++;
+        }
+        if (i == solutionList.size() && y == graphList.size()) {
             _mainController.stopGraphics();
         }
-
     }
 }
 

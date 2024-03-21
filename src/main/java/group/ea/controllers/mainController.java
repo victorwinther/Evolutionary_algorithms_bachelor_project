@@ -1,13 +1,12 @@
 package group.ea.controllers;
-
 import group.ea.main;
 import group.ea.structure.algorithm.Algorithm;
 import group.ea.structure.algorithm.RLS;
 import group.ea.structure.algorithm.SA;
+import group.ea.structure.algorithm.onePlusOneEA;
 import group.ea.structure.problem.OneMax;
 import group.ea.structure.problem.LeadingOnes;
 import group.ea.structure.problem.Problem;
-
 import group.ea.structure.searchspace.BitString;
 import group.ea.structure.searchspace.SearchSpace;
 import javafx.animation.AnimationTimer;
@@ -162,28 +161,41 @@ public class mainController implements Initializable {
             //startAlgorithm();
             //new Thread(this::runEvolution).start(); // Run EA in a separate thread
             SearchSpace searchSpace = null;
-            if ("Bit strings".equals(blueprintChoices[0])) {
-                bitStringValue = stringLength.getValue();
-                searchSpace = new BitString(bitStringValue);
-                System.out.println("is here");
-            } else if ("Permutation".equals(blueprintChoices[0])) {
-                //searchSpace = new Permutation(100);
+            switch (blueprintChoices[0]) {
+                case "Bit strings":
+                    bitStringValue = stringLength.getValue();
+                    searchSpace = new BitString(bitStringValue);
+                    break;
+                case "Permutation":
+                    //searchSpace = new Permutation(100);
+                    break;
             }
 
             Problem problem = null;
-            if ("OneMax".equals(blueprintChoices[1])) {
-                problem = new OneMax(searchSpace);
-            } else if ("LeadingOnes".equals(blueprintChoices[1])) {
-                problem = new LeadingOnes(searchSpace);
+            switch(blueprintChoices[1]){
+                case "OneMax":
+                    problem = new OneMax(searchSpace);
+                    break;
+                case "LeadingOnes":
+                    problem = new LeadingOnes(searchSpace);
+                    break;
             }
 
-            if (blueprintChoices[2].equals("RLS")) {
-                algorithm = new RLS(searchSpace, problem, this);
-            } else if (blueprintChoices[2].equals("Simulated Annealing")) {
-                algorithm = new SA(searchSpace, problem, this);
-            } else {
-                algorithm = null;
+            switch (blueprintChoices[2]){
+                case "RLS":
+                    algorithm = new RLS(searchSpace, problem, this);
+                    break;
+                case "Simulated Annealing":
+                    algorithm = new SA(searchSpace, problem, this);
+                    break;
+                case "(1+1) EA":
+                    algorithm = new onePlusOneEA(searchSpace, problem, this);
+                    break;
+                default:
+                    algorithm = null;
+                    break;
             }
+
             if (algorithm != null) {
                 timesRun++;
                 //new Thread(() -> algorithm.runAlgorithm()).start();
@@ -294,6 +306,8 @@ public class mainController implements Initializable {
         isAnimationPaused = true;
     }
     public void stopGraphics() {
+        //wait 5 sec
+
         animationTimer.stop(); // Stop the animation
         isRunning = false; // Set running state to false to stop the algorithm
     }

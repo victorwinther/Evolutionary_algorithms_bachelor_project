@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -15,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="mainBorderPane" prefHeight="520.0" prefWidth="887.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.blueprintController">
+<BorderPane fx:id="mainBorderPane" prefHeight="520.0" prefWidth="887.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.blueprintController">
    <top>
       <HBox prefHeight="53.0" prefWidth="600.0" style="-fx-background-color: #26282B;" BorderPane.alignment="CENTER">
          <children>
@@ -85,6 +86,18 @@
                                           <Insets bottom="20.0" top="10.0" />
                                        </VBox.margin>
                                     </ComboBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                       <children>
+                                          <Label text="Stopping criteria" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="12.0" />
+                                             </font>
+                                          </Label>
+                                          <CheckBox fx:id="optimumCheck" mnemonicParsing="false" selected="true" text="Optimum" textFill="#fffafa" />
+                                          <CheckBox fx:id="fitnessCheck" mnemonicParsing="false" text="Fitness" textFill="WHITE" />
+                                          <CheckBox fx:id="iterationCheck" mnemonicParsing="false" text="Iteration" textFill="WHITE" />
+                                       </children>
+                                    </HBox>
                                     <Label text="Batches" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="12.0" />
