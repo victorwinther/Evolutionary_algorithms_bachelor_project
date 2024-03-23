@@ -1,5 +1,6 @@
 package group.ea.controllers;
 import group.ea.main;
+import group.ea.structure.algorithm.BooleanHypercubeVisualization;
 import group.ea.structure.algorithm.Algorithm;
 import group.ea.structure.algorithm.RLS;
 import group.ea.structure.algorithm.SA;
@@ -44,7 +45,7 @@ public class mainController implements Initializable {
     @FXML
     private ChoiceBox<Integer> stringLength;
     @FXML
-    private FlowPane flowPane;
+    public FlowPane flowPane;
 
     @FXML
     private CheckBox graphSelector,textSelector;
@@ -324,5 +325,6 @@ public class mainController implements Initializable {
         stringLength.getItems().addAll(10,100, 200, 300, 400, 500);
         stringLength.setValue(100);
 
+        BooleanHypercubeVisualization booleanHypercubeVisualization = new BooleanHypercubeVisualization(new BitString(20), new OneMax(new BitString(20)), this);
     }
 }
