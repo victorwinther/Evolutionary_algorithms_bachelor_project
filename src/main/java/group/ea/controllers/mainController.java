@@ -1,4 +1,5 @@
 package group.ea.controllers;
+
 import group.ea.main;
 import group.ea.structure.algorithm.BooleanHypercubeVisualization;
 import group.ea.structure.algorithm.Algorithm;
@@ -38,90 +39,74 @@ import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 public class mainController implements Initializable {
-    @FXML
-    private Button btnPlot, btnConnect, btnTable, createBlueprintBtn, loadBlueprintBtn;
-
-    @FXML
-    private BorderPane mainBorderPane,borderPane;
-    @FXML
-    private ChoiceBox<Integer> stringLength;
-    @FXML
-    public FlowPane flowPane;
-
-    @FXML
-    private CheckBox graphSelector,textSelector, hypercubeCheck;
-
-    @FXML
-    private Label searchspaceLabel,problemLabel, algorithmLabel,criteriasLabel,timeLabel,mutationLabel, selectionLabel,crossoverLabel;
-
-    @FXML
-    Slider sliderSpeed;
-    @FXML
-    public Slider generationSlider;
-
+    private static AnimationTimer animationTimer;
     final NumberAxis xAxis = new NumberAxis();
     final NumberAxis yAxis = new NumberAxis();
-    LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
+    private final FileChooser fileChooser = new FileChooser();
+    @FXML
+    public FlowPane flowPane;
+    @FXML
+    public Slider generationSlider;
     public XYChart.Series<Number, Number> series = new XYChart.Series<>();
-
-    private static AnimationTimer animationTimer;
-
-    Algorithm algorithm;
-
     public volatile boolean isRunning = false;
-
-    private Stage stage;
-    private Scene scene;
-    private Parent parent;
-    private FileChooser fileChooser = new FileChooser();
-    private String[] blueprintChoices = new String[5];
-
     public BooleanHypercubeVisualization booleanHypercubeVisualization;
-
+    public Pane hypercubenPane = new Pane();
+    @FXML
+    public TextArea solutionArea = new TextArea();
+    @FXML
+    Slider sliderSpeed;
+    LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
+    Algorithm algorithm;
     double duration = 1000;
     Label titleLabel;
     VBox container = new VBox(5);
-
-    public Pane hypercubenPane = new Pane();
-
+    // Button action to start the EA
+    int timesRun = 0;
+    int i = 0;
+    @FXML
+    private Button btnPlot, btnConnect, btnTable, createBlueprintBtn, loadBlueprintBtn;
+    @FXML
+    private BorderPane mainBorderPane, borderPane;
+    @FXML
+    private ChoiceBox<Integer> stringLength;
+    @FXML
+    private CheckBox graphSelector, textSelector, hypercubeCheck;
+    @FXML
+    private Label searchspaceLabel, problemLabel, algorithmLabel, criteriasLabel, timeLabel, mutationLabel, selectionLabel, crossoverLabel;
+    private Stage stage;
+    private Scene scene;
+    private Parent parent;
+    private String[] blueprintChoices = new String[5];
     private int bitStringValue;
     private boolean hypercubeSelected;
+    @FXML
+    private Button startButton;
+    private boolean isAnimationPaused = false;// Starts paused
 
     public mainController() {
 
-       animationTimer = new AnimationTimer() {
-           private long lastUpdate = 0;
-           @Override
-           public void handle(long l) {
-               //algorithm.performSingleUpdate();
-               if (l - lastUpdate >= duration) { // Update every second
-                   if (!isAnimationPaused) {
-                       /*
-                       if (graphSelector.isSelected()) {
-                           algorithm.graphGraphics();
-                       }
-                       if (textSelector.isSelected()) {
-                           algorithm.updateGraphics();
-                       }
-                       if (hypercubeCheck.isSelected()) {
+        animationTimer = new AnimationTimer() {
+            private long lastUpdate = 0;
 
-                           algorithm.hyperCubeGraphics();
-                       }*/
-                       algorithm.sliderController();
-                       lastUpdate = l;
-                       double speed = sliderSpeed.getValue();
-                       duration = (TimeUnit.MILLISECONDS.toNanos(1000) * (1 - speed / sliderSpeed.getMax()));
-                   }
-               }
-           }
-       };
+            @Override
+            public void handle(long l) {
+                if (l - lastUpdate >= duration) { // Update every second
+                    if (!isAnimationPaused) {
+                        algorithm.sliderController();
+                        lastUpdate = l;
+                        double speed = sliderSpeed.getValue();
+                        duration = (TimeUnit.MILLISECONDS.toNanos(1000) * (1 - speed / sliderSpeed.getMax()));
+                    }
+                }
+            }
+        };
     }
 
     @FXML
-    void createBlueprintHandler(ActionEvent event) throws IOException{
+    void createBlueprintHandler(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/createBlueprintPage.fxml")));
         Scene scene = new Scene(root);
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
         Platform.runLater(root::requestFocus);
         stage.setScene(scene);
@@ -129,20 +114,17 @@ public class mainController implements Initializable {
     }
 
     @FXML
-    void loadBlueprintHandler(ActionEvent event){
+    void loadBlueprintHandler(ActionEvent event) {
         fileChooser.showOpenDialog(stage);
     }
 
-
     @FXML
     void menuChangeHandler(ActionEvent event) throws IOException {
-        if (event.getSource() == btnPlot){
+        if (event.getSource() == btnPlot) {
             changeContent("plotPage");
-        }
-        else if (event.getSource() == btnConnect){
+        } else if (event.getSource() == btnConnect) {
             changeContent("connectPage");
-        }
-        else if (event.getSource() == btnTable){
+        } else if (event.getSource() == btnTable) {
             changeContent("tablePage");
         }
     }
@@ -160,16 +142,8 @@ public class mainController implements Initializable {
     }
 
     @FXML
-    private Button startButton;
-    @FXML
-    public TextArea solutionArea = new TextArea();
-
-
-    // Button action to start the EA
-    int timesRun = 0;
-    @FXML
     private void startEvolution() {
-        if(!isAnimationPaused) {
+        if (!isAnimationPaused) {
             isRunning = true;
             solutionArea.clear();
             container.getChildren().clear();
@@ -189,7 +163,7 @@ public class mainController implements Initializable {
             }
 
             Problem problem = null;
-            switch(blueprintChoices[1]){
+            switch (blueprintChoices[1]) {
                 case "OneMax":
                     problem = new OneMax(searchSpace);
                     break;
@@ -198,7 +172,7 @@ public class mainController implements Initializable {
                     break;
             }
 
-            switch (blueprintChoices[2]){
+            switch (blueprintChoices[2]) {
                 case "RLS":
                     algorithm = new RLS(searchSpace, problem, this);
                     break;
@@ -215,8 +189,6 @@ public class mainController implements Initializable {
 
             if (algorithm != null) {
                 timesRun++;
-                //new Thread(() -> algorithm.runAlgorithm()).start();
-                //algorithm.initialize();
                 if (graphSelector.isSelected()) {
                     initializeChart();
                     if (!flowPane.getChildren().contains(lineChart)) {
@@ -247,11 +219,11 @@ public class mainController implements Initializable {
                         flowPane.getChildren().add(container);
                     }
                 }
-                if(hypercubeCheck.isSelected()){
+                if (hypercubeCheck.isSelected()) {
                     if (!flowPane.getChildren().contains(hypercubenPane)) {
                         flowPane.getChildren().add(hypercubenPane);
                     }
-                    booleanHypercubeVisualization = new BooleanHypercubeVisualization(searchSpace, problem, this,hypercubenPane);
+                    booleanHypercubeVisualization = new BooleanHypercubeVisualization(searchSpace, problem, this, hypercubenPane);
                 }
 
                 startAlgorithm();
@@ -262,10 +234,10 @@ public class mainController implements Initializable {
         }
         //new Thread(() -> algorithm.runAlgorithm()).start();
         // Running the algorithm
-       // onePlusOneEA.runAlgorithm();
+        // onePlusOneEA.runAlgorithm();
         //new Thread(this::runEvolution).start();
     }
-    int i = 0;
+
     public void initializeChart() {
         xAxis.setLabel("Generation");
         yAxis.setLabel("Fitness");
@@ -274,12 +246,13 @@ public class mainController implements Initializable {
         lineChart.setAnimated(true);
         xAxis.setAnimated(true);
         yAxis.setAnimated(true);
-        System.out.println("height + " + lineChart.getHeight() + "width "+ lineChart.getWidth());
+        System.out.println("height + " + lineChart.getHeight() + "width " + lineChart.getWidth());
         series = new XYChart.Series<>();
-        series.setName("Run number "+ (i+1));
+        series.setName("Run number " + (i + 1));
         lineChart.getData().add(series);
         i++;
     }
+
     @FXML
     private void graphListener(ActionEvent event) {
         if (graphSelector.isSelected()) {
@@ -290,6 +263,7 @@ public class mainController implements Initializable {
             flowPane.getChildren().remove(lineChart);
         }
     }
+
     @FXML
     private void textListener(ActionEvent event) {
         if (textSelector.isSelected()) {
@@ -301,22 +275,21 @@ public class mainController implements Initializable {
         }
     }
 
-   @FXML
-   private void hypercubeListener(ActionEvent event) {
+    @FXML
+    private void hypercubeListener(ActionEvent event) {
 
-       if (!hypercubeCheck.isSelected()) {
-           hypercubeSelected = false;
-           if(flowPane.getChildren().contains(hypercubenPane)){
-               flowPane.getChildren().remove(hypercubenPane);
-           }
-       } else {
-           hypercubeSelected = true;
-       }
+        if (!hypercubeCheck.isSelected()) {
+            hypercubeSelected = false;
+            flowPane.getChildren().remove(hypercubenPane);
+        } else {
+            hypercubeSelected = true;
+        }
 
-   }
-   public boolean isHypercubeSelected(){
+    }
+
+    public boolean isHypercubeSelected() {
         return hypercubeSelected;
-   }
+    }
 
     public void recieveArray(String[] blueprintChoices) {
         this.blueprintChoices = blueprintChoices;
@@ -325,9 +298,11 @@ public class mainController implements Initializable {
         algorithmLabel.setText(blueprintChoices[2]);
         criteriasLabel.setText(blueprintChoices[3]);
     }
+
     public void stopEvolution() {
         stopGraphics();
     }
+
     public void updateCanvas() {
         algorithm.updateGraphics();
     }
@@ -340,7 +315,7 @@ public class mainController implements Initializable {
         // Initialize your algorithm runner here
         animationTimer.start(); // Start the animation
     }
-    private boolean isAnimationPaused = false;// Starts paused
+
     @FXML
     private void pauseGraphics() {
         isAnimationPaused = true;
@@ -353,6 +328,7 @@ public class mainController implements Initializable {
 
 
     }
+
     public void stopGraphics() {
         //wait 5 sec
 
@@ -369,7 +345,7 @@ public class mainController implements Initializable {
         blueprintChoices[4] = "0.1";
         recieveArray(blueprintChoices);
 
-        stringLength.getItems().addAll(10,100, 200, 300, 400, 500);
+        stringLength.getItems().addAll(10, 100, 200, 300, 400, 500);
         stringLength.setValue(100);
     }
 

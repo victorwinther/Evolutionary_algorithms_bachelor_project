@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
-public class SA extends  Algorithm {
+public class SA extends Algorithm {
 
 
     String bitString;
@@ -18,13 +18,13 @@ public class SA extends  Algorithm {
     double currentTemp;
 
 
-
     public SA(SearchSpace searchSpace, Problem problem, mainController mainController) {
         super(searchSpace, problem, mainController);
         bestFitness = (int) problem.computeFitness(bitString);
         currentTemp = initTemp;
 
     }
+
     @Override
     public void initialize() {
         bitString = searchSpace.init();
@@ -43,15 +43,13 @@ public class SA extends  Algorithm {
             if (bestFitness == bitString.length()) {
                 stoppingMet = true;
             }
-        }
-        else if ( offspringFitness == bestFitness) {
+        } else if (offspringFitness == bestFitness) {
             bitString = offspring;
-        }
-        else {
+        } else {
             double SARate = Math.random();
             double SAEnergy = Math.exp((offspringFitness - bestFitness) / currentTemp);
 
-            if(SAEnergy > SARate){
+            if (SAEnergy > SARate) {
                 bitString = offspring;
                 bestFitness = offspringFitness;
                 data.setTemp(Optional.of(currentTemp));

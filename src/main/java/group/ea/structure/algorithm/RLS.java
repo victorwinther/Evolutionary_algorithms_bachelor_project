@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
-public class RLS extends Algorithm{
+public class RLS extends Algorithm {
     String bitString;
 
     public RLS(SearchSpace searchSpace, Problem problem, mainController mainController) {
@@ -17,6 +17,7 @@ public class RLS extends Algorithm{
 
 
     }
+
     @Override
     public void initialize() {
         bitString = searchSpace.init();

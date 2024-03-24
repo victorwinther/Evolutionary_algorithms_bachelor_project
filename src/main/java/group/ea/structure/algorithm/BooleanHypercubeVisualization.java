@@ -12,20 +12,16 @@ import java.util.ArrayList;
 
 public class BooleanHypercubeVisualization {
     private static final double X_SCALE = 0.8;
-    private int currentWidth = 600; // Example width
-    private int currentHeight = 400; // Example height
-
+    protected final mainController _mainController;
+    public boolean isDone = false;
+    public Pane hypercubePane;
     double fixedWidth = 600.0;
     double fixedHeight = 400.0;
-
     Problem problem;
     SearchSpace searchSpace;
-    protected final mainController _mainController;
+    private int currentWidth = 600; // Example width
+    private int currentHeight = 400; // Example height
     private ArrayList<Circle> pointsList = new ArrayList<>();
-
-    public boolean isDone = false;
-
-    public Pane hypercubePane;
     // Calculate the y-coordinate based on the number of 1-bits
 
     public BooleanHypercubeVisualization(SearchSpace searchSpace, Problem problem, mainController controller, Pane hypercubenPane) {
@@ -41,6 +37,7 @@ public class BooleanHypercubeVisualization {
         drawSearchSpace();
 
     }
+
     private static int calculateYCoordinate(String bitString) {
         int count = 0;
         for (char bit : bitString.toCharArray()) {
@@ -103,8 +100,8 @@ public class BooleanHypercubeVisualization {
         //return (int) (Math.sin(Math.PI * (y / (double)currentHeight)) * getXScale());
         double yHeight = (double) y / bitStringLength * 2 * 7 - 7;
         int function = (int) (Math.exp(-(Math.pow(yHeight, 2) / 8)) * 250);
-        System.out.println("y "+ y);
-        System.out.println("functionvalue "+ Math.exp(-(Math.pow(y, 2) / 8)));
+        System.out.println("y " + y);
+        System.out.println("functionvalue " + Math.exp(-(Math.pow(y, 2) / 8)));
         return function;
     }
 
@@ -115,14 +112,15 @@ public class BooleanHypercubeVisualization {
     private void drawSearchSpace() {
 
         // 90 degrees rotated function plot
-        Path rotated90Plot = plotFunction((double) currentWidth /2, (double) currentHeight /2, 90);
+        Path rotated90Plot = plotFunction((double) currentWidth / 2, (double) currentHeight / 2, 90);
         hypercubePane.getChildren().add(rotated90Plot);
 
         // 270 degrees rotated function plot (effectively 90 degrees counterclockwise)
-        Path rotated270Plot = plotFunction((double) currentWidth /2, (double) currentHeight /2, 270);
+        Path rotated270Plot = plotFunction((double) currentWidth / 2, (double) currentHeight / 2, 270);
         hypercubePane.getChildren().add(rotated270Plot);
         hypercubePane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
     }
+
     public Circle getDisplayCoordinates(String bitString, boolean isPerfectSolution) {
 
         int onemax = 0;
@@ -132,11 +130,11 @@ public class BooleanHypercubeVisualization {
             }
         }
 
-    // Calculate the x-coordinate based on the positions of 1-bits
+        // Calculate the x-coordinate based on the positions of 1-bits
         int sumOfIndices = 0;
         for (int i = 0; i < bitString.length(); i++) {
             if (bitString.charAt(i) == '1') {
-                sumOfIndices += i ; //
+                sumOfIndices += i; //
             }
         }
         // the minimal and maximal values are computed with Gaussian sums.
@@ -150,19 +148,19 @@ public class BooleanHypercubeVisualization {
         System.out.println(x + "x value");
 
         int centerX = currentWidth / 2;
-        int yOffset = (int) (currentHeight/2 + 7 * 25 - ((double)onemax/bitString.length() * 7.0 * 25.0 * 2.0));
+        int yOffset = (int) (currentHeight / 2 + 7 * 25 - ((double) onemax / bitString.length() * 7.0 * 25.0 * 2.0));
 
         int xOffset = 0;
         if (range != 0) {
-            xOffset = (int) ((x * getXDeviation(onemax,bitString.length())) / (double) range);
-            System.out.println("x= "+ x + " xDeviation= " + getXDeviation(onemax,bitString.length()) + " range= " + range + " xOffset= " + xOffset);
+            xOffset = (int) ((x * getXDeviation(onemax, bitString.length())) / (double) range);
+            System.out.println("x= " + x + " xDeviation= " + getXDeviation(onemax, bitString.length()) + " range= " + range + " xOffset= " + xOffset);
         }
-        if(isPerfectSolution){
+        if (isPerfectSolution) {
             System.out.println("returned perfect");
             Circle circle = new Circle(centerX + xOffset, yOffset, 3);
             circle.setFill(Color.RED);
             isDone = true;
-             return circle;
+            return circle;
 
         } else {
             return new Circle(centerX + xOffset, yOffset, 2);
@@ -177,7 +175,7 @@ public class BooleanHypercubeVisualization {
         pane.getChildren().add(point);
     }
 
-    public Circle getNextCircle(){
+    public Circle getNextCircle() {
         if (!pointsList.isEmpty()) {
             return pointsList.remove(0);
         }
