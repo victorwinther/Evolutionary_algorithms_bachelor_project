@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="735.0" prefWidth="1071.0" style="-fx-background-color: #353941;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.mainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="735.0" prefWidth="1071.0" style="-fx-background-color: #353941;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.mainController">
    <left>
       <AnchorPane prefHeight="584.0" prefWidth="213.0" style="-fx-background-color: #26282B;" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -167,11 +167,11 @@
    <bottom>
       <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0" BorderPane.alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="59.0" stylesheets="@../../../css/styling.css" text="GRAPH">
+            <CheckBox fx:id="hypercubeCheck" mnemonicParsing="false" onAction="#hypercubeListener" prefHeight="18.0" prefWidth="233.0" text="Boolean Hypercube" textFill="WHITE">
                <HBox.margin>
-                  <Insets left="30.0" right="105.0" />
+                  <Insets left="20.0" />
                </HBox.margin>
-            </Button>
+            </CheckBox>
             <Separator opacity="0.5" orientation="VERTICAL" prefHeight="80.0" prefWidth="19.0">
                <HBox.margin>
                   <Insets bottom="10.0" top="10.0" />
@@ -258,6 +258,9 @@
                </content>
             </ScrollPane>
          </center>
+         <bottom>
+            <Slider fx:id="generationSlider" max="500.0" onDragDetected="#pauseGraphics" onDragDone="#continueSlider" prefHeight="17.0" prefWidth="816.0" showTickLabels="true" showTickMarks="true" BorderPane.alignment="CENTER" />
+         </bottom>
       </BorderPane>
    </center>
 </BorderPane>

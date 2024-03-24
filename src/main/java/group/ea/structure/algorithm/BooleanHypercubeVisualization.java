@@ -3,15 +3,11 @@ package group.ea.structure.algorithm;
 import group.ea.controllers.mainController;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.scene.effect.Light;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 
+import java.util.ArrayList;
 
 
 public class BooleanHypercubeVisualization {
@@ -25,22 +21,24 @@ public class BooleanHypercubeVisualization {
     Problem problem;
     SearchSpace searchSpace;
     protected final mainController _mainController;
+    private ArrayList<Circle> pointsList = new ArrayList<>();
 
-    private Pane hypercubePane;
+    public boolean isDone = false;
+
+    public Pane hypercubePane;
     // Calculate the y-coordinate based on the number of 1-bits
 
-    public BooleanHypercubeVisualization(SearchSpace searchSpace, Problem problem, mainController controller) {
+    public BooleanHypercubeVisualization(SearchSpace searchSpace, Problem problem, mainController controller, Pane hypercubenPane) {
         this.searchSpace = searchSpace;
         this.problem = problem;
         _mainController = controller;
-        hypercubePane = new Pane();
+        this.hypercubePane = hypercubenPane;
         hypercubePane.setPrefSize(fixedWidth, fixedHeight);
 
 // Set min and max size to ensure the size stays fixed
         hypercubePane.setMinSize(fixedWidth, fixedHeight);
         hypercubePane.setMaxSize(fixedWidth, fixedHeight);
         drawSearchSpace();
-        getDisplayCoordinates("0000000000");
 
     }
     private static int calculateYCoordinate(String bitString) {
@@ -115,30 +113,6 @@ public class BooleanHypercubeVisualization {
     }
 
     private void drawSearchSpace() {
-        /*
-        int centerx = currentWidth / 2;
-
-        for (int y = 0; y <= currentHeight; y++) {
-            int xdev = getXDeviation(y);
-            drawPixel(hypercubePane, centerx - xdev, y);
-            drawPixel(hypercubePane, centerx + xdev, y);
-        }
-
-
-        int n = searchSpace.length;
-        for (int i = -n/2; i < n; i++) {
-            drawPixel(hypercubePane,  getXDeviation(i), i);
-        }
-
-        //update the pane
-        _mainController.flowPane.getChildren().add(hypercubePane);
-
-
-         */
-        //FlowPane pane = _mainController.flowPane;
-        // Original function plot
-        //Path originalPlot = plotFunction(300, 200, 0);
-        //pane.getChildren().add(originalPlot);
 
         // 90 degrees rotated function plot
         Path rotated90Plot = plotFunction((double) currentWidth /2, (double) currentHeight /2, 90);
@@ -148,20 +122,15 @@ public class BooleanHypercubeVisualization {
         Path rotated270Plot = plotFunction((double) currentWidth /2, (double) currentHeight /2, 270);
         hypercubePane.getChildren().add(rotated270Plot);
         hypercubePane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
-        _mainController.flowPane.getChildren().add(hypercubePane);
-        Platform.runLater(() -> {
-            System.out.println(hypercubePane.getWidth() + " " + hypercubePane.getHeight());
-        });
-        System.out.println(currentHeight + " " + currentWidth);
     }
-    private void getDisplayCoordinates(String bitString) {
+    public Circle getDisplayCoordinates(String bitString, boolean isPerfectSolution) {
+
         int onemax = 0;
         for (char bit : bitString.toCharArray()) {
             if (bit == '1') {
                 onemax++;
             }
         }
-
 
     // Calculate the x-coordinate based on the positions of 1-bits
         int sumOfIndices = 0;
@@ -170,7 +139,6 @@ public class BooleanHypercubeVisualization {
                 sumOfIndices += i ; //
             }
         }
-
         // the minimal and maximal values are computed with Gaussian sums.
         int minimalSumOfIndices = ((onemax - 1) * onemax) / 2;
         int maximalSumOfIndices = ((bitString.length() - 1) * bitString.length()) / 2 - ((bitString.length() - 1 - onemax) * (bitString.length() - onemax)) / 2;
@@ -189,10 +157,16 @@ public class BooleanHypercubeVisualization {
             xOffset = (int) ((x * getXDeviation(onemax,bitString.length())) / (double) range);
             System.out.println("x= "+ x + " xDeviation= " + getXDeviation(onemax,bitString.length()) + " range= " + range + " xOffset= " + xOffset);
         }
+        if(isPerfectSolution){
+            System.out.println("returned perfect");
+            Circle circle = new Circle(centerX + xOffset, yOffset, 3);
+            circle.setFill(Color.RED);
+            isDone = true;
+             return circle;
 
-        hypercubePane.getChildren().add( new Circle(centerX + xOffset, yOffset,3));
-        System.out.println(xOffset + "x offset");
-        System.out.println(bitString + " " + (centerX + xOffset) + " " + yOffset);
+        } else {
+            return new Circle(centerX + xOffset, yOffset, 2);
+        }
     }
 
     private void drawPixel(Pane pane, int x, int y) {
@@ -203,5 +177,11 @@ public class BooleanHypercubeVisualization {
         pane.getChildren().add(point);
     }
 
+    public Circle getNextCircle(){
+        if (!pointsList.isEmpty()) {
+            return pointsList.remove(0);
+        }
+        return null;
+    }
 
 }

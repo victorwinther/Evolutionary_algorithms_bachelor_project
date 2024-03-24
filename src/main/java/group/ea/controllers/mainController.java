@@ -24,6 +24,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -48,13 +49,15 @@ public class mainController implements Initializable {
     public FlowPane flowPane;
 
     @FXML
-    private CheckBox graphSelector,textSelector;
+    private CheckBox graphSelector,textSelector, hypercubeCheck;
 
     @FXML
     private Label searchspaceLabel,problemLabel, algorithmLabel,criteriasLabel,timeLabel,mutationLabel, selectionLabel,crossoverLabel;
 
     @FXML
     Slider sliderSpeed;
+    @FXML
+    public Slider generationSlider;
 
     final NumberAxis xAxis = new NumberAxis();
     final NumberAxis yAxis = new NumberAxis();
@@ -73,11 +76,16 @@ public class mainController implements Initializable {
     private FileChooser fileChooser = new FileChooser();
     private String[] blueprintChoices = new String[5];
 
+    public BooleanHypercubeVisualization booleanHypercubeVisualization;
+
     double duration = 1000;
     Label titleLabel;
     VBox container = new VBox(5);
 
+    public Pane hypercubenPane = new Pane();
+
     private int bitStringValue;
+    private boolean hypercubeSelected;
 
     public mainController() {
 
@@ -88,12 +96,18 @@ public class mainController implements Initializable {
                //algorithm.performSingleUpdate();
                if (l - lastUpdate >= duration) { // Update every second
                    if (!isAnimationPaused) {
+                       /*
                        if (graphSelector.isSelected()) {
                            algorithm.graphGraphics();
                        }
                        if (textSelector.isSelected()) {
                            algorithm.updateGraphics();
                        }
+                       if (hypercubeCheck.isSelected()) {
+
+                           algorithm.hyperCubeGraphics();
+                       }*/
+                       algorithm.sliderController();
                        lastUpdate = l;
                        double speed = sliderSpeed.getValue();
                        duration = (TimeUnit.MILLISECONDS.toNanos(1000) * (1 - speed / sliderSpeed.getMax()));
@@ -159,6 +173,8 @@ public class mainController implements Initializable {
             isRunning = true;
             solutionArea.clear();
             container.getChildren().clear();
+            hypercubenPane.getChildren().clear();
+
             //startAlgorithm();
             //new Thread(this::runEvolution).start(); // Run EA in a separate thread
             SearchSpace searchSpace = null;
@@ -231,6 +247,12 @@ public class mainController implements Initializable {
                         flowPane.getChildren().add(container);
                     }
                 }
+                if(hypercubeCheck.isSelected()){
+                    if (!flowPane.getChildren().contains(hypercubenPane)) {
+                        flowPane.getChildren().add(hypercubenPane);
+                    }
+                    booleanHypercubeVisualization = new BooleanHypercubeVisualization(searchSpace, problem, this,hypercubenPane);
+                }
 
                 startAlgorithm();
                 algorithm.runAlgorithm();
@@ -279,6 +301,23 @@ public class mainController implements Initializable {
         }
     }
 
+   @FXML
+   private void hypercubeListener(ActionEvent event) {
+
+       if (!hypercubeCheck.isSelected()) {
+           hypercubeSelected = false;
+           if(flowPane.getChildren().contains(hypercubenPane)){
+               flowPane.getChildren().remove(hypercubenPane);
+           }
+       } else {
+           hypercubeSelected = true;
+       }
+
+   }
+   public boolean isHypercubeSelected(){
+        return hypercubeSelected;
+   }
+
     public void recieveArray(String[] blueprintChoices) {
         this.blueprintChoices = blueprintChoices;
         searchspaceLabel.setText(blueprintChoices[0]);
@@ -306,6 +345,14 @@ public class mainController implements Initializable {
     private void pauseGraphics() {
         isAnimationPaused = true;
     }
+
+    @FXML
+    private void continueSlider() {
+        algorithm.i = (int) generationSlider.getValue();
+        isAnimationPaused = false;
+
+
+    }
     public void stopGraphics() {
         //wait 5 sec
 
@@ -324,7 +371,13 @@ public class mainController implements Initializable {
 
         stringLength.getItems().addAll(10,100, 200, 300, 400, 500);
         stringLength.setValue(100);
+    }
 
-        BooleanHypercubeVisualization booleanHypercubeVisualization = new BooleanHypercubeVisualization(new BitString(20), new OneMax(new BitString(20)), this);
+    public boolean isTextSelected() {
+        return textSelector.isSelected();
+    }
+
+    public boolean isGraphSelected() {
+        return graphSelector.isSelected();
     }
 }
