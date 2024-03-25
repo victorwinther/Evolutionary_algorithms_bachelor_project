@@ -8,6 +8,10 @@ public abstract class SearchSpace {
         this.length = length;
     }
 
+    public SearchSpace() {
+
+    }
+
     public abstract String init();
 
 }

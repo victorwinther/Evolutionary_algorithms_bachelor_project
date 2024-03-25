@@ -1,9 +1,8 @@
 package group.ea.controllers;
 import group.ea.main;
-import group.ea.structure.algorithm.Algorithm;
-import group.ea.structure.algorithm.RLS;
-import group.ea.structure.algorithm.SA;
-import group.ea.structure.algorithm.onePlusOneEA;
+import group.ea.structure.TSP.Solution;
+import group.ea.structure.TSP.TSPParser;
+import group.ea.structure.algorithm.*;
 import group.ea.structure.problem.OneMax;
 import group.ea.structure.problem.LeadingOnes;
 import group.ea.structure.problem.Problem;
@@ -63,6 +62,7 @@ public class mainController implements Initializable {
     private static AnimationTimer animationTimer;
 
     Algorithm algorithm;
+    TSPParser tp;
 
     public volatile boolean isRunning = false;
 
@@ -167,7 +167,7 @@ public class mainController implements Initializable {
                     searchSpace = new BitString(bitStringValue);
                     break;
                 case "Permutation":
-                    //searchSpace = new Permutation(100);
+                    searchSpace = new TSPParser("src/main/java/group/ea/controllers/berlin52.txt");
                     break;
             }
 
@@ -179,6 +179,9 @@ public class mainController implements Initializable {
                 case "LeadingOnes":
                     problem = new LeadingOnes(searchSpace);
                     break;
+                case "TSP":
+                    assert searchSpace instanceof TSPParser;
+                    problem = new Solution((TSPParser) searchSpace);
             }
 
             switch (blueprintChoices[2]){
@@ -190,6 +193,9 @@ public class mainController implements Initializable {
                     break;
                 case "(1+1) EA":
                     algorithm = new onePlusOneEA(searchSpace, problem, this);
+                    break;
+                case "TEMP":
+                    algorithm = new PermutationSA(searchSpace, problem, this);
                     break;
                 default:
                     algorithm = null;

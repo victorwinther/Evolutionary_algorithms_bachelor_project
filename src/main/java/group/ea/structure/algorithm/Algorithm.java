@@ -51,8 +51,9 @@ public abstract class Algorithm {
 
     public void runAlgorithm() {
         while (!this.stoppingCriteriaMet()) {
-            this.iterate(1000);
+            this.iterate(10000);
         }
+        System.out.println("Best fitness found: " + bestFitness);
     }
 
     /*

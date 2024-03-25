@@ -88,9 +88,9 @@ public class blueprintController implements Initializable {
         algorithmSelector.getItems().addAll(algorithms);
         stoppingcriteriaSelector.getItems().addAll(criterias);
         //choiceBox.getItems().addAll(stopping);
-        searchspaceSelector.setValue("Bit strings");
-        problemSelector.setValue("OneMax");
-        algorithmSelector.setValue("RLS");
+        searchspaceSelector.setValue("Permutation");
+        problemSelector.setValue("TSP");
+        algorithmSelector.setValue("TEMP");
         stoppingcriteriaSelector.setValue("Optimum reached");
 
         //initialize filechooser object
@@ -130,7 +130,7 @@ public class blueprintController implements Initializable {
     private void addCategoryOptions() {
         categoryOptions.put("searchSpace", Arrays.asList("Bit strings", "Permutations"));
         categoryOptions.put("problem", Arrays.asList("OneMax", "LeadingOnes", "TSP"));
-        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System"));
+        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System", "TEMP"));
         categoryOptions.put("stopping", Arrays.asList("Optimum reached", "Fitness bound", "Iteration bound"));
         categoryOptions.put("display", Arrays.asList("Table", "Graph"));
     }
