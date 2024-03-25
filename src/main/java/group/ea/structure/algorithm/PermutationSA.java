@@ -20,8 +20,8 @@ public class PermutationSA extends  Algorithm {
 
 
     Solution _sl;
-    double initTemp = 100000;
-    double tempReduction = 0.99;
+    double initTemp = 10000;
+    double tempReduction = 0.9995;
     double currentTemp;
 
 
@@ -55,13 +55,20 @@ public class PermutationSA extends  Algorithm {
         _sl.twoOptMutate();
         int offspringFitness = _sl.computeFitness();
 
+
+        System.out.println(offspringFitness + " " + bestFitness);
+
+
         if (offspringFitness < bestFitness) {
+            System.out.println("Better in generation " + generation);
+
             bestFitness = offspringFitness;
             String solutionText = "Generation " + generation + ": New solution found:  with fitness: " + bestFitness + " tempature is " + currentTemp + "\n";
             solutionList.add(solutionText);
         }
-        else if (Math.exp((bestFitness - offspringFitness) / currentTemp) < Math.random()) {
-                _sl.revert();
+        else if (Math.exp((offspringFitness-bestFitness) / currentTemp) > Math.random()) {
+            System.out.println("Revert in generation " + generation);
+            _sl.revert();
                 String solutionText = "Generation " + generation + ": New SA found:  with fitness: " + bestFitness + " tempature is " + currentTemp + "\n";
                 solutionList.add(solutionText);
 
