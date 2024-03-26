@@ -6,8 +6,10 @@ import group.ea.structure.searchspace.SearchSpace;
 import javafx.application.Platform;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Optional;
 
-public class SA extends  Algorithm {
+public class SA extends Algorithm {
 
 
     String bitString;
@@ -16,59 +18,44 @@ public class SA extends  Algorithm {
     double currentTemp;
 
 
-
     public SA(SearchSpace searchSpace, Problem problem, mainController mainController) {
         super(searchSpace, problem, mainController);
         bestFitness = (int) problem.computeFitness(bitString);
         currentTemp = initTemp;
 
     }
+
     @Override
     public void initialize() {
         bitString = searchSpace.init();
-        System.out.println("bitstring is " + bitString + "\n");
-        solutionList = new ArrayList<>();
-        _mainController.solutionArea.appendText( ("Initial Solution: " + bitString + " with fitness: " + this.bestFitness + " tempature is " + this.initTemp + "\n"));
-
     }
 
     @Override
     public void performSingleUpdate(int generation) {
         String offspring = mutate(bitString);
         int offspringFitness = (int) problem.computeFitness(offspring);
-
+        Data data = new Data(bitString, generation, bestFitness, false, Optional.empty());
 
         if (offspringFitness > bestFitness) {
             bitString = offspring;
             bestFitness = offspringFitness;
-            //_mainController.solutionArea.appendText( "Generation " + generation + ": New solution found: " + bitString + " with fitness: " + bestFitness + " tempature is " + currentTemp + "\n");
-            // add to solution list
-            String solutionText = "Generation " + generation + ": New solution found: " + bitString + " with fitness: " + bestFitness + " tempature is " + currentTemp + "\n";
-            solutionList.add(solutionText);
-
+            data.setYesNo(true);
             if (bestFitness == bitString.length()) {
-                //_mainController.solutionArea.appendText("Perfect solution found in generation " + generation + "\n");
-                solutionList.add( ("Perfect solution found in generation " + generation + "\n"));
                 stoppingMet = true;
-                //_mainController.stopAlgorithm();
             }
-        }
-        else if ( offspringFitness == bestFitness) {
+        } else if (offspringFitness == bestFitness) {
             bitString = offspring;
-        }
-        else {
+        } else {
             double SARate = Math.random();
             double SAEnergy = Math.exp((offspringFitness - bestFitness) / currentTemp);
 
-            if(SAEnergy > SARate){
+            if (SAEnergy > SARate) {
                 bitString = offspring;
                 bestFitness = offspringFitness;
-                String solutionText = "Generation " + generation + ": New SA found: " + bitString + " with fitness: " + bestFitness + " tempature is " + currentTemp + "\n";
-                solutionList.add(solutionText);
-
+                data.setTemp(Optional.of(currentTemp));
             }
         }
-
+        finalList.add(data);
         currentTemp *= tempReduction;
     }
 
