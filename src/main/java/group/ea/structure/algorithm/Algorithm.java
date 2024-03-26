@@ -4,14 +4,11 @@ import group.ea.controllers.mainController;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.chart.XYChart;
 import javafx.scene.shape.Circle;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,10 +21,7 @@ public abstract class Algorithm {
 
     protected List<Pair<Integer, Integer>> graphList;
 
-   // public ArrayList<HashMap<String,HashMap<String,String>>> finalList = new ArrayList<>();
     public List<Data> finalList = new ArrayList<>();
-    // create arraylist with string and integers
-
 
     protected int bestFitness;
     private boolean hyperDone = true;
@@ -60,7 +54,7 @@ public abstract class Algorithm {
 
     public void runAlgorithm() {
         while (!this.stoppingCriteriaMet()) {
-            this.iterate(1000);
+            this.iterate(10000);
         }
     }
 
@@ -75,34 +69,14 @@ public abstract class Algorithm {
         }
     */
     public int i = 0;
-    private final Object lock = new Object();
-    private volatile int oldI = -1; // Initialize oldI to -1 so it's different from the initial i value.
     public void sliderController() {
-/*
-        synchronized (lock) {
-            if (i == oldI) {
-                System.out.println("not changed");
-                // If i has not changed since the last run, skip this execution.
-                return;
-            }
-            Platform.runLater(() -> {
-                synchronized (lock) {
-                    System.out.println("old i "+oldI + " i "+i);
-                    runGraphics(i);
-                    oldI = i; // Update oldI only after runGraphics is actually called.
-                    i++;
-                }
-            });
-        }
-
- */
         if(i != finalList.size()) {
             Data data = finalList.get(i);
         if(data.getImproved()) {
             runGraphics(i);
             i++;
         } else {
-            while (!data.getImproved() && i < finalList.size()) {
+            while (!data.getImproved() && i < finalList.size()-1) {
                 i++;
                 data = finalList.get(i);
             }
@@ -121,8 +95,9 @@ public abstract class Algorithm {
         Optional<Double> temp = data.getTemp();
         double max = finalList.size()-1;
         _mainController.generationSlider.setMax(max);
-        _mainController.generationSlider.setBlockIncrement((double) finalList.size() /10/4);
-        _mainController.generationSlider.setMajorTickUnit((double) finalList.size() /10);
+        _mainController.generationSlider.setBlockIncrement(10);
+        _mainController.generationSlider.setMajorTickUnit(50);
+        _mainController.generationSlider.setSnapToTicks(true);
         _mainController.generationSlider.adjustValue(i);
 
         if(data.getImproved()) {
@@ -236,5 +211,9 @@ public abstract class Algorithm {
                 hyperDone = false;
             }
         }
+    }
+
+    public void clearAndContinue(int i, int newI) {
+
     }
 }

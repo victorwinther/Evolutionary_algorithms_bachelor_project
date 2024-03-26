@@ -259,7 +259,7 @@
             </ScrollPane>
          </center>
          <bottom>
-            <Slider fx:id="generationSlider" max="500.0" onDragDetected="#pauseGraphics" onDragDone="#continueSlider" prefHeight="17.0" prefWidth="816.0" showTickLabels="true" showTickMarks="true" BorderPane.alignment="CENTER" />
+            <Slider fx:id="generationSlider" blockIncrement="50.0" max="200.0" minorTickCount="5" onDragDetected="#pauseGraphics" onDragDone="#continueSlider" prefHeight="17.0" prefWidth="816.0" showTickLabels="true" showTickMarks="true" BorderPane.alignment="CENTER" />
          </bottom>
       </BorderPane>
    </center>

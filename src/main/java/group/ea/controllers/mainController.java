@@ -323,10 +323,10 @@ public class mainController implements Initializable {
 
     @FXML
     private void continueSlider() {
-        algorithm.i = (int) generationSlider.getValue();
+        int i = algorithm.i;
+        int newI = (int) generationSlider.getValue();
+        algorithm.clearAndContinue(i, newI);
         isAnimationPaused = false;
-
-
     }
 
     public void stopGraphics() {

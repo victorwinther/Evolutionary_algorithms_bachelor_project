@@ -100,8 +100,6 @@ public class BooleanHypercubeVisualization {
         //return (int) (Math.sin(Math.PI * (y / (double)currentHeight)) * getXScale());
         double yHeight = (double) y / bitStringLength * 2 * 7 - 7;
         int function = (int) (Math.exp(-(Math.pow(yHeight, 2) / 8)) * 250);
-        System.out.println("y " + y);
-        System.out.println("functionvalue " + Math.exp(-(Math.pow(y, 2) / 8)));
         return function;
     }
 
@@ -118,7 +116,7 @@ public class BooleanHypercubeVisualization {
         // 270 degrees rotated function plot (effectively 90 degrees counterclockwise)
         Path rotated270Plot = plotFunction((double) currentWidth / 2, (double) currentHeight / 2, 270);
         hypercubePane.getChildren().add(rotated270Plot);
-        hypercubePane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
+        //hypercubePane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
     }
 
     public Circle getDisplayCoordinates(String bitString, boolean isPerfectSolution) {
@@ -141,11 +139,9 @@ public class BooleanHypercubeVisualization {
         int minimalSumOfIndices = ((onemax - 1) * onemax) / 2;
         int maximalSumOfIndices = ((bitString.length() - 1) * bitString.length()) / 2 - ((bitString.length() - 1 - onemax) * (bitString.length() - onemax)) / 2;
         int range = maximalSumOfIndices - minimalSumOfIndices;
-        System.out.println(minimalSumOfIndices + " " + maximalSumOfIndices + " " + range);
 
         // compute a normalized value in [-range, +range]
         int x = 2 * sumOfIndices - 2 * minimalSumOfIndices - range;
-        System.out.println(x + "x value");
 
         int centerX = currentWidth / 2;
         int yOffset = (int) (currentHeight / 2 + 7 * 25 - ((double) onemax / bitString.length() * 7.0 * 25.0 * 2.0));
@@ -153,17 +149,15 @@ public class BooleanHypercubeVisualization {
         int xOffset = 0;
         if (range != 0) {
             xOffset = (int) ((x * getXDeviation(onemax, bitString.length())) / (double) range);
-            System.out.println("x= " + x + " xDeviation= " + getXDeviation(onemax, bitString.length()) + " range= " + range + " xOffset= " + xOffset);
         }
         if (isPerfectSolution) {
-            System.out.println("returned perfect");
-            Circle circle = new Circle(centerX + xOffset, yOffset, 3);
+            Circle circle = new Circle(centerX + xOffset, yOffset, 5);
             circle.setFill(Color.RED);
             isDone = true;
             return circle;
 
         } else {
-            return new Circle(centerX + xOffset, yOffset, 2);
+            return new Circle(centerX + xOffset, yOffset, 4);
         }
     }
 
