@@ -70,6 +70,7 @@ public class PermutationSA extends  Algorithm {
             System.out.println("Revert in generation " + generation);
             _sl.revert();
                 String solutionText = "Generation " + generation + ": New SA found:  with fitness: " + bestFitness + " tempature is " + currentTemp + "\n";
+                System.out.println("Test");
                 solutionList.add(solutionText);
 
         }
