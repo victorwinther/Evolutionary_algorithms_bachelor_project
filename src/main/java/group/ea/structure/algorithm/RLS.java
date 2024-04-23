@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Optional;
 
 public class RLS extends Algorithm {
-    String bitString;
 
     public RLS(SearchSpace searchSpace, Problem problem, mainController mainController) {
         super(searchSpace, problem, mainController);
@@ -39,9 +38,6 @@ public class RLS extends Algorithm {
             data.setYesNo(true);
         }
         finalList.add(data);
-        if (bestFitness == bitString.length()) {
-            stoppingMet = true;
-        }
     }
 
     private String mutate(String parent) {

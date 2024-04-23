@@ -40,7 +40,7 @@ public class SA extends Algorithm {
             bitString = offspring;
             bestFitness = offspringFitness;
             data.setYesNo(true);
-            if (bestFitness == bitString.length()) {
+            if (checkStoppingCriteria()) {
                 stoppingMet = true;
             }
         } else if (offspringFitness == bestFitness) {

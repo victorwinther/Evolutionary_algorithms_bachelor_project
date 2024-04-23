@@ -1,11 +1,14 @@
 package group.ea.structure.algorithm;
 
 import group.ea.controllers.mainController;
+import group.ea.structure.TSP.Solution;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
 import javafx.application.Platform;
 import javafx.scene.chart.XYChart;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -14,6 +17,8 @@ import java.util.Optional;
 
 public abstract class Algorithm {
     Problem problem;
+
+    Solution _sl;
     SearchSpace searchSpace;
     protected final mainController _mainController;
     protected boolean stoppingMet = false;
@@ -24,38 +29,44 @@ public abstract class Algorithm {
     public List<Data> finalList = new ArrayList<>();
 
     protected int bestFitness;
+    protected String bitString;
+
+    int bitLength;
+    protected int generation;
     private boolean hyperDone = true;
+    private List<StoppingCriterion> stoppingCriteria = new ArrayList<>();
 
     public Algorithm(SearchSpace searchSpace, Problem problem, mainController controller) {
         this.searchSpace = searchSpace;
+        bitLength = searchSpace.length;
+        //sl = (Solution) problem;
         this.problem = problem;
         _mainController = controller;
         this.initialize();
+    }
+    public void addStoppingCriterion(StoppingCriterion criterion) {
+        stoppingCriteria.add(criterion);
+    }
+
+    protected boolean checkStoppingCriteria() {
+        for (StoppingCriterion criterion : stoppingCriteria) {
+            if (criterion.isMet(this)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public abstract void performSingleUpdate(int generation);
 
     public abstract void initialize();
 
-    public void iterate(int generations) {
-        for (int i = 0; i < generations; i++) {
-            performSingleUpdate(i);
-            if (stoppingMet) {
-                break;
-            }
+    public void runAlgorithm() {
+        while (!checkStoppingCriteria()) {
+            performSingleUpdate(generation);
+            generation++;
         }
         stoppingMet = true;
-
-    }
-
-    public boolean stoppingCriteriaMet() {
-        return stoppingMet;
-    }
-
-    public void runAlgorithm() {
-        while (!this.stoppingCriteriaMet()) {
-            this.iterate(1000000);
-        }
         System.out.println("Best fitness found: " + bestFitness);
     }
 
@@ -73,16 +84,16 @@ public abstract class Algorithm {
     public void sliderController() {
         if(i != finalList.size()) {
             Data data = finalList.get(i);
-        if(data.getImproved()) {
-            runGraphics(i);
-            i++;
-        } else {
-            while (!data.getImproved() && i < finalList.size()-1) {
+            if(data.getImproved()) {
+                runGraphics(i);
                 i++;
-                data = finalList.get(i);
+            } else {
+                while (!data.getImproved() && i < finalList.size()-1) {
+                    i++;
+                    data = finalList.get(i);
+                }
             }
         }
-    }
     }
 
     public void runGraphics(int i) {
@@ -216,5 +227,16 @@ public abstract class Algorithm {
 
     public void clearAndContinue(int i, int newI) {
 
+    }
+    public int getBitStringLength() {
+        return bitLength;
+    }
+
+    public int getFitness() {
+        return bestFitness;
+    }
+
+    public int getGeneration() {
+        return generation;
     }
 }

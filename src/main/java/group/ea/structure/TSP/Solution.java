@@ -31,6 +31,16 @@ public class Solution extends Problem {
         init();
     }
 
+    public int getXSolution(int i){
+        return (int) solution.get(i).getX();
+    }
+    public int getYSolution(int i){
+        return (int) solution.get(i).getY();
+    }
+
+    public int getListLength(){
+        return solution.size();
+    }
     private int randomIndex(){
         return (int) (Math.random() * solution.size());
     }
@@ -48,6 +58,7 @@ public class Solution extends Problem {
         //System.out.println("swapping " + firstIndex + "which is " + firstCity.getId() + " with " + secondIndex + "which " + secondCity.getId());
         solution.set(firstIndex, secondCity);
         solution.set(secondIndex, firstCity);
+        System.out.println(solution.size());
     }
 
     public int computeFitness(){

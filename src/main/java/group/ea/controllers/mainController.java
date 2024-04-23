@@ -26,10 +26,8 @@ import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.chart.XYChart;
@@ -37,6 +35,8 @@ import javafx.scene.chart.XYChart;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
@@ -54,6 +54,8 @@ public class mainController implements Initializable {
     public volatile boolean isRunning = false;
     public BooleanHypercubeVisualization booleanHypercubeVisualization;
     public Pane hypercubenPane = new Pane();
+
+    public Pane tspVisualization = new Pane();
     @FXML
     public TextArea solutionArea = new TextArea();
     @FXML
@@ -73,41 +75,33 @@ public class mainController implements Initializable {
     @FXML
     private ChoiceBox<Integer> stringLength;
     @FXML
-    private CheckBox graphSelector, textSelector, hypercubeCheck;
+    private CheckBox graphSelector;
+    @FXML
+    private CheckBox textSelector;
+    @FXML
+    private CheckBox hypercubeCheck;
+    @FXML
+    public CheckBox showTSPgraph;
     @FXML
     private Label searchspaceLabel,problemLabel, algorithmLabel,criteriasLabel,timeLabel,mutationLabel, selectionLabel,crossoverLabel;
 
-    @FXML
-    Slider sliderSpeed;
-
-    final NumberAxis xAxis = new NumberAxis();
-    final NumberAxis yAxis = new NumberAxis();
-    LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
-    public XYChart.Series<Number, Number> series = new XYChart.Series<>();
-
-    private static AnimationTimer animationTimer;
-
-    Algorithm algorithm;
     TSPParser tp;
 
-    public volatile boolean isRunning = false;
-
-    private Label searchspaceLabel, problemLabel, algorithmLabel, criteriasLabel, timeLabel, mutationLabel, selectionLabel, crossoverLabel;
     private Stage stage;
     private Scene scene;
     private Parent parent;
-    private String[] blueprintChoices = new String[5];
+    private String[] blueprintChoices = new String[6];
     private int bitStringValue;
     private boolean hypercubeSelected;
     @FXML
     private Button startButton;
     private boolean isAnimationPaused = false;// Starts paused
+   List<StoppingCriterion> stoppingCriteria;
 
     public mainController() {
 
         animationTimer = new AnimationTimer() {
             private long lastUpdate = 0;
-
             @Override
             public void handle(long l) {
                 if (l - lastUpdate >= duration) { // Update every second
@@ -168,13 +162,15 @@ public class mainController implements Initializable {
             solutionArea.clear();
             container.getChildren().clear();
             hypercubenPane.getChildren().clear();
+            tspVisualization.getChildren().clear();
 
             //startAlgorithm();
             //new Thread(this::runEvolution).start(); // Run EA in a separate thread
             SearchSpace searchSpace = null;
             switch (blueprintChoices[0]) {
                 case "Bit strings":
-                    bitStringValue = stringLength.getValue();
+                    bitStringValue = Integer.parseInt(blueprintChoices[5]);
+                    System.out.println("bitStringValue: " + bitStringValue);
                     searchSpace = new BitString(bitStringValue);
                     break;
                 case "Permutation":
@@ -214,6 +210,9 @@ public class mainController implements Initializable {
             }
 
             if (algorithm != null) {
+                for (StoppingCriterion criterion : stoppingCriteria) {
+                    algorithm.addStoppingCriterion(criterion);
+                }
                 timesRun++;
                 if (graphSelector.isSelected()) {
                     initializeChart();
@@ -250,6 +249,21 @@ public class mainController implements Initializable {
                         flowPane.getChildren().add(hypercubenPane);
                     }
                     booleanHypercubeVisualization = new BooleanHypercubeVisualization(searchSpace, problem, this, hypercubenPane);
+                }
+                if(showTSPgraph.isSelected()){
+                    System.out.println("is selected");
+                    if (!flowPane.getChildren().contains(tspVisualization))
+                    {
+                        tspVisualization.setPrefSize(600, 400);
+                        tspVisualization.setMinSize(600, 400);
+                        tspVisualization.setMaxSize(600, 400);
+                        tspVisualization.setBorder(new Border(new BorderStroke(Color.BLACK,
+                                BorderStrokeStyle.SOLID,
+                                CornerRadii.EMPTY,
+                                new BorderWidths(2))));
+                        flowPane.getChildren().add(tspVisualization);
+                    }
+
                 }
 
                 startAlgorithm();
@@ -319,6 +333,15 @@ public class mainController implements Initializable {
 
     public void recieveArray(String[] blueprintChoices) {
         this.blueprintChoices = blueprintChoices;
+        stoppingCriteria = new ArrayList<>();
+        if (blueprintChoices[3].equals("Optimum reached")) {
+            stoppingCriteria.add(new OptimumReached());
+        } else if (blueprintChoices[3].equals("Iteration bound")) {
+            stoppingCriteria.add(new MaxGenerationsCriterion(Integer.parseInt(blueprintChoices[4])));
+        } else if (blueprintChoices[3].equals("Fitness bound")){
+            stoppingCriteria.add(new MaxFitnessCriterion(Integer.parseInt(blueprintChoices[4])));
+        }
+
         searchspaceLabel.setText(blueprintChoices[0]);
         problemLabel.setText(blueprintChoices[1]);
         algorithmLabel.setText(blueprintChoices[2]);
@@ -369,10 +392,10 @@ public class mainController implements Initializable {
         blueprintChoices[2] = "RLS";
         blueprintChoices[3] = "Optimum reached";
         blueprintChoices[4] = "0.1";
+        blueprintChoices[5] = "100";
         recieveArray(blueprintChoices);
 
-        stringLength.getItems().addAll(10, 100, 200, 300, 400, 500);
-        stringLength.setValue(100);
+
     }
 
     public boolean isTextSelected() {
