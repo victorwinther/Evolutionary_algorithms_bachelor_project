@@ -31,9 +31,9 @@ public class blueprintController implements Initializable {
     @FXML
     private Label explainingLabel;
     @FXML
-    private Label iterationLabel;
+    private Label iterationLabel, dimensionLabel;
     @FXML
-    private TextField iterationTxtField, bitStringSize;
+    private TextField iterationTxtField, dimensionTxtField, optimumTxtField, fitnessTxtField;
     @FXML
     private TableView<BatchRow> batchTable;
     @FXML
@@ -43,13 +43,9 @@ public class blueprintController implements Initializable {
     @FXML
     private ComboBox<String> algorithmSelector;
     @FXML
-    private ComboBox<String> stoppingcriteriaSelector;
-    @FXML
     private ComboBox<String> displaySelector;
     @FXML
-    private ChoiceBox<Integer> stringLength;
-    @FXML
-    private CheckBox optimumCheck, fitnessCheck, iterationCheck;
+    private CheckBox optimumReached, fitnessBound, iterationBound;
 
     @FXML
     private ChoiceBox<String> choiceBox;
@@ -62,7 +58,7 @@ public class blueprintController implements Initializable {
     private HashMap<String, String> descriptions = new HashMap<>();
     private HashMap<String, List<String>> batchParameters = new HashMap<>();
     private List<ComboBox<String>> allComboBoxes;
-    private final String[] categories = {"searchSpace", "problem", "algorithm", "stopping", "display"};
+    private final String[] categories = {"searchSpace", "problem", "algorithm", "display"};
     private ArrayList<String> dependencies = new ArrayList<>();
     private ArrayList<String> batchColumns = new ArrayList<>();
     private ArrayList<ArrayList<String>> batchData = new ArrayList<>();
@@ -73,7 +69,7 @@ public class blueprintController implements Initializable {
     private final String[] algorithms = {"(1+1) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System"};
     private final String[] criterias = {"Optimum reached", "Fitness bound", "Iteration bound"};
 
-    private final String[] stopping = {"Optimum reached", "Fitness bound", "Iteration bound"};
+
     private Stage stage;
     public String[] blueprintChoices = new String[6];
 
@@ -82,21 +78,18 @@ public class blueprintController implements Initializable {
 
     public void initialize(URL arg0, ResourceBundle arg1){
         //initialize components
-        allComboBoxes = Arrays.asList(searchspaceSelector, problemSelector, algorithmSelector, stoppingcriteriaSelector, displaySelector);
+        allComboBoxes = Arrays.asList(searchspaceSelector, problemSelector, algorithmSelector, displaySelector);
         addCategoryOptions();
         addDescriptions();
         initializeBatchParameters();
         searchspaceSelector.getItems().addAll(searchspaces);
         problemSelector.getItems().addAll(problems);
         algorithmSelector.getItems().addAll(algorithms);
-        stoppingcriteriaSelector.getItems().addAll(criterias);
-        stringLength.getItems().addAll(10, 100, 200, 300, 400, 500);
-        stringLength.setValue(100);
-        //choiceBox.getItems().addAll(stopping);
+
         searchspaceSelector.setValue("Permutation");
         problemSelector.setValue("TSP");
         algorithmSelector.setValue("TEMP");
-        stoppingcriteriaSelector.setValue("Optimum reached");
+        //stoppingcriteriaSelector.setValue("Optimum reached");
 
 
         //initialize filechooser object
@@ -137,7 +130,7 @@ public class blueprintController implements Initializable {
         categoryOptions.put("searchSpace", Arrays.asList("Bit strings", "Permutations"));
         categoryOptions.put("problem", Arrays.asList("OneMax", "LeadingOnes", "TSP"));
         categoryOptions.put("algorithm", Arrays.asList("(1+1) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System", "TEMP"));
-        categoryOptions.put("stopping", Arrays.asList("Optimum reached", "Fitness bound", "Iteration bound"));
+        //categoryOptions.put("stopping", Arrays.asList("Optimum reached", "Fitness bound", "Iteration bound"));
         categoryOptions.put("display", Arrays.asList("Table", "Graph"));
     }
 
@@ -244,7 +237,7 @@ public class blueprintController implements Initializable {
                 writer.write(searchspaceSelector.getValue() + ",");
                 writer.write(problemSelector.getValue() + ",");
                 writer.write(algorithmSelector.getValue() + ",");
-                writer.write(stoppingcriteriaSelector.getValue() + ",");
+                //writer.write(stoppingcriteriaSelector.getValue() + ",");
                 writer.write(iterationTxtField.getText() + ",");
                 writer.write(displaySelector.getValue() + "\n");
             }
@@ -253,7 +246,7 @@ public class blueprintController implements Initializable {
                 writer.write(searchspaceSelector.getValue() + ",");
                 writer.write(problemSelector.getValue() + ",");
                 writer.write(algorithmSelector.getValue() + ",");
-                writer.write(stoppingcriteriaSelector.getValue() + ",");
+                //writer.write(stoppingcriteriaSelector.getValue() + ",");
                 writer.write(displaySelector.getValue() + "\n");
             }
 
@@ -288,13 +281,33 @@ public class blueprintController implements Initializable {
                 getValueOrDefault(searchspaceSelector),
                 getValueOrDefault(problemSelector),
                 getValueOrDefault(algorithmSelector),
-                getValueOrDefault(stoppingcriteriaSelector),
                 getValueOrDefault(displaySelector)
         );
     }
 
     private String getValueOrDefault(ComboBox<?> comboBox) {
         return comboBox.getValue() != null ? comboBox.getValue().toString() : "";
+    }
+
+    @FXML
+    void checkboxHandler(ActionEvent event){
+        CheckBox checkbox = (CheckBox) event.getSource();
+
+        if (descriptions.containsKey(checkbox.getText())) {
+            explainingLabel.setText(descriptions.get(checkbox.getText()));
+        }
+
+        // Check which checkbox is clicked
+        if (checkbox.getText().equals("Optimum reached")) {
+            optimumTxtField.setDisable(!checkbox.isSelected());
+        } else if (checkbox.getText().equals("Fitness bound")) {
+            fitnessTxtField.setDisable(!checkbox.isSelected());
+        } else if (checkbox.getText().equals("Iteration bound")) {
+            iterationTxtField.setDisable(!checkbox.isSelected());
+        }
+
+        boolean anyCheckboxChecked = optimumReached.isSelected() || fitnessBound.isSelected() || iterationBound.isSelected();
+        iterationLabel.setDisable(!anyCheckboxChecked);
     }
 
     @FXML
@@ -308,14 +321,9 @@ public class blueprintController implements Initializable {
         }
 
         //check if iteration is needed
-        if (selector == stoppingcriteriaSelector) {
-            if (selector.getValue().equals("Fitness bound") || selector.getValue().equals("Iteration bound")) {
-                iterationLabel.setDisable(false);
-                iterationTxtField.setDisable(false);
-            } else {
-                iterationLabel.setDisable(true);
-                iterationTxtField.setDisable(true);
-            }
+        if (selector == searchspaceSelector) {
+                dimensionLabel.setDisable(false);
+                dimensionTxtField.setDisable(false);
         }
 
         //category dependencies logic
@@ -337,12 +345,22 @@ public class blueprintController implements Initializable {
         // Increment the id counter
         int id = batchTable.getItems().size() + 1;
 
-        // Create a new row instance
-        BatchRow newRow = new BatchRow(id, "0"); // Assuming "0" for the other column
+        // Create a new row with default values
+        BatchRow newRow = new BatchRow(id);
+
+        // Fill the rest of the columns with "0"s
+        for (int i = 1; i < batchColumns.size(); i++) {
+            newRow.addData("0");
+        }
 
         // Add the new row to the batch table
         batchTable.getItems().add(newRow);
+
+        // Add the new row data to the batch data list
+        batchData.add((ArrayList<String>) newRow.getRowData());
     }
+
+
 
     @FXML
     void removeBatch(ActionEvent event){
@@ -351,8 +369,8 @@ public class blueprintController implements Initializable {
 
     @FXML
     void saveHandler(ActionEvent event) {
-        if (!iterationTxtField.isDisable() && iterationTxtField.getText().equals("")){
-            showAlert("Iteration must be filled when \"" + stoppingcriteriaSelector.getValue() + "\" is chosen");
+        if (!dimensionLabel.isDisable() && dimensionTxtField.getText().equals("")){
+            showAlert("Dimension must be filled when \"" + searchspaceSelector.getValue() + "\" is chosen");
         }
         else{
             File file = fileChooser.showSaveDialog(stage);
@@ -377,34 +395,41 @@ public class blueprintController implements Initializable {
     void startMainPage(ActionEvent event) throws IOException {
         // Load the home page FXML file
         //make an array where you fill it with the chosen combobox values
-        blueprintChoices[0] = searchspaceSelector.getValue();
-        blueprintChoices[1] = problemSelector.getValue();
-        blueprintChoices[2] = algorithmSelector.getValue();
-        blueprintChoices[3] = stoppingcriteriaSelector.getValue();
-        blueprintChoices[4] = iterationTxtField.isDisable() ? "" : iterationTxtField.getText();
-        blueprintChoices[5] = String.valueOf(stringLength.getValue());
+        if (!dimensionLabel.isDisable() && dimensionTxtField.getText().equals("")){
+            showAlert("Dimension must be filled when \"" + searchspaceSelector.getValue() + "\" is chosen");
+        }
+        else{
+            blueprintChoices[0] = searchspaceSelector.getValue();
+            blueprintChoices[1] = problemSelector.getValue();
+            blueprintChoices[2] = algorithmSelector.getValue();
+            blueprintChoices[3] = "Optimum reached";
+
+            blueprintChoices[4] = iterationTxtField.isDisable() ? "" : iterationTxtField.getText();
+            blueprintChoices[5] = String.valueOf(dimensionTxtField.getText());
 
 
 
-        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
-        Parent root = loader.load();
+            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
+            Parent root = loader.load();
 
-        // Here you would get the controller if you need to call methods on it
-        mainController controller = loader.getController();
-        controller.recieveArray(blueprintChoices); // Call methods on the controller if needed
+            // Here you would get the controller if you need to call methods on it
+            mainController controller = loader.getController();
+            controller.recieveArray(blueprintChoices); // Call methods on the controller if needed
 
-        // Set the scene to the home page
-        Scene scene = new Scene(root);
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            // Set the scene to the home page
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-        // Optional: If you need the home page to gain focus or perform additional setup
-        Platform.runLater(() -> {
-            root.requestFocus();
-            // Any additional setup can go here
-        });
+            // Optional: If you need the home page to gain focus or perform additional setup
+            Platform.runLater(() -> {
+                root.requestFocus();
+                // Any additional setup can go here
+            });
 
-        stage.setScene(scene);
-        stage.show();
+            stage.setScene(scene);
+            stage.show();
+        }
+
     }
 
     public String getSearchspaceSelector() {

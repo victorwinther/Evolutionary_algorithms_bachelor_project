@@ -1,30 +1,26 @@
 package group.ea.structure.helperClasses;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BatchRow {
-    private SimpleIntegerProperty id;
-    private SimpleStringProperty otherColumn;
+    private int id;
+    private List<String> rowData;
 
-    public BatchRow(int id, String otherColumn) {
-        this.id = new SimpleIntegerProperty(id);
-        this.otherColumn = new SimpleStringProperty(otherColumn);
+    public BatchRow(int id) {
+        this.id = id;
+        this.rowData = new ArrayList<>();
     }
 
     public int getId() {
-        return id.get();
+        return id;
     }
 
-    public void setId(int id) {
-        this.id.set(id);
+    public List<String> getRowData() {
+        return rowData;
     }
 
-    public String getOtherColumn() {
-        return otherColumn.get();
-    }
-
-    public void setOtherColumn(String otherColumn) {
-        this.otherColumn.set(otherColumn);
+    public void addData(String data) {
+        rowData.add(data);
     }
 }
-
