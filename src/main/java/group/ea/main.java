@@ -38,6 +38,7 @@ public class main extends Application {
             stage.setY(event.getScreenY() - y);
         });
 
+
         stage.setScene(scene);
         stage.show();
     }

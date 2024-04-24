@@ -230,7 +230,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" text="Stop at the end" textFill="WHITE" />
+                  <CheckBox fx:id="showTSPgraph" mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" text="Show graph" textFill="WHITE" />
                   <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" text="Expand label" textFill="WHITE" GridPane.rowIndex="1" />
                   <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" text="Stepwise mode" textFill="WHITE" GridPane.rowIndex="2" />
                   <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="145.0" text="Display temperature" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />

@@ -7,20 +7,21 @@ import group.ea.structure.searchspace.SearchSpace;
 import java.util.Optional;
 
 public class onePlusOneEA extends Algorithm {
-    String bitString;
 
     public onePlusOneEA(SearchSpace searchSpace, Problem problem, mainController controller) {
         super(searchSpace, problem, controller);
     }
 
     @Override
-    public void performSingleUpdate(int generation) {
+    public void performSingleUpdate(int gen) {
         int n = bitString.length();
-        int t = 0;
-        int fitness = 0;
-        while (problem.computeFitness(bitString) < bitString.length()) {
+        generation = 0;
+
+        System.out.println("here");
+        while (!checkStoppingCriteria()) {
+            System.out.println("also here");
             String y = bitString;
-            Data data = new Data(bitString, t, bestFitness, false, Optional.empty());
+            Data data = new Data(bitString, generation, bestFitness, false, Optional.empty());
             for (int i = 0; i < n; i++) {
                 if (Math.random() < 1.0 / n) {
                     y = y.substring(0, i) + (y.charAt(i) == '0' ? '1' : '0') + y.substring(i + 1);
@@ -31,12 +32,12 @@ public class onePlusOneEA extends Algorithm {
                     data.setYesNo(true);
                 }
                 bitString = y;
-                fitness = (int) problem.computeFitness(bitString);
+                bestFitness = (int) problem.computeFitness(bitString);
                 data.setBitString(bitString);
-                data.setFitness(fitness);
+                data.setFitness(bestFitness);
 
             }
-            t++;
+            generation++;
             finalList.add(data);
         }
         stoppingMet = true;

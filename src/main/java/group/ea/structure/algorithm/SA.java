@@ -12,7 +12,6 @@ import java.util.Optional;
 public class SA extends Algorithm {
 
 
-    String bitString;
     double initTemp = 2;
     double tempReduction = 0.99;
     double currentTemp;
@@ -40,9 +39,6 @@ public class SA extends Algorithm {
             bitString = offspring;
             bestFitness = offspringFitness;
             data.setYesNo(true);
-            if (bestFitness == bitString.length()) {
-                stoppingMet = true;
-            }
         } else if (offspringFitness == bestFitness) {
             bitString = offspring;
         } else {

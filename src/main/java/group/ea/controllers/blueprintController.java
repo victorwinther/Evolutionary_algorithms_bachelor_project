@@ -33,7 +33,7 @@ public class blueprintController implements Initializable {
     @FXML
     private Label iterationLabel;
     @FXML
-    private TextField iterationTxtField;
+    private TextField iterationTxtField, bitStringSize;
     @FXML
     private TableView<BatchRow> batchTable;
     @FXML
@@ -46,7 +46,8 @@ public class blueprintController implements Initializable {
     private ComboBox<String> stoppingcriteriaSelector;
     @FXML
     private ComboBox<String> displaySelector;
-
+    @FXML
+    private ChoiceBox<Integer> stringLength;
     @FXML
     private CheckBox optimumCheck, fitnessCheck, iterationCheck;
 
@@ -74,7 +75,7 @@ public class blueprintController implements Initializable {
 
     private final String[] stopping = {"Optimum reached", "Fitness bound", "Iteration bound"};
     private Stage stage;
-    public String[] blueprintChoices = new String[5];
+    public String[] blueprintChoices = new String[6];
 
 
 
@@ -89,11 +90,14 @@ public class blueprintController implements Initializable {
         problemSelector.getItems().addAll(problems);
         algorithmSelector.getItems().addAll(algorithms);
         stoppingcriteriaSelector.getItems().addAll(criterias);
+        stringLength.getItems().addAll(10, 100, 200, 300, 400, 500);
+        stringLength.setValue(100);
         //choiceBox.getItems().addAll(stopping);
-        searchspaceSelector.setValue("Bit strings");
-        problemSelector.setValue("OneMax");
-        algorithmSelector.setValue("RLS");
+        searchspaceSelector.setValue("Permutation");
+        problemSelector.setValue("TSP");
+        algorithmSelector.setValue("TEMP");
         stoppingcriteriaSelector.setValue("Optimum reached");
+
 
         //initialize filechooser object
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("CSV Files", "*.csv"),
@@ -132,7 +136,7 @@ public class blueprintController implements Initializable {
     private void addCategoryOptions() {
         categoryOptions.put("searchSpace", Arrays.asList("Bit strings", "Permutations"));
         categoryOptions.put("problem", Arrays.asList("OneMax", "LeadingOnes", "TSP"));
-        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System"));
+        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System", "TEMP"));
         categoryOptions.put("stopping", Arrays.asList("Optimum reached", "Fitness bound", "Iteration bound"));
         categoryOptions.put("display", Arrays.asList("Table", "Graph"));
     }
@@ -377,7 +381,8 @@ public class blueprintController implements Initializable {
         blueprintChoices[1] = problemSelector.getValue();
         blueprintChoices[2] = algorithmSelector.getValue();
         blueprintChoices[3] = stoppingcriteriaSelector.getValue();
-        blueprintChoices[4] = "Random";
+        blueprintChoices[4] = iterationTxtField.isDisable() ? "" : iterationTxtField.getText();
+        blueprintChoices[5] = String.valueOf(stringLength.getValue());
 
 
 
