@@ -1,9 +1,11 @@
 package group.ea.controllers;
 
 import group.ea.main;
+import group.ea.structure.helperClasses.BatchRow;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -33,7 +35,7 @@ public class blueprintController implements Initializable {
     @FXML
     private TextField iterationTxtField;
     @FXML
-    private TableView<String> batchTable;
+    private TableView<BatchRow> batchTable;
     @FXML
     private ComboBox<String> searchspaceSelector;
     @FXML
@@ -174,7 +176,7 @@ public class blueprintController implements Initializable {
         // Construct parameters for batch table
         List<String> currentSelection = getSelection();
         batchColumns.clear(); // Clear previous batch columns
-        batchColumns.addAll(List.of("No. runs", "Dimension"));
+        batchColumns.addAll(List.of("id", "No. runs", "Dimension"));
 
         // Update batch columns based on the current selection
         for (String selection : currentSelection) {
@@ -189,40 +191,38 @@ public class blueprintController implements Initializable {
         // Add new columns from batchColumns
         for (String columnName : batchColumns) {
             if (!columnExists(columnName)) {
-                TableColumn<String, String> column = new TableColumn<>(columnName);
-                column.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()));
+                TableColumn<BatchRow, String> column = new TableColumn<>(columnName);
+                column.setCellValueFactory(data -> {
+                    // Get the appropriate property from BatchRow based on the column name
+                    if (columnName.equals("id")) {
+                        return new SimpleStringProperty(String.valueOf(data.getValue().getId()));
+                    } else {
+                        // Handle other columns accordingly
+                        // For now, assuming all other columns are empty strings
+                        return new SimpleStringProperty("");
+                    }
+                });
                 column.setCellFactory(TextFieldTableCell.forTableColumn()); // Set cell factory for editing
                 column.setOnEditCommit(event -> {
-                    int rowIndex = event.getTablePosition().getRow();
-                    int colIndex = batchColumns.indexOf(columnName);
-
-                    while (batchData.size() <= rowIndex) {
-                        batchData.add(new ArrayList<>(batchColumns.size()));
-                    }
-
-                    while (batchData.get(rowIndex).size() < batchColumns.size()) {
-                        batchData.get(rowIndex).add("");
-                    }
-
-                    // Update the data in the ArrayList
-                    batchData.get(rowIndex).set(colIndex, event.getNewValue());
+                    // Handle edit commit event if needed
                 });
 
                 batchTable.getColumns().add(column);
             }
         }
-
     }
+
 
     // Helper method to check if a column already exists in batchTable
     private boolean columnExists(String columnName) {
-        for (TableColumn<String, ?> existingColumn : batchTable.getColumns()) {
+        for (TableColumn<BatchRow, ?> existingColumn : batchTable.getColumns()) {
             if (existingColumn.getText().equals(columnName)) {
                 return true;
             }
         }
         return false;
     }
+
 
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -330,14 +330,19 @@ public class blueprintController implements Initializable {
 
     @FXML
     void createNewBatch(ActionEvent event) {
-        /*
-        ObservableList<String> newRow = FXCollections.observableArrayList();
-        batchTable.getColumns().forEach(column -> {
-            newRow.add("0"); // Add "0" to each cell
-        });
-        */
+        // Increment the id counter
+        int id = batchTable.getItems().size() + 1;
 
-        batchTable.getItems().add("0");
+        // Create a new row instance
+        BatchRow newRow = new BatchRow(id, "0"); // Assuming "0" for the other column
+
+        // Add the new row to the batch table
+        batchTable.getItems().add(newRow);
+    }
+
+    @FXML
+    void removeBatch(ActionEvent event){
+        //TODO
     }
 
     @FXML
