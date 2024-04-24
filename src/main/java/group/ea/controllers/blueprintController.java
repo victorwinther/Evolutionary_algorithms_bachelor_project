@@ -27,13 +27,12 @@ import java.util.*;
 
 
 public class blueprintController implements Initializable {
-
     @FXML
     private Label explainingLabel;
     @FXML
     private Label iterationLabel, dimensionLabel;
     @FXML
-    private TextField iterationTxtField, dimensionTxtField, optimumTxtField, fitnessTxtField;
+    private TextField iterationTxtField, dimensionTxtField, fitnessTxtField;
     @FXML
     private TableView<BatchRow> batchTable;
     @FXML
@@ -43,13 +42,7 @@ public class blueprintController implements Initializable {
     @FXML
     private ComboBox<String> algorithmSelector;
     @FXML
-    private ComboBox<String> displaySelector;
-    @FXML
     private CheckBox optimumReached, fitnessBound, iterationBound;
-
-    @FXML
-    private ChoiceBox<String> choiceBox;
-
     @FXML
     Button saveButton;
     FileChooser fileChooser = new FileChooser();
@@ -58,7 +51,7 @@ public class blueprintController implements Initializable {
     private HashMap<String, String> descriptions = new HashMap<>();
     private HashMap<String, List<String>> batchParameters = new HashMap<>();
     private List<ComboBox<String>> allComboBoxes;
-    private final String[] categories = {"searchSpace", "problem", "algorithm", "display"};
+    private final String[] categories = {"searchSpace", "problem", "algorithm"};
     private ArrayList<String> dependencies = new ArrayList<>();
     private ArrayList<String> batchColumns = new ArrayList<>();
     private ArrayList<ArrayList<String>> batchData = new ArrayList<>();
@@ -67,7 +60,6 @@ public class blueprintController implements Initializable {
     private final String[] searchspaces = {"Bit strings", "Permutations"};
     private final String[] problems = {"OneMax", "LeadingOnes", "BinVal", "Trap", "Jump_k"};
     private final String[] algorithms = {"(1+1) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System"};
-    private final String[] criterias = {"Optimum reached", "Fitness bound", "Iteration bound"};
 
 
     private Stage stage;
@@ -78,7 +70,7 @@ public class blueprintController implements Initializable {
 
     public void initialize(URL arg0, ResourceBundle arg1){
         //initialize components
-        allComboBoxes = Arrays.asList(searchspaceSelector, problemSelector, algorithmSelector, displaySelector);
+        allComboBoxes = Arrays.asList(searchspaceSelector, problemSelector, algorithmSelector);
         addCategoryOptions();
         addDescriptions();
         initializeBatchParameters();
@@ -130,8 +122,6 @@ public class blueprintController implements Initializable {
         categoryOptions.put("searchSpace", Arrays.asList("Bit strings", "Permutations"));
         categoryOptions.put("problem", Arrays.asList("OneMax", "LeadingOnes", "TSP"));
         categoryOptions.put("algorithm", Arrays.asList("(1+1) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System", "TEMP"));
-        //categoryOptions.put("stopping", Arrays.asList("Optimum reached", "Fitness bound", "Iteration bound"));
-        categoryOptions.put("display", Arrays.asList("Table", "Graph"));
     }
 
     private void initializeBatchParameters() {
@@ -237,17 +227,15 @@ public class blueprintController implements Initializable {
                 writer.write(searchspaceSelector.getValue() + ",");
                 writer.write(problemSelector.getValue() + ",");
                 writer.write(algorithmSelector.getValue() + ",");
-                //writer.write(stoppingcriteriaSelector.getValue() + ",");
-                writer.write(iterationTxtField.getText() + ",");
-                writer.write(displaySelector.getValue() + "\n");
+                writer.write(iterationTxtField.getText() + "\n");
+
             }
             else {
                 writer.write("Searchspace,Problem,Algorithm,StoppingCriteria,Display\n");
                 writer.write(searchspaceSelector.getValue() + ",");
                 writer.write(problemSelector.getValue() + ",");
-                writer.write(algorithmSelector.getValue() + ",");
-                //writer.write(stoppingcriteriaSelector.getValue() + ",");
-                writer.write(displaySelector.getValue() + "\n");
+                writer.write(algorithmSelector.getValue() + "\n");
+
             }
 
             // Write batch table data to the file
@@ -280,8 +268,7 @@ public class blueprintController implements Initializable {
         return Arrays.asList(
                 getValueOrDefault(searchspaceSelector),
                 getValueOrDefault(problemSelector),
-                getValueOrDefault(algorithmSelector),
-                getValueOrDefault(displaySelector)
+                getValueOrDefault(algorithmSelector)
         );
     }
 
@@ -298,15 +285,13 @@ public class blueprintController implements Initializable {
         }
 
         // Check which checkbox is clicked
-        if (checkbox.getText().equals("Optimum reached")) {
-            optimumTxtField.setDisable(!checkbox.isSelected());
-        } else if (checkbox.getText().equals("Fitness bound")) {
+        if (checkbox.getText().equals("Fitness bound")) {
             fitnessTxtField.setDisable(!checkbox.isSelected());
         } else if (checkbox.getText().equals("Iteration bound")) {
             iterationTxtField.setDisable(!checkbox.isSelected());
         }
 
-        boolean anyCheckboxChecked = optimumReached.isSelected() || fitnessBound.isSelected() || iterationBound.isSelected();
+        boolean anyCheckboxChecked = fitnessBound.isSelected() || iterationBound.isSelected();
         iterationLabel.setDisable(!anyCheckboxChecked);
     }
 
