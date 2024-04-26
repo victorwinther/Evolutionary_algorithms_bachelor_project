@@ -98,7 +98,42 @@
     -fx-padding: 0.25em;
     -fx-rotate: -180;
 }
-.scroll-bar:vertical:focused,
-.scroll-bar:horizontal:focused {
-    -fx-background-color: transparent,rgb(96,96,96),rgb(96,96,96);
+    /* Horizontal Scrollbar */
+.scroll-bar:horizontal .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 2em;
+}
+
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: rgb(211,211,211);
+    -fx-background-insets: 4 0 4 0;
+    -fx-background-radius: 2em;
+}
+
+.scroll-bar:horizontal .increment-button, .scroll-bar:horizontal .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 2em;
+    -fx-padding: 5;
+}
+
+.scroll-bar:horizontal .increment-arrow, .scroll-bar:horizontal .decrement-arrow {
+    -fx-background-color: rgb(211,211,211);
+    -fx-shape: "M 0 0 L 8 4 L 0 8 Z";
+    -fx-padding: 0.25em;
+}
+
+.scroll-bar:horizontal .increment-arrow {
+    -fx-rotate: 0;
+}
+
+.scroll-bar:horizontal .decrement-arrow {
+    -fx-rotate: 180;
+}
+
+.scroll-bar:vertical:focused, .scroll-bar:horizontal:focused {
+    -fx-background-color: transparent, rgb(96,96,96), rgb(96,96,96);
+}
+.table-cell {
+    -fx-alignment: CENTER;
 }

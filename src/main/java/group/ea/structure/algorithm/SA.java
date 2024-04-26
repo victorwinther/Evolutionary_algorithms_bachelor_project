@@ -3,26 +3,30 @@ package group.ea.structure.algorithm;
 import group.ea.controllers.mainController;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
-import javafx.util.Pair;
+import javafx.application.Platform;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
-public class RLS extends Algorithm {
+public class SA extends Algorithm {
 
-    public RLS(SearchSpace searchSpace, Problem problem, mainController mainController) {
+
+    double initTemp = 2;
+    double tempReduction = 0.99;
+    double currentTemp;
+
+
+    public SA(SearchSpace searchSpace, Problem problem, mainController mainController) {
         super(searchSpace, problem, mainController);
-
+        bestFitness = (int) problem.computeFitness(bitString);
+        currentTemp = initTemp;
 
     }
 
     @Override
     public void initialize() {
         bitString = searchSpace.init();
-        bestFitness = (int) problem.computeFitness(bitString);
-        Data data = new Data(bitString, 0, bestFitness, true, Optional.empty());
-
     }
 
     @Override
@@ -30,14 +34,25 @@ public class RLS extends Algorithm {
         String offspring = mutate(bitString);
         int offspringFitness = (int) problem.computeFitness(offspring);
         Data data = new Data(bitString, generation, bestFitness, false, Optional.empty());
+
         if (offspringFitness > bestFitness) {
             bitString = offspring;
             bestFitness = offspringFitness;
-            data.setBitString(bitString);
-            data.setFitness(bestFitness);
             data.setYesNo(true);
+        } else if (offspringFitness == bestFitness) {
+            bitString = offspring;
+        } else {
+            double SARate = Math.random();
+            double SAEnergy = Math.exp((offspringFitness - bestFitness) / currentTemp);
+
+            if (SAEnergy > SARate) {
+                bitString = offspring;
+                bestFitness = offspringFitness;
+                data.setTemp(Optional.of(currentTemp));
+            }
         }
         finalList.add(data);
+        currentTemp *= tempReduction;
     }
 
     private String mutate(String parent) {
@@ -46,6 +61,5 @@ public class RLS extends Algorithm {
         chars[mutateIndex] = chars[mutateIndex] == '0' ? '1' : '0';
         return new String(chars);
     }
-
 
 }

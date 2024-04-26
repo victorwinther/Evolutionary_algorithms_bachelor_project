@@ -1,9 +1,16 @@
 package group.ea.controllers;
 
 import group.ea.main;
+import group.ea.structure.TSP.Solution;
+import group.ea.structure.TSP.TSPParser;
+import group.ea.structure.algorithm.*;
+import group.ea.structure.algorithm.BooleanHypercubeVisualization;
 import group.ea.structure.algorithm.Algorithm;
 import group.ea.structure.algorithm.RLS;
+import group.ea.structure.algorithm.SA;
+import group.ea.structure.algorithm.onePlusOneEA;
 import group.ea.structure.problem.OneMax;
+import group.ea.structure.problem.LeadingOnes;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.BitString;
 import group.ea.structure.searchspace.SearchSpace;
@@ -12,78 +19,108 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.scene.chart.XYChart;
 
 
 import java.io.IOException;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
-public class mainController {
+public class mainController implements Initializable {
+    private static AnimationTimer animationTimer;
+    final NumberAxis xAxis = new NumberAxis();
+    final NumberAxis yAxis = new NumberAxis();
+    private final FileChooser fileChooser = new FileChooser();
+    @FXML
+    public FlowPane flowPane;
+    @FXML
+    public Slider generationSlider;
+    public XYChart.Series<Number, Number> series = new XYChart.Series<>();
+    public volatile boolean isRunning = false;
+    public BooleanHypercubeVisualization booleanHypercubeVisualization;
+    public Pane hypercubenPane = new Pane();
+
+    public Pane tspVisualization = new Pane();
+    @FXML
+    public TextArea solutionArea = new TextArea();
+    @FXML
+    Slider sliderSpeed;
+    LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
+    Algorithm algorithm;
+    double duration = 1000;
+    Label titleLabel;
+    VBox container = new VBox(5);
+    // Button action to start the EA
+    int timesRun = 0;
+    int i = 0;
     @FXML
     private Button btnPlot, btnConnect, btnTable, createBlueprintBtn, loadBlueprintBtn;
-
     @FXML
-    private BorderPane mainBorderPane;
-
+    private BorderPane mainBorderPane, borderPane;
+    @FXML
+    private ChoiceBox<Integer> stringLength;
+    @FXML
+    private CheckBox graphSelector;
+    @FXML
+    private CheckBox textSelector;
+    @FXML
+    private CheckBox hypercubeCheck;
+    @FXML
+    public CheckBox showTSPgraph;
     @FXML
     private Label searchspaceLabel,problemLabel, algorithmLabel,criteriasLabel,timeLabel,mutationLabel, selectionLabel,crossoverLabel;
 
-    @FXML
-    Slider sliderSpeed;
-
-    private static AnimationTimer animationTimer;
-
-    Algorithm algorithm;
-
-    public volatile boolean isRunning = false;
+    TSPParser tp;
 
     private Stage stage;
     private Scene scene;
     private Parent parent;
-    private FileChooser fileChooser = new FileChooser();
-    private String[] blueprintChoices;
-    double duration = 1000;
+    private String[] blueprintChoices = new String[6];
+    private int bitStringValue;
+    private boolean hypercubeSelected;
+    @FXML
+    private Button startButton;
+    private boolean isAnimationPaused = false;// Starts paused
+   List<StoppingCriterion> stoppingCriteria;
 
     public mainController() {
-       animationTimer = new AnimationTimer() {
-           private long lastUpdate = 0;
-           @Override
-           public void handle(long l) {
-               //algorithm.performSingleUpdate();
 
-               if (l - lastUpdate >= duration) { // Update every second
-                   algorithm.updateGraphics();
-                   String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-                   timeLabel.setText("Current time: " + time);
-                   lastUpdate = l;
-
-                   double speed = sliderSpeed.getValue();
-                    duration =  (TimeUnit.MILLISECONDS.toNanos(1000) * (1 - speed / sliderSpeed.getMax()));
-               }
-           }
-       };
+        animationTimer = new AnimationTimer() {
+            private long lastUpdate = 0;
+            @Override
+            public void handle(long l) {
+                if (l - lastUpdate >= duration) { // Update every second
+                    if (!isAnimationPaused) {
+                        algorithm.sliderController();
+                        lastUpdate = l;
+                        double speed = sliderSpeed.getValue();
+                        duration = (TimeUnit.MILLISECONDS.toNanos(1000) * (1 - speed / sliderSpeed.getMax()));
+                    }
+                }
+            }
+        };
     }
 
-
-
     @FXML
-    void createBlueprintHandler(ActionEvent event) throws IOException{
+    void createBlueprintHandler(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/createBlueprintPage.fxml")));
         Scene scene = new Scene(root);
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
         Platform.runLater(root::requestFocus);
         stage.setScene(scene);
@@ -91,20 +128,17 @@ public class mainController {
     }
 
     @FXML
-    void loadBlueprintHandler(ActionEvent event){
+    void loadBlueprintHandler(ActionEvent event) {
         fileChooser.showOpenDialog(stage);
     }
 
-
     @FXML
     void menuChangeHandler(ActionEvent event) throws IOException {
-        if (event.getSource() == btnPlot){
+        if (event.getSource() == btnPlot) {
             changeContent("plotPage");
-        }
-        else if (event.getSource() == btnConnect){
+        } else if (event.getSource() == btnConnect) {
             changeContent("connectPage");
-        }
-        else if (event.getSource() == btnTable){
+        } else if (event.getSource() == btnTable) {
             changeContent("tablePage");
         }
     }
@@ -122,60 +156,202 @@ public class mainController {
     }
 
     @FXML
-    private Button startButton;
-    @FXML
-    public TextArea solutionArea;
-
-    private int stringLength = 100; // Length of the binary string
-
-    // Button action to start the EA
-    @FXML
     private void startEvolution() {
-        isRunning = true;
-        //startAlgorithm();
-        solutionArea.clear(); // Clear previous solutions
-        //new Thread(this::runEvolution).start(); // Run EA in a separate thread
-        SearchSpace searchSpace = null;
-        if ("Bit strings".equals(blueprintChoices[0])) {
-            searchSpace = new BitString(300);
-            System.out.println("is here");
-        } else if ("Permutation".equals(blueprintChoices[0])) {
-            //searchSpace = new Permutation(100);
-        }
+        if (!isAnimationPaused) {
+            isRunning = true;
+            solutionArea.clear();
+            container.getChildren().clear();
+            hypercubenPane.getChildren().clear();
+            tspVisualization.getChildren().clear();
 
-        Problem problem = null;
-        if("OneMax".equals(blueprintChoices[1])){
-            problem = new OneMax(searchSpace);
-        }
+            //startAlgorithm();
+            //new Thread(this::runEvolution).start(); // Run EA in a separate thread
+            SearchSpace searchSpace = null;
+            switch (blueprintChoices[0]) {
+                case "Bit strings":
+                    bitStringValue = Integer.parseInt(blueprintChoices[5]);
+                    System.out.println("bitStringValue: " + bitStringValue);
+                    searchSpace = new BitString(bitStringValue);
+                    break;
+                case "Permutation":
+                    searchSpace = new TSPParser("src/main/java/group/ea/controllers/berlin52.txt");
+                    break;
+            }
 
-        if(blueprintChoices[2].equals("RLS")){
-            algorithm = new RLS(searchSpace, problem, this);
+            Problem problem = null;
+            switch (blueprintChoices[1]) {
+                case "OneMax":
+                    problem = new OneMax(searchSpace);
+                    break;
+                case "LeadingOnes":
+                    problem = new LeadingOnes(searchSpace);
+                    break;
+                case "TSP":
+                    assert searchSpace instanceof TSPParser;
+                    problem = new Solution((TSPParser) searchSpace);
+            }
+
+            switch (blueprintChoices[2]) {
+                case "RLS":
+                    algorithm = new RLS(searchSpace, problem, this);
+                    break;
+                case "Simulated Annealing":
+                    algorithm = new SA(searchSpace, problem, this);
+                    break;
+                case "(1+1) EA":
+                    algorithm = new onePlusOneEA(searchSpace, problem, this);
+                    break;
+                case "TEMP":
+                    algorithm = new PermutationSA(searchSpace, problem, this);
+                    break;
+                default:
+                    algorithm = null;
+                    break;
+            }
+
+            if (algorithm != null) {
+                for (StoppingCriterion criterion : stoppingCriteria) {
+                    algorithm.addStoppingCriterion(criterion);
+                }
+                timesRun++;
+                if (graphSelector.isSelected()) {
+                    initializeChart();
+                    if (!flowPane.getChildren().contains(lineChart)) {
+                        flowPane.getChildren().add(lineChart);
+                    }
+                }
+
+                // if you want to add each run to a new text area
+            /*
+            if (textSelector.isSelected()) {
+                solutionArea = new TextArea();
+                Label titleLabel = new Label("Run number: "+ (i));
+                VBox container = new VBox(5);
+                container.getChildren().addAll(titleLabel, solutionArea);
+                //Optionally, style your label to make it look more like a title
+                titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+
+                    flowPane.getChildren().add(container);
+
+            }
+             */
+                if (textSelector.isSelected()) {
+                    titleLabel = new Label("Run number: " + (timesRun));
+                    container.getChildren().addAll(titleLabel, solutionArea);
+                    //Optionally, style your label to make it look more like a title
+                    titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+                    if (!flowPane.getChildren().contains(container)) {
+                        flowPane.getChildren().add(container);
+                    }
+                }
+                if (hypercubeCheck.isSelected()) {
+                    if (!flowPane.getChildren().contains(hypercubenPane)) {
+                        flowPane.getChildren().add(hypercubenPane);
+                    }
+                    booleanHypercubeVisualization = new BooleanHypercubeVisualization(searchSpace, problem, this, hypercubenPane);
+                }
+                if(showTSPgraph.isSelected()){
+                    System.out.println("is selected");
+                    if (!flowPane.getChildren().contains(tspVisualization))
+                    {
+                        tspVisualization.setPrefSize(600, 400);
+                        tspVisualization.setMinSize(600, 400);
+                        tspVisualization.setMaxSize(600, 400);
+                        tspVisualization.setBorder(new Border(new BorderStroke(Color.BLACK,
+                                BorderStrokeStyle.SOLID,
+                                CornerRadii.EMPTY,
+                                new BorderWidths(2))));
+                        flowPane.getChildren().add(tspVisualization);
+                    }
+
+                }
+
+                startAlgorithm();
+                algorithm.runAlgorithm();
+            }
         } else {
-            algorithm = null;
-        }
-        if(algorithm != null){
-            //new Thread(() -> algorithm.runAlgorithm()).start();
-            //algorithm.initialize();
-            startAlgorithm();
-            algorithm.runAlgorithm();
+            isAnimationPaused = false;
         }
         //new Thread(() -> algorithm.runAlgorithm()).start();
         // Running the algorithm
-       // onePlusOneEA.runAlgorithm();
+        // onePlusOneEA.runAlgorithm();
         //new Thread(this::runEvolution).start();
     }
+
+    public void initializeChart() {
+        xAxis.setLabel("Generation");
+        yAxis.setLabel("Fitness");
+        lineChart.setTitle("Fitness Chart");
+
+        lineChart.setAnimated(true);
+        xAxis.setAnimated(true);
+        yAxis.setAnimated(true);
+        System.out.println("height + " + lineChart.getHeight() + "width " + lineChart.getWidth());
+        series = new XYChart.Series<>();
+        series.setName("Run number " + (i + 1));
+        lineChart.getData().add(series);
+        i++;
+    }
+
+    @FXML
+    private void graphListener(ActionEvent event) {
+        if (graphSelector.isSelected()) {
+            if (!flowPane.getChildren().contains(lineChart)) {
+                flowPane.getChildren().add(lineChart);
+            }
+        } else {
+            flowPane.getChildren().remove(lineChart);
+        }
+    }
+
+    @FXML
+    private void textListener(ActionEvent event) {
+        if (textSelector.isSelected()) {
+            if (!flowPane.getChildren().contains(solutionArea)) {
+                flowPane.getChildren().add(solutionArea);
+            }
+        } else {
+            flowPane.getChildren().remove(solutionArea);
+        }
+    }
+
+    @FXML
+    private void hypercubeListener(ActionEvent event) {
+
+        if (!hypercubeCheck.isSelected()) {
+            hypercubeSelected = false;
+            flowPane.getChildren().remove(hypercubenPane);
+        } else {
+            hypercubeSelected = true;
+        }
+
+    }
+
+    public boolean isHypercubeSelected() {
+        return hypercubeSelected;
+    }
+
     public void recieveArray(String[] blueprintChoices) {
         this.blueprintChoices = blueprintChoices;
+        stoppingCriteria = new ArrayList<>();
+        if (blueprintChoices[3].equals("Optimum reached")) {
+            stoppingCriteria.add(new OptimumReached());
+        } else if (blueprintChoices[3].equals("Iteration bound")) {
+            stoppingCriteria.add(new MaxGenerationsCriterion(Integer.parseInt(blueprintChoices[4])));
+        } else if (blueprintChoices[3].equals("Fitness bound")){
+            stoppingCriteria.add(new MaxFitnessCriterion(Integer.parseInt(blueprintChoices[4])));
+        }
+
         searchspaceLabel.setText(blueprintChoices[0]);
         problemLabel.setText(blueprintChoices[1]);
         algorithmLabel.setText(blueprintChoices[2]);
         criteriasLabel.setText(blueprintChoices[3]);
     }
+
     public void stopEvolution() {
-        stopAlgorithm();
-        isRunning = false; // Set running state to false to stop the algorithm
-        // Optionally stop the AnimationTimer if needed
+        stopGraphics();
     }
+
     public void updateCanvas() {
         algorithm.updateGraphics();
     }
@@ -189,8 +365,44 @@ public class mainController {
         animationTimer.start(); // Start the animation
     }
 
-    public void stopAlgorithm() {
-        animationTimer.stop(); // Stop the animation
+    @FXML
+    private void pauseGraphics() {
+        isAnimationPaused = true;
     }
 
+    @FXML
+    private void continueSlider() {
+        int i = algorithm.i;
+        int newI = (int) generationSlider.getValue();
+        algorithm.clearAndContinue(i, newI);
+        isAnimationPaused = false;
+    }
+
+    public void stopGraphics() {
+        //wait 5 sec
+
+        animationTimer.stop(); // Stop the animation
+        isRunning = false; // Set running state to false to stop the algorithm
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        blueprintChoices[0] = "Bit strings";
+        blueprintChoices[1] = "OneMax";
+        blueprintChoices[2] = "RLS";
+        blueprintChoices[3] = "Optimum reached";
+        blueprintChoices[4] = "0.1";
+        blueprintChoices[5] = "100";
+        recieveArray(blueprintChoices);
+
+
+    }
+
+    public boolean isTextSelected() {
+        return textSelector.isSelected();
+    }
+
+    public boolean isGraphSelected() {
+        return graphSelector.isSelected();
+    }
 }
