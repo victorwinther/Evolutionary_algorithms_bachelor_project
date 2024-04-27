@@ -1,11 +1,11 @@
 package group.ea.controllers;
 
 import group.ea.main;
+import group.ea.structure.algorithm.OptimumReached;
 import group.ea.structure.helperClasses.BatchRow;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,7 +13,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.FileChooser;
@@ -128,8 +127,8 @@ public class blueprintController implements Initializable {
         batchParameters.put("Ant System", List.of("ants", "colony"));
         batchParameters.put("RLS", List.of("size"));
         batchParameters.put("Graph", List.of("test"));
-        batchParameters.put("Fitness bound", List.of("Iteration"));
-        batchParameters.put("Iteration bound", List.of("Iteration"));
+        batchParameters.put("Fitness bound", List.of("F. Iterations"));
+        batchParameters.put("Iteration bound", List.of("I. Iterations"));
     }
 
     private void addDescriptions(){
@@ -161,7 +160,7 @@ public class blueprintController implements Initializable {
 
     private void updateBatchTable() {
         // Construct parameters for batch table
-        List<String> currentSelection = getSelection();
+        List<String> currentSelection = getParameterSelection();
         batchColumns.clear(); // Clear previous batch columns
         batchColumns.addAll(List.of("id", "No. runs", "Dimension"));
 
@@ -179,23 +178,33 @@ public class blueprintController implements Initializable {
         for (String columnName : batchColumns) {
             if (!columnExists(columnName)) {
                 TableColumn<BatchRow, String> column = new TableColumn<>(columnName);
-                column.setCellValueFactory(data -> {
-                    // Get the appropriate property from BatchRow based on the column name
-                    if (columnName.equals("id")) {
-                        return new SimpleStringProperty(String.valueOf(data.getValue().getId()));
-                    } else {
-                        // Handle other columns accordingly
-                        // For now, assuming all other columns are empty strings
-                        return new SimpleStringProperty("");
-                    }
-                });
+                column.setCellValueFactory(data -> new SimpleStringProperty(batchTableInitialValue(columnName, String.valueOf(data.getValue().getId()))));
                 column.setCellFactory(TextFieldTableCell.forTableColumn()); // Set cell factory for editing
                 column.setOnEditCommit(event -> {
-                    // Handle edit commit event if needed
+                    int rowIndex = event.getTablePosition().getRow();
+                    int colIndex = batchColumns.indexOf(columnName);
+
+                    while (batchData.size() <= rowIndex) {
+                        batchData.add(new ArrayList<>(batchColumns.size()));
+                    }
+
+                    while (batchData.get(rowIndex).size() < batchColumns.size()) {
+                        batchData.get(rowIndex).add("");
+                    }
+
+                    // Update the data in the ArrayList
+                    batchData.get(rowIndex).set(colIndex, event.getNewValue());
                 });
 
                 batchTable.getColumns().add(column);
             }
+        }
+
+        for (ArrayList<String> row : batchData) {
+            for (String element : row) {
+                System.out.print(element + " ");
+            }
+            System.out.println();
         }
     }
 
@@ -221,22 +230,31 @@ public class blueprintController implements Initializable {
 
     private void saveDataToFile(File file) {
         try (FileWriter writer = new FileWriter(file)) {
-            // Write ComboBox selections to the file in CSV format
-            if (!iterationTxtField.isDisable()){
-                writer.write("Searchspace,Problem,Algorithm,StoppingCriteria,StoppingCriteriaIterations,Display\n");
-                writer.write(searchspaceSelector.getValue() + ",");
-                writer.write(problemSelector.getValue() + ",");
-                writer.write(algorithmSelector.getValue() + ",");
-                writer.write(iterationTxtField.getText() + "\n");
+            // Write header line
+            writer.write("Searchspace,Problem,Algorithm");
 
-            }
-            else {
-                writer.write("Searchspace,Problem,Algorithm,StoppingCriteria,Display\n");
-                writer.write(searchspaceSelector.getValue() + ",");
-                writer.write(problemSelector.getValue() + ",");
-                writer.write(algorithmSelector.getValue() + "\n");
+            // Array of checkboxes and their corresponding text fields
+            CheckBox[] checkboxes = {optimumReached, fitnessBound, iterationBound};
+            TextField[] textFields = {fitnessTxtField, iterationTxtField};
 
+            // Loop through checkboxes and write column headers for selected ones
+            for (int i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].isSelected()) {
+                    writer.write("," + checkboxes[i].getText());
+                }
             }
+            writer.write("\n");
+
+            // Write data values
+            writer.write(searchspaceSelector.getValue() + ",");
+            writer.write(problemSelector.getValue() + ",");
+            writer.write(algorithmSelector.getValue());
+            for (int i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].isSelected()) {
+                    writer.write(", true" );
+                }
+            }
+            writer.write("\n");
 
             // Write batch table data to the file
             writer.write("batch\n");
@@ -264,16 +282,23 @@ public class blueprintController implements Initializable {
         }
     }
 
-    private List<String> getSelection() {
+    private List<String> getParameterSelection() {
         return Arrays.asList(
                 getValueOrDefault(searchspaceSelector),
                 getValueOrDefault(problemSelector),
-                getValueOrDefault(algorithmSelector)
+                getValueOrDefault(algorithmSelector),
+                getCheckBoxValue(optimumReached),
+                getCheckBoxValue(fitnessBound),
+                getCheckBoxValue(iterationBound)
         );
     }
 
     private String getValueOrDefault(ComboBox<?> comboBox) {
         return comboBox.getValue() != null ? comboBox.getValue().toString() : "";
+    }
+
+    private String getCheckBoxValue(CheckBox checkBox){
+        return checkBox.isSelected() ? checkBox.getText() : "";
     }
 
     @FXML
@@ -293,6 +318,7 @@ public class blueprintController implements Initializable {
 
         boolean anyCheckboxChecked = fitnessBound.isSelected() || iterationBound.isSelected();
         iterationLabel.setDisable(!anyCheckboxChecked);
+        updateBatchTable();
     }
 
     @FXML
@@ -333,6 +359,13 @@ public class blueprintController implements Initializable {
         // Create a new row with default values
         BatchRow newRow = new BatchRow(id);
 
+        //add id
+        //newRow.addData(String.valueOf(id));
+
+        for (String category : batchColumns){
+            newRow.addData(batchTableInitialValue(category, String.valueOf(id)));
+        }
+
         // Fill the rest of the columns with "0"s
         for (int i = 1; i < batchColumns.size(); i++) {
             newRow.addData("0");
@@ -345,6 +378,29 @@ public class blueprintController implements Initializable {
         batchData.add((ArrayList<String>) newRow.getRowData());
     }
 
+    private String batchTableInitialValue(String category, String id){
+        String res = "0";
+
+        if (category.equals("id")){
+            res = id;
+        }
+        else if (category.equals("No. runs")){
+            res = "1";
+        }
+        else if (category.equals("Dimension") && !dimensionTxtField.isDisable()){
+            res = dimensionTxtField.getText();
+        }
+        else if(category.equals("F. Iterations") && !fitnessTxtField.isDisable()){
+            res = fitnessTxtField.getText();
+        }
+        else if(category.equals("I. Iterations") && !iterationTxtField.isDisable()){
+            res = iterationTxtField.getText();
+        }
+
+
+
+        return res;
+    }
 
 
     @FXML
@@ -391,8 +447,6 @@ public class blueprintController implements Initializable {
 
             blueprintChoices[4] = iterationTxtField.isDisable() ? "" : iterationTxtField.getText();
             blueprintChoices[5] = String.valueOf(dimensionTxtField.getText());
-
-
 
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
             Parent root = loader.load();
