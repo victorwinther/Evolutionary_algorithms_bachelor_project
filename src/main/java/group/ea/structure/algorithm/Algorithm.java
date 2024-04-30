@@ -4,11 +4,14 @@ import group.ea.controllers.mainController;
 import group.ea.structure.TSP.Solution;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.util.Duration;
 import javafx.util.Pair;
 
 import java.util.ArrayList;

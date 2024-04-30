@@ -16,10 +16,7 @@ public class onePlusOneEA extends Algorithm {
     public void performSingleUpdate(int gen) {
         int n = bitString.length();
         generation = 0;
-
-        System.out.println("here");
         while (!checkStoppingCriteria()) {
-            System.out.println("also here");
             String y = bitString;
             Data data = new Data(bitString, generation, bestFitness, false, Optional.empty());
             for (int i = 0; i < n; i++) {

@@ -62,7 +62,8 @@ public class blueprintController implements Initializable {
 
 
     private Stage stage;
-    public String[] blueprintChoices = new String[6];
+    public HashMap<String,String> blueprintChoices = new HashMap<>();
+    //make a hashmap of string
 
 
 
@@ -436,17 +437,45 @@ public class blueprintController implements Initializable {
     void startMainPage(ActionEvent event) throws IOException {
         // Load the home page FXML file
         //make an array where you fill it with the chosen combobox values
-        if (!dimensionLabel.isDisable() && dimensionTxtField.getText().equals("")){
-            showAlert("Dimension must be filled when \"" + searchspaceSelector.getValue() + "\" is chosen");
+        if ((!dimensionLabel.isDisable() && dimensionTxtField.getText().equals("")) ||( !fitnessTxtField.isDisable() && fitnessTxtField.getText().equals("")) || (!iterationTxtField.isDisable() && iterationTxtField.getText().equals(""))) {
+            showAlert("Please fill out missing information");
         }
         else{
-            blueprintChoices[0] = searchspaceSelector.getValue();
-            blueprintChoices[1] = problemSelector.getValue();
-            blueprintChoices[2] = algorithmSelector.getValue();
-            blueprintChoices[3] = "Optimum reached";
+            blueprintChoices.put("Searchspace",searchspaceSelector.getValue());
+            try {
+                Integer.parseInt(dimensionTxtField.getText());
+                blueprintChoices.put("Dimension",dimensionTxtField.getText());
+            } catch (Exception e) {
+                showAlert("Enter only integers for dimension");
+                return;
 
-            blueprintChoices[4] = iterationTxtField.isDisable() ? "" : iterationTxtField.getText();
-            blueprintChoices[5] = String.valueOf(dimensionTxtField.getText());
+            }
+            blueprintChoices.put("Problem",problemSelector.getValue());
+            blueprintChoices.put("Algorithm",algorithmSelector.getValue());
+                if (optimumReached.isSelected())
+                    blueprintChoices.put("OptimumReached", String.valueOf(optimumReached.isSelected()));
+                if (fitnessBound.isSelected()) {
+                    try {
+                        Integer.parseInt(fitnessTxtField.getText());
+                        blueprintChoices.put("FitnessBound", fitnessTxtField.getText());
+                    } catch (Exception e) {
+                        showAlert("Enter only integers for fitness bound");
+                        return;
+                    }
+                }
+
+                if (iterationBound.isSelected()) {
+                    try{
+                        Integer.parseInt(iterationTxtField.getText());
+                        blueprintChoices.put("IterationBound", iterationTxtField.getText());
+                    }
+                    catch (Exception e){
+                        showAlert("Enter only integers for iteration bound");
+                        return;
+                    }
+
+                }
+
 
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
             Parent root = loader.load();

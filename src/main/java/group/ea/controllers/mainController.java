@@ -35,16 +35,13 @@ import javafx.scene.chart.XYChart;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class mainController implements Initializable {
     private static AnimationTimer animationTimer;
-    final NumberAxis xAxis = new NumberAxis();
-    final NumberAxis yAxis = new NumberAxis();
+    public final NumberAxis xAxis = new NumberAxis();
+    public final NumberAxis yAxis = new NumberAxis();
     private final FileChooser fileChooser = new FileChooser();
     @FXML
     public FlowPane flowPane;
@@ -90,7 +87,7 @@ public class mainController implements Initializable {
     private Stage stage;
     private Scene scene;
     private Parent parent;
-    private String[] blueprintChoices = new String[6];
+    private HashMap<String, String> blueprintChoices = new HashMap<>();
     private int bitStringValue;
     private boolean hypercubeSelected;
     @FXML
@@ -167,9 +164,9 @@ public class mainController implements Initializable {
             //startAlgorithm();
             //new Thread(this::runEvolution).start(); // Run EA in a separate thread
             SearchSpace searchSpace = null;
-            switch (blueprintChoices[0]) {
+            switch (blueprintChoices.get("Searchspace")) {
                 case "Bit strings":
-                    bitStringValue = Integer.parseInt(blueprintChoices[5]);
+                    bitStringValue = Integer.parseInt(blueprintChoices.get("Dimension"));
                     System.out.println("bitStringValue: " + bitStringValue);
                     searchSpace = new BitString(bitStringValue);
                     break;
@@ -179,7 +176,7 @@ public class mainController implements Initializable {
             }
 
             Problem problem = null;
-            switch (blueprintChoices[1]) {
+            switch (blueprintChoices.get("Problem")) {
                 case "OneMax":
                     problem = new OneMax(searchSpace);
                     break;
@@ -191,7 +188,7 @@ public class mainController implements Initializable {
                     problem = new Solution((TSPParser) searchSpace);
             }
 
-            switch (blueprintChoices[2]) {
+            switch (blueprintChoices.get("Algorithm")) {
                 case "RLS":
                     algorithm = new RLS(searchSpace, problem, this);
                     break;
@@ -282,7 +279,6 @@ public class mainController implements Initializable {
         xAxis.setLabel("Generation");
         yAxis.setLabel("Fitness");
         lineChart.setTitle("Fitness Chart");
-
         lineChart.setAnimated(true);
         xAxis.setAnimated(true);
         yAxis.setAnimated(true);
@@ -331,21 +327,38 @@ public class mainController implements Initializable {
         return hypercubeSelected;
     }
 
-    public void recieveArray(String[] blueprintChoices) {
+    public void recieveArray(HashMap<String, String> blueprintChoices) {
         this.blueprintChoices = blueprintChoices;
         stoppingCriteria = new ArrayList<>();
-        if (blueprintChoices[3].equals("Optimum reached")) {
+        String criterias = "";
+        if (blueprintChoices.containsKey("OptimumReached")) {
             stoppingCriteria.add(new OptimumReached());
-        } else if (blueprintChoices[3].equals("Iteration bound")) {
-            stoppingCriteria.add(new MaxGenerationsCriterion(Integer.parseInt(blueprintChoices[4])));
-        } else if (blueprintChoices[3].equals("Fitness bound")){
-            stoppingCriteria.add(new MaxFitnessCriterion(Integer.parseInt(blueprintChoices[4])));
+            criterias += "Optimum";
+        }
+        if (blueprintChoices.containsKey("FitnessBound")){
+            System.out.println(blueprintChoices.get("FitnessBound"));
+            stoppingCriteria.add(new MaxFitnessCriterion(Integer.parseInt(blueprintChoices.get("FitnessBound"))));
+            criterias += " Fitness";
+        }
+        if (blueprintChoices.containsKey("IterationBound")){
+            stoppingCriteria.add(new MaxGenerationsCriterion(Integer.parseInt(blueprintChoices.get("IterationBound"))));
+            criterias += " Iteration";
+        }
+        if(blueprintChoices.containsValue("TSP")){
+            showTSPgraph.setVisible(true);
+        } else {
+            showTSPgraph.setVisible(false);
         }
 
-        searchspaceLabel.setText(blueprintChoices[0]);
-        problemLabel.setText(blueprintChoices[1]);
-        algorithmLabel.setText(blueprintChoices[2]);
-        criteriasLabel.setText(blueprintChoices[3]);
+        searchspaceLabel.setText(blueprintChoices.get("Searchspace"));
+        searchspaceLabel.setStyle("-fx-font-size: 10px;");
+        problemLabel.setText(blueprintChoices.get("Problem"));
+        problemLabel.setStyle("-fx-font-size: 10px;");
+        algorithmLabel.setText(blueprintChoices.get("Algorithm"));
+        algorithmLabel.setStyle("-fx-font-size: 10px;");
+        criteriasLabel.setText(criterias);
+        criteriasLabel.setStyle("-fx-font-size: 10px;");
+
     }
 
     public void stopEvolution() {
@@ -387,12 +400,11 @@ public class mainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        blueprintChoices[0] = "Bit strings";
-        blueprintChoices[1] = "OneMax";
-        blueprintChoices[2] = "RLS";
-        blueprintChoices[3] = "Optimum reached";
-        blueprintChoices[4] = "0.1";
-        blueprintChoices[5] = "100";
+        blueprintChoices.put("Searchspace", "Bit strings");
+        blueprintChoices.put("Problem", "OneMax");
+        blueprintChoices.put("Algorithm", "RLS");
+        blueprintChoices.put("OptimumReached", "true");
+        blueprintChoices.put("Dimension","100");
         recieveArray(blueprintChoices);
 
 
