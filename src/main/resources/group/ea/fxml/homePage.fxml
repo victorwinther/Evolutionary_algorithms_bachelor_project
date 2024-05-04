@@ -191,11 +191,12 @@
    <bottom>
       <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="295.0" spacing="15.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="335.0" spacing="15.0">
                <children>
                   <Button fx:id="startButton" mnemonicParsing="false" onAction="#startEvolution" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="START" textFill="WHITE" />
                   <Button fx:id="pauseButton" mnemonicParsing="false" onAction="#pauseGraphics" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="PAUSE" textFill="WHITE" />
                   <Button mnemonicParsing="false" onAction="#stopEvolution" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="STOP" textFill="WHITE" />
+                  <Button fx:id="nextAlgorithm" mnemonicParsing="false" onAction="#nextAlgorithm" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="NEXT" textFill="WHITE" />
                </children>
             </HBox>
             <Separator opacity="0.5" orientation="VERTICAL" prefHeight="80.0" prefWidth="19.0">
@@ -233,7 +234,7 @@
             <VBox alignment="CENTER" prefHeight="100.0" prefWidth="156.0" spacing="6.0">
                <children>
                   <Label text="Speed" textFill="WHITE" />
-                  <Slider fx:id="sliderSpeed" blockIncrement="50.0" majorTickUnit="100.0" max="1000.0" prefHeight="26.0" prefWidth="129.0" showTickMarks="true" value="1000.0" />
+                  <Slider fx:id="sliderSpeed" blockIncrement="50.0" majorTickUnit="100.0" max="1000.0" prefHeight="26.0" prefWidth="129.0" showTickMarks="true" value="500.0" />
                </children>
             </VBox>
             <Separator opacity="0.5" orientation="VERTICAL" prefHeight="200.0">

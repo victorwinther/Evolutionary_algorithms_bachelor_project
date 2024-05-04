@@ -17,8 +17,8 @@ public class SA extends Algorithm {
     double currentTemp;
 
 
-    public SA(SearchSpace searchSpace, Problem problem, mainController mainController) {
-        super(searchSpace, problem, mainController);
+    public SA(SearchSpace searchSpace, Problem problem) {
+        super(searchSpace, problem);
         bestFitness = (int) problem.computeFitness(bitString);
         currentTemp = initTemp;
 

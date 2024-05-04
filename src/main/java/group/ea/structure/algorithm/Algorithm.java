@@ -23,7 +23,6 @@ public abstract class Algorithm {
 
     Solution _sl;
     SearchSpace searchSpace;
-    protected final mainController _mainController;
     protected boolean stoppingMet = false;
     protected ArrayList<String> solutionList;
 
@@ -39,12 +38,11 @@ public abstract class Algorithm {
     private boolean hyperDone = true;
     private List<StoppingCriterion> stoppingCriteria = new ArrayList<>();
 
-    public Algorithm(SearchSpace searchSpace, Problem problem, mainController controller) {
+    public Algorithm(SearchSpace searchSpace, Problem problem) {
         this.searchSpace = searchSpace;
         bitLength = searchSpace.length;
         //sl = (Solution) problem;
         this.problem = problem;
-        _mainController = controller;
         this.initialize();
     }
     public void addStoppingCriterion(StoppingCriterion criterion) {
@@ -70,7 +68,7 @@ public abstract class Algorithm {
             generation++;
         }
         stoppingMet = true;
-        System.out.println("Best fitness found: " + bestFitness);
+        System.out.println("Problem" + problem.name + "Stopping criterion met: "  + "Generations"+ generation + "done");
     }
 
     /*
@@ -83,11 +81,19 @@ public abstract class Algorithm {
             _mainController.stopAlgorithm();
         }
     */
+    /*
     public int i = 0;
     public void sliderController() {
         if(i != finalList.size()) {
             Data data = finalList.get(i);
             if(data.getImproved()) {
+                if(_mainController.fullspeed){
+                    int skips = _mainController.skipIterations;
+                    System.out.println(skips);
+                    if(i+skips < finalList.size()) {
+                        i += _mainController.skipIterations;
+                    }
+                }
                 runGraphics(i);
                 i++;
             } else {
@@ -98,7 +104,8 @@ public abstract class Algorithm {
             }
         }
     }
-
+    */
+/*
     public void runGraphics(int i) {
         int generation = 0;
         String bitString = null;
@@ -227,6 +234,7 @@ public abstract class Algorithm {
             }
         }
     }
+    */
 
     public void clearAndContinue(int i, int newI) {
 

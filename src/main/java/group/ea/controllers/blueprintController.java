@@ -1,7 +1,6 @@
 package group.ea.controllers;
 
 import group.ea.main;
-import group.ea.structure.algorithm.OptimumReached;
 import group.ea.structure.helperClasses.BatchRow;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -70,6 +69,7 @@ public class blueprintController implements Initializable {
 
     public void initialize(URL arg0, ResourceBundle arg1){
         //initialize components
+        Schedule.getSchedules().clear();
         allComboBoxes = Arrays.asList(searchspaceSelector, problemSelector, algorithmSelector);
         addCategoryOptions();
         addDescriptions();
@@ -78,10 +78,11 @@ public class blueprintController implements Initializable {
         problemSelector.getItems().addAll(problems);
         algorithmSelector.getItems().addAll(algorithms);
 
-        searchspaceSelector.setValue("Permutation");
-        problemSelector.setValue("TSP");
-        algorithmSelector.setValue("TEMP");
-        //stoppingcriteriaSelector.setValue("Optimum reached");
+        searchspaceSelector.setValue("Bitstring");
+        problemSelector.setValue("OneMax");
+        algorithmSelector.setValue("(1+1) EA");
+        optimumReached.setSelected(true);
+        dimensionTxtField.setText("100");
 
 
         //initialize filechooser object
@@ -377,7 +378,54 @@ public class blueprintController implements Initializable {
 
         // Add the new row data to the batch data list
         batchData.add((ArrayList<String>) newRow.getRowData());
-    }
+        addSchedule();
+
+
+        }
+        public void addSchedule(){
+            Schedule newSchedule = new Schedule();
+            if ((!dimensionLabel.isDisable() && dimensionTxtField.getText().equals("")) ||( !fitnessTxtField.isDisable() && fitnessTxtField.getText().equals("")) || (!iterationTxtField.isDisable() && iterationTxtField.getText().equals(""))) {
+                showAlert("Please fill out missing information");
+            }
+            else {
+                try {
+                    int dimension = Integer.parseInt(dimensionTxtField.getText());
+                    newSchedule.setDimension(dimension);
+                    newSchedule.setSearchSpaceString(searchspaceSelector.getValue());
+                } catch (Exception e) {
+                    showAlert("Enter only integers for dimension");
+                    return;
+
+                }
+                newSchedule.setProblemString(problemSelector.getValue());
+                newSchedule.setAlgorithmString(algorithmSelector.getValue());
+                if (optimumReached.isSelected())
+                    newSchedule.setOptimumReached(true);
+                if (fitnessBound.isSelected()) {
+                    try {
+                        int fitnessBound = Integer.parseInt(fitnessTxtField.getText());
+                        newSchedule.setFitnessBound(fitnessBound);
+                        System.out.println("fitness bound: " + fitnessBound);
+                    } catch (Exception e) {
+                        showAlert("Enter only integers for fitness bound");
+                        return;
+                    }
+                }
+
+                if (iterationBound.isSelected()) {
+                    try {
+                        int iterationBound = Integer.parseInt(iterationTxtField.getText());
+                        newSchedule.setIterationBound(iterationBound);
+                        System.out.println("iteration bound: " + iterationBound);
+                    } catch (Exception e) {
+                        showAlert("Enter only integers for iteration bound");
+                        return ;
+                    }
+
+                }
+                    newSchedule.setUpAlgorithm();
+            }
+        }
 
     private String batchTableInitialValue(String category, String id){
         String res = "0";
@@ -437,52 +485,18 @@ public class blueprintController implements Initializable {
     void startMainPage(ActionEvent event) throws IOException {
         // Load the home page FXML file
         //make an array where you fill it with the chosen combobox values
-        if ((!dimensionLabel.isDisable() && dimensionTxtField.getText().equals("")) ||( !fitnessTxtField.isDisable() && fitnessTxtField.getText().equals("")) || (!iterationTxtField.isDisable() && iterationTxtField.getText().equals(""))) {
-            showAlert("Please fill out missing information");
+        //make a hashmap of string
+        if(batchData.size() == 0){
+             addSchedule();
         }
-        else{
-            blueprintChoices.put("Searchspace",searchspaceSelector.getValue());
-            try {
-                Integer.parseInt(dimensionTxtField.getText());
-                blueprintChoices.put("Dimension",dimensionTxtField.getText());
-            } catch (Exception e) {
-                showAlert("Enter only integers for dimension");
-                return;
-
-            }
-            blueprintChoices.put("Problem",problemSelector.getValue());
-            blueprintChoices.put("Algorithm",algorithmSelector.getValue());
-                if (optimumReached.isSelected())
-                    blueprintChoices.put("OptimumReached", String.valueOf(optimumReached.isSelected()));
-                if (fitnessBound.isSelected()) {
-                    try {
-                        Integer.parseInt(fitnessTxtField.getText());
-                        blueprintChoices.put("FitnessBound", fitnessTxtField.getText());
-                    } catch (Exception e) {
-                        showAlert("Enter only integers for fitness bound");
-                        return;
-                    }
-                }
-
-                if (iterationBound.isSelected()) {
-                    try{
-                        Integer.parseInt(iterationTxtField.getText());
-                        blueprintChoices.put("IterationBound", iterationTxtField.getText());
-                    }
-                    catch (Exception e){
-                        showAlert("Enter only integers for iteration bound");
-                        return;
-                    }
-
-                }
-
 
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
             Parent root = loader.load();
 
             // Here you would get the controller if you need to call methods on it
             mainController controller = loader.getController();
-            controller.recieveArray(blueprintChoices); // Call methods on the controller if needed
+            controller.recieveArray(Schedule.getSchedules()); // Call methods on the controller if needed
+        System.out.println(Schedule.getSchedules().toString());
 
             // Set the scene to the home page
             Scene scene = new Scene(root);
@@ -498,7 +512,7 @@ public class blueprintController implements Initializable {
             stage.show();
         }
 
-    }
+
 
     public String getSearchspaceSelector() {
         return searchspaceSelector.getValue();
