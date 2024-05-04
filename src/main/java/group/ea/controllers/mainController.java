@@ -121,7 +121,7 @@ public class mainController implements Initializable {
                         } else{
                             duration = TimeUnit.MILLISECONDS.toNanos(0);
                             fullspeed = true;
-                            skipIterations = (int) (speed - 500)/100;
+                            skipIterations = (int) (speed - 500)/10;
                         }
                     }
                 }
@@ -314,7 +314,6 @@ public class mainController implements Initializable {
             if(data.getImproved()) {
                 if(fullspeed){
                     int skips = skipIterations;
-
                     if(i+skips < algorithm.finalList.size()) {
                         i += skipIterations;
                     }
@@ -323,12 +322,13 @@ public class mainController implements Initializable {
                 i++;
             } else {
                 while (!data.getImproved() && i < algorithm.finalList.size()) {
-                    data = algorithm.finalList.get(i);
                     i++;
+                    data = algorithm.finalList.get(i);
                 }
             }
         } else {
             System.out.println("stopped graphics");
+            System.out.println(i + "i er " + algorithm.finalList.size());
             animationDone = true;
             System.out.println(runNr + " " + queueSchedule.size());
             if(runNr >= queueSchedule.size()-1) {
