@@ -306,8 +306,8 @@ public class mainController implements Initializable {
     }
 
     public void sliderController() {
-        System.out.println(currentSchedule.getAlgorithmString() + "hej" + i);
         Algorithm algorithm = currentSchedule.getAlgorithm();
+
 
         if(i < algorithm.finalList.size()) {
             Data data = algorithm.finalList.get(i);
@@ -322,9 +322,9 @@ public class mainController implements Initializable {
                 runGraphics(algorithm,i);
                 i++;
             } else {
-                while (!data.getImproved() && i < algorithm.finalList.size()-1) {
-                    i++;
+                while (!data.getImproved() && i < algorithm.finalList.size()) {
                     data = algorithm.finalList.get(i);
+                    i++;
                 }
             }
         } else {
@@ -338,7 +338,7 @@ public class mainController implements Initializable {
             }
             stopGraphics();
         }
-        i++;
+
     }
     Circle lastCircle = null;
     public void runGraphics(Algorithm a, int i) {
