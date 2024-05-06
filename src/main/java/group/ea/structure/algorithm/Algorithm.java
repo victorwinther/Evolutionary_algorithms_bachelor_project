@@ -38,6 +38,9 @@ public abstract class Algorithm {
     private boolean hyperDone = true;
     private List<StoppingCriterion> stoppingCriteria = new ArrayList<>();
 
+    protected double currentTemp = 10000;
+
+    protected AlgorithmUpdateListener listener;
     public Algorithm(SearchSpace searchSpace, Problem problem) {
         this.searchSpace = searchSpace;
         bitLength = searchSpace.length;
@@ -52,6 +55,7 @@ public abstract class Algorithm {
     protected boolean checkStoppingCriteria() {
         for (StoppingCriterion criterion : stoppingCriteria) {
             if (criterion.isMet(this)) {
+                System.out.println(criterion.getClass().getName() + "Stopping criterion met: " + criterion.getClass().getName() + "Generations" + generation + "done");
                 return true;
             }
         }
@@ -64,10 +68,13 @@ public abstract class Algorithm {
 
     public void runAlgorithm() {
         while (!checkStoppingCriteria()) {
+            System.out.println(currentTemp);
             performSingleUpdate(generation);
             generation++;
         }
         stoppingMet = true;
+        finalList.get(finalList.size()-1).setYesNo(true);
+
         System.out.println("Problem" + problem.name + "Stopping criterion met: "  + "Generations"+ generation + "done");
     }
 
@@ -84,5 +91,16 @@ public abstract class Algorithm {
 
     public int getGeneration() {
         return generation;
+    }
+
+    public int getCurrentTemp() {
+        return (int) currentTemp;
+    }
+    public Solution get_sl() {
+        return _sl;
+    }
+
+    public void sendListener(mainController mainController) {
+        this.listener = mainController;
     }
 }

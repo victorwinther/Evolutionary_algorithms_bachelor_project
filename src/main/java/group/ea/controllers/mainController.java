@@ -30,6 +30,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.chart.XYChart;
@@ -42,7 +43,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class mainController implements Initializable {
+public class mainController implements Initializable, AlgorithmUpdateListener {
     private static AnimationTimer animationTimer;
     public final NumberAxis xAxis = new NumberAxis();
     public final NumberAxis yAxis = new NumberAxis();
@@ -308,7 +309,6 @@ public class mainController implements Initializable {
     public void sliderController() {
         Algorithm algorithm = currentSchedule.getAlgorithm();
 
-
         if(i < algorithm.finalList.size()) {
             Data data = algorithm.finalList.get(i);
             if(data.getImproved()) {
@@ -321,7 +321,7 @@ public class mainController implements Initializable {
                 runGraphics(algorithm,i);
                 i++;
             } else {
-                while (!data.getImproved() && i < algorithm.finalList.size()) {
+                while (!data.getImproved() && i < algorithm.finalList.size()-1) {
                     i++;
                     data = algorithm.finalList.get(i);
                 }
@@ -424,6 +424,7 @@ public class mainController implements Initializable {
         series.setName("Run number " + (chartNr + 1));
         lineChart.getData().add(series);
         chartNr++;
+
     }
 
     @FXML
@@ -488,6 +489,7 @@ public class mainController implements Initializable {
             Schedule newSchedule = schedules.get(j);
             for (int k = 0; k < newSchedule.getRuns(); k++) {
             queueSchedule.add(newSchedule);
+            newSchedule.getAlgorithm().sendListener(this);
             }
         }
 
@@ -577,4 +579,32 @@ public class mainController implements Initializable {
     public boolean isGraphSelected() {
         return graphSelector.isSelected();
     }
+    @Override
+    public void tspGraphics(Solution _sl){
+        Platform.runLater(() -> {
+        tspVisualization.getChildren().clear();
+        int maxY = 1200; // Replace with the actual maximum Y value of your canvas
+        if (i == 0 && showTSPgraph.isSelected()) {
+            int prevX = 0;
+            int prevY = 0;
+            for (int j = 0; j < _sl.getListLength();j++) {
+                System.out.println("i er " + j + " og listlength er " + _sl.getListLength());
+                int x = _sl.getXSolution(j);
+                int y = maxY - _sl.getYSolution(j); // Subtract the y-coordinate from maxY to mirror it
+                Circle circle = new Circle(x/4, y/4, 3);
+                circle.setFill(Color.RED);
+                tspVisualization.getChildren().add(circle);
+                if (j > 0) { // Draw line from the previous point to the current point
+                    Line line = new Line(prevX / 4.0, prevY / 4.0, x / 4.0, y / 4.0);
+                    line.setStroke(Color.BLUE);
+                    tspVisualization.getChildren().add(line);
+                }
+                prevX = x;
+                prevY = y;
+                System.out.println(x + " x og er y" + y);
+            }
+        }
+        });
+    }
+
 }

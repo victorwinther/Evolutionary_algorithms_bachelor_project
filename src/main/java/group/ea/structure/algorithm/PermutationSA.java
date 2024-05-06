@@ -23,10 +23,8 @@ import java.util.Optional;
 public class PermutationSA extends  Algorithm {
 
 
-    Solution _sl;
     double initTemp = 10000;
     double tempReduction = 0.9995;
-    double currentTemp;
 
 
     public PermutationSA(SearchSpace searchSpace, Problem problem) {
@@ -60,11 +58,10 @@ public class PermutationSA extends  Algorithm {
         _sl.twoOptMutate();
         int offspringFitness = _sl.computeFitness();
 
-
         System.out.println(offspringFitness + " " + bestFitness);
 
-
         if (offspringFitness < bestFitness) {
+            listener.tspGraphics(_sl);
             System.out.println("Better in generation " + generation);
             data.setYesNo(true);
             bestFitness = offspringFitness;
@@ -85,47 +82,6 @@ public class PermutationSA extends  Algorithm {
         currentTemp *= tempReduction;
         finalList.add(data);
         graphList.add(new Pair<>(generation + 1, bestFitness));
+
     }
 }
-/*
-    public void sliderController(){
-
-            int maxY = 400; // Replace with the actual maximum Y value of your canvas
-            if (i == 0 && _mainController.showTSPgraph.isSelected()) {
-                int prevX = 0;
-                int prevY = 0;
-                for (int j = 0; j < _sl.getListLength();j++) {
-                    System.out.println("i er " + j + " og listlength er " + _sl.getListLength());
-                    int x = _sl.getXSolution(j);
-                    int y = maxY - _sl.getYSolution(j); // Subtract the y-coordinate from maxY to mirror it
-                    Circle circle = new Circle(x/4, y/4, 3);
-                    circle.setFill(Color.RED);
-                    _mainController.tspVisualization.getChildren().add(circle);
-                    if (j > 0) { // Draw line from the previous point to the current point
-                        Line line = new Line(prevX / 4.0, prevY / 4.0, x / 4.0, y / 4.0);
-                        line.setStroke(Color.BLUE);
-                        _mainController.tspVisualization.getChildren().add(line);
-                    }
-                    prevX = x;
-                    prevY = y;
-                    System.out.println(x + " x og er y" + y);
-
-            }
-        }
-        if(i != finalList.size()) {
-            Data data = finalList.get(i);
-            if(data.getImproved()) {
-                runGraphics(i);
-                i++;
-            } else {
-                while (!data.getImproved() && i < finalList.size()-1) {
-                    i++;
-                    data = finalList.get(i);
-                }
-            }
-        }
-    }
-
-}
-
- */

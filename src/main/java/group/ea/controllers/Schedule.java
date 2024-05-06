@@ -125,11 +125,15 @@ public class Schedule {
 
     public void setUpAlgorithm() {
         criterias = "";
+        System.out.println("Search space: " + this.searchSpaceString);
         switch (this.searchSpaceString) {
+
             case "Bit strings":
+                System.out.println("bit string");
                 this.searchSpace = new BitString(this.dimension);
                 break;
-            case "Permutation":
+            case "Permutations":
+                System.out.println("permutation");
                 this.searchSpace = new TSPParser("src/main/java/group/ea/controllers/berlin52.txt");
                 break;
         }
@@ -143,6 +147,7 @@ public class Schedule {
                 this.problem = new LeadingOnes(this.searchSpace);
                 break;
             case "TSP":
+                tspBool = true;
                 assert this.searchSpace instanceof TSPParser;
                 this.problem = new Solution((TSPParser) this.searchSpace);
                 break;
@@ -160,7 +165,9 @@ public class Schedule {
                 this.algorithm = new onePlusOneEA(this.searchSpace, this.problem);
                 break;
             case "TEMP":
+                System.out.println("temp");
                 this.algorithm = new PermutationSA(this.searchSpace, this.problem);
+                algorithm.addStoppingCriterion(new TempStopping());
                 break;
             default:
                 this.algorithm = null;
