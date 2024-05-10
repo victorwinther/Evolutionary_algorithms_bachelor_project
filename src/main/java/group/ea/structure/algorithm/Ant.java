@@ -54,16 +54,25 @@ public class Ant {
     }
     public void setTrailOfAnt(int[] trail){trailOfAnt = trail;}
 
-    public void localMutate(int i, int j, int k){
+    public boolean[] getVisited(){
+        return visited;
+    }
+
+    public void localMutate(int i, int j){
 
 
         int first = trailOfAnt[i];
         int second = trailOfAnt[j];
-        int third = trailOfAnt[k];
 
         trailOfAnt[i] = second;
-        trailOfAnt[j] = third;
-        trailOfAnt[k] = first;
+        trailOfAnt[j] = first;
     }
 
+    public void setTour(int[] ints) {
+        trailOfAnt = ints;
+    }
+
+    public void setVisited(boolean[] booleans) {
+        visited = booleans;
+    }
 }

@@ -169,6 +169,11 @@ public class Schedule {
                 this.algorithm = new PermutationSA(this.searchSpace, this.problem);
                 algorithm.addStoppingCriterion(new TempStopping());
                 break;
+            case "Ant System":
+                System.out.println("ANT");
+                this.algorithm = new ACO(this.searchSpace, this.problem);
+                algorithm.addStoppingCriterion(new TempStopping());
+                break;
             default:
                 this.algorithm = null;
                 break;

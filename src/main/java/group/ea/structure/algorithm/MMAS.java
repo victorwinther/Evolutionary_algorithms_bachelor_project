@@ -9,8 +9,8 @@ public class MMAS extends ACO {
     private double minPheremone;
     private double maxPheremone;
 
-    public MMAS(SearchSpace searchSpace, Problem problem, mainController controller) {
-        super(searchSpace, problem, controller);
+    public MMAS(SearchSpace searchSpace, Problem problem) {
+        super(searchSpace, problem);
 
         maxPheremone = 1.0 / ((evaporation * getValue()));
         minPheremone = maxPheremone / (2.0 * dimension);

@@ -13,9 +13,8 @@ import java.util.Random;
 FIX SO IT CAN BOTH THE BEST ANt AND EVERY ANT
 TRY TO GET IT ON BITSTRING?
 MAKE 1+1 EA work on TSP
+MERGE SO IT WORKS WITH GRAPH
 
-SIH LOCAL SEARCH
-MERGE
  */
 
 
@@ -41,8 +40,8 @@ public class ACO extends Algorithm{
     protected double bestInGeneration;
 
 
-    public ACO (SearchSpace searchSpace, Problem problem, mainController controller){
-        super(searchSpace, problem, controller);
+    public ACO (SearchSpace searchSpace, Problem problem){
+        super(searchSpace, problem);
         _sl = (Solution) problem;
         dimension = _sl.getDimension();
         setupAnts();
@@ -58,9 +57,7 @@ public class ACO extends Algorithm{
     public void performSingleUpdate(int generation){
         if(generation > maxGeneration){
             if(_localSearch){
-                System.out.println("Best before" + bestAnt.getCost());
                 localSearch(3);
-                System.out.println("Best after" + bestAnt.getCost());
             }
             System.out.println("done");
             System.out.println("Best " + bestAnt.getCost());
@@ -251,37 +248,33 @@ public class ACO extends Algorithm{
     }
 
 
-
+    //FIX
     public void localSearch(int width){
         int step = 0;
         Ant temp = new Ant(dimension);
-        temp.setTrailOfAnt(bestAnt.getTrailOfAnt());
+        System.out.println(bestAnt.getCost() + " best Before");
+        copyFromTo(bestAnt, temp);
+        System.out.println(temp.getCost() + " temp Before");
         while(step < dimension){
             for(int i = (step - width); i < (2 * width) + step; i++ ){
                 for(int j = (step - width); j < (2 * width) + step - 1; j++ ){
-                    for(int k = (step - width); k < (2 * width) + step - 2; k++ ){
-                        if(i == j || i == k || j == k){
+                        if(i == j ){
                             continue;
                         }
-                        //System.out.println(i + " " + j +" " + k);
-                        //System.out.println(((i+dimension) % dimension) + " " +  ((j+dimension) % dimension) + " " +  ((k+dimension) % dimension));
-                        temp.localMutate((i+dimension) % dimension, (j+dimension) % dimension, (k+dimension) % dimension);
+                        temp.localMutate((i+dimension) % dimension, (j+dimension) % dimension);
                         temp.setCost(calculateAntCost(temp.getTrailOfAnt()));
-                        //System.out.println(temp.getCost() / 1000);
                         if ( temp.getCost() < bestInGeneration){
-                            bestAnt = temp;
+                            copyFromTo(temp, bestAnt);
                             bestInGeneration = temp.getCost();
                             System.out.println("Swapping " + temp.getTrailOfAnt()[(i+dimension) % dimension] + " with "
-                                    + temp.getTrailOfAnt()[(j+dimension) % dimension] + " and with "
-                                    + temp.getTrailOfAnt()[(k+dimension) % dimension]);
+                                    + temp.getTrailOfAnt()[(j+dimension) % dimension]);
 
                         }
                     }
-                }
             }
-
-            System.out.println("step " + step + "resat to " + temp.getCost() / 1000);
-            System.out.println("step " + step + " best ant to " + bestAnt.getCost() / 1000);
+            copyFromTo(bestAnt, temp);
+            System.out.println(bestAnt.getCost() + " best last");
+            System.out.println(temp.getCost() + " temp last");
             step++;
         }
 
@@ -289,7 +282,16 @@ public class ACO extends Algorithm{
 
     //FUCK POINTERE lol
     public void copyFromTo(Ant from, Ant to){
-
+        to.setTour(new int[dimension]);
+        to.setVisited(new boolean[dimension]);
+        to.setCost(0.0);
+        for(int i = 0; i < dimension; i++){
+            to.getTrailOfAnt()[i] = from.getTrailOfAnt()[i];
+            if (i < to.getVisited().length) {
+                to.getVisited()[i] = true;
+            }
+        }
+        to.setCost(from.getCost());
     }
 
 
