@@ -11,8 +11,8 @@ import java.util.Optional;
 
 public class RLS extends Algorithm {
 
-    public RLS(SearchSpace searchSpace, Problem problem, mainController mainController) {
-        super(searchSpace, problem, mainController);
+    public RLS(SearchSpace searchSpace, Problem problem) {
+        super(searchSpace, problem);
 
 
     }

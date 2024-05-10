@@ -16,6 +16,7 @@ import group.ea.structure.searchspace.BitString;
 import group.ea.structure.searchspace.SearchSpace;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,6 +29,8 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.chart.XYChart;
@@ -35,16 +38,15 @@ import javafx.scene.chart.XYChart;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class mainController implements Initializable {
+public class mainController implements Initializable, AlgorithmUpdateListener {
     private static AnimationTimer animationTimer;
-    final NumberAxis xAxis = new NumberAxis();
-    final NumberAxis yAxis = new NumberAxis();
+    public final NumberAxis xAxis = new NumberAxis();
+    public final NumberAxis yAxis = new NumberAxis();
     private final FileChooser fileChooser = new FileChooser();
     @FXML
     public FlowPane flowPane;
@@ -61,7 +63,6 @@ public class mainController implements Initializable {
     @FXML
     Slider sliderSpeed;
     LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
-    Algorithm algorithm;
     double duration = 1000;
     Label titleLabel;
     VBox container = new VBox(5);
@@ -87,16 +88,22 @@ public class mainController implements Initializable {
 
     TSPParser tp;
 
+    boolean animationDone = true;
+
     private Stage stage;
     private Scene scene;
     private Parent parent;
-    private String[] blueprintChoices = new String[6];
+    private HashMap<String, String> blueprintChoices = new HashMap<>();
     private int bitStringValue;
     private boolean hypercubeSelected;
     @FXML
-    private Button startButton;
+    private Button startButton,nextAlgorithm;
     private boolean isAnimationPaused = false;// Starts paused
    List<StoppingCriterion> stoppingCriteria;
+   public int skipIterations;
+   public boolean fullspeed = false;
+    private ArrayList<Schedule> schedules;
+    Schedule currentSchedule;
 
     public mainController() {
 
@@ -106,10 +113,17 @@ public class mainController implements Initializable {
             public void handle(long l) {
                 if (l - lastUpdate >= duration) { // Update every second
                     if (!isAnimationPaused) {
-                        algorithm.sliderController();
+                        sliderController();
                         lastUpdate = l;
                         double speed = sliderSpeed.getValue();
-                        duration = (TimeUnit.MILLISECONDS.toNanos(1000) * (1 - speed / sliderSpeed.getMax()));
+                        if(speed < (sliderSpeed.getMax()*0.5)) {
+                            duration = (TimeUnit.MILLISECONDS.toNanos(1000) * (1 - speed / sliderSpeed.getMax()));
+                            fullspeed = false;
+                        } else{
+                            duration = TimeUnit.MILLISECONDS.toNanos(0);
+                            fullspeed = true;
+                            skipIterations = (int) (speed - 500)/10;
+                        }
                     }
                 }
             }
@@ -154,146 +168,263 @@ public class mainController implements Initializable {
         root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/" + page + ".fxml")));
         mainBorderPane.setCenter(root);
     }
+    private ExecutorService executor = Executors.newFixedThreadPool(4); // Adjust based on needs
 
+    public void executeSchedules(List<Schedule> schedules) {
+        for (Schedule schedule : schedules) {
+            executor.submit(() -> {
+                schedule.setUpAlgorithm();
+                schedule.run();
+            });
+        }
+    }
     @FXML
-    private void startEvolution() {
+    private void startAllEvolutions(Schedule schedule) {
+
         if (!isAnimationPaused) {
             isRunning = true;
             solutionArea.clear();
             container.getChildren().clear();
             hypercubenPane.getChildren().clear();
             tspVisualization.getChildren().clear();
+            i=0;
 
-            //startAlgorithm();
-            //new Thread(this::runEvolution).start(); // Run EA in a separate thread
-            SearchSpace searchSpace = null;
-            switch (blueprintChoices[0]) {
-                case "Bit strings":
-                    bitStringValue = Integer.parseInt(blueprintChoices[5]);
-                    System.out.println("bitStringValue: " + bitStringValue);
-                    searchSpace = new BitString(bitStringValue);
-                    break;
-                case "Permutation":
-                    searchSpace = new TSPParser("src/main/java/group/ea/controllers/berlin52.txt");
-                    break;
-            }
+            timesRun++;
+            //currentSchedule.setUpAlgorithm();
+            prepareUIBeforeAlgorithmRuns(schedule);
 
-            Problem problem = null;
-            switch (blueprintChoices[1]) {
-                case "OneMax":
-                    problem = new OneMax(searchSpace);
-                    break;
-                case "LeadingOnes":
-                    problem = new LeadingOnes(searchSpace);
-                    break;
-                case "TSP":
-                    assert searchSpace instanceof TSPParser;
-                    problem = new Solution((TSPParser) searchSpace);
-            }
 
-            switch (blueprintChoices[2]) {
-                case "RLS":
-                    algorithm = new RLS(searchSpace, problem, this);
-                    break;
-                case "Simulated Annealing":
-                    algorithm = new SA(searchSpace, problem, this);
-                    break;
-                case "(1+1) EA":
-                    algorithm = new onePlusOneEA(searchSpace, problem, this);
-                    break;
-                case "TEMP":
-                    algorithm = new PermutationSA(searchSpace, problem, this);
-                    break;
-                case "Ant System":
-                    algorithm = new ACO(searchSpace, problem, this);
-                    break;
-                default:
-                    algorithm = null;
-                    break;
-            }
-
-            if (algorithm != null) {
-                for (StoppingCriterion criterion : stoppingCriteria) {
-                    algorithm.addStoppingCriterion(criterion);
+            Task<Void> runAlgorithmTask = new Task<>() {
+                @Override
+                protected Void call() {
+                    schedule.run();  // This is where the algorithm runs on a background thread
+                    return null;
                 }
-                timesRun++;
-                if (graphSelector.isSelected()) {
-                    initializeChart();
-                    if (!flowPane.getChildren().contains(lineChart)) {
-                        flowPane.getChildren().add(lineChart);
-                    }
-                }
+            };
+            Algorithm algorithm = currentSchedule.getAlgorithm();
 
-                // if you want to add each run to a new text area
-            /*
-            if (textSelector.isSelected()) {
-                solutionArea = new TextArea();
-                Label titleLabel = new Label("Run number: "+ (i));
-                VBox container = new VBox(5);
-                container.getChildren().addAll(titleLabel, solutionArea);
-                //Optionally, style your label to make it look more like a title
-                titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
 
-                    flowPane.getChildren().add(container);
+            runAlgorithmTask.setOnSucceeded(event -> Platform.runLater(() -> updateUIPostAlgorithm(currentSchedule)));
+            runAlgorithmTask.setOnFailed(event -> Platform.runLater(() -> showError(runAlgorithmTask.getException())));
 
-            }
-             */
-                if (textSelector.isSelected()) {
-                    titleLabel = new Label("Run number: " + (timesRun));
-                    container.getChildren().addAll(titleLabel, solutionArea);
-                    //Optionally, style your label to make it look more like a title
-                    titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-                    if (!flowPane.getChildren().contains(container)) {
-                        flowPane.getChildren().add(container);
-                    }
-                }
-                if (hypercubeCheck.isSelected()) {
-                    if (!flowPane.getChildren().contains(hypercubenPane)) {
-                        flowPane.getChildren().add(hypercubenPane);
-                    }
-                    booleanHypercubeVisualization = new BooleanHypercubeVisualization(searchSpace, problem, this, hypercubenPane);
-                }
-                if(showTSPgraph.isSelected()){
-                    System.out.println("is selected");
-                    if (!flowPane.getChildren().contains(tspVisualization))
-                    {
-                        tspVisualization.setPrefSize(600, 400);
-                        tspVisualization.setMinSize(600, 400);
-                        tspVisualization.setMaxSize(600, 400);
-                        tspVisualization.setBorder(new Border(new BorderStroke(Color.BLACK,
-                                BorderStrokeStyle.SOLID,
-                                CornerRadii.EMPTY,
-                                new BorderWidths(2))));
-                        flowPane.getChildren().add(tspVisualization);
-                    }
+            new Thread(runAlgorithmTask).start();  // Start the task on a new thread
 
-                }
-
-                startAlgorithm();
-                algorithm.runAlgorithm();
-            }
         } else {
             isAnimationPaused = false;
         }
-        //new Thread(() -> algorithm.runAlgorithm()).start();
-        // Running the algorithm
-        // onePlusOneEA.runAlgorithm();
-        //new Thread(this::runEvolution).start();
     }
 
+
+
+
+
+    public void prepareUIBeforeAlgorithmRuns(Schedule s) {
+        // Apply UI changes that need to occur before the algorithm runs
+
+        if(s.getTSP()){
+            showTSPgraph.setVisible(true);
+        } else {
+            showTSPgraph.setVisible(false);
+        }
+
+        searchspaceLabel.setText(s.getSearchSpaceString());
+        searchspaceLabel.setStyle("-fx-font-size: 10px;");
+        problemLabel.setText(s.getProblemString());
+        problemLabel.setStyle("-fx-font-size: 10px;");
+        algorithmLabel.setText(s.getAlgorithmString());
+        algorithmLabel.setStyle("-fx-font-size: 10px;");
+        criteriasLabel.setText(s.getCriterias());
+        criteriasLabel.setStyle("-fx-font-size: 10px;");
+
+        if (graphSelector.isSelected()) {
+            initializeChart();
+            if (!flowPane.getChildren().contains(lineChart)) {
+                flowPane.getChildren().add(lineChart);
+            }
+        }
+
+        if (textSelector.isSelected()) {
+            titleLabel = new Label("Run number: " + (timesRun));
+            container.getChildren().addAll(titleLabel, solutionArea);
+            titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+            if (!flowPane.getChildren().contains(container)) {
+                flowPane.getChildren().add(container);
+            }
+        }
+
+        if (hypercubeCheck.isSelected()) {
+            if (!flowPane.getChildren().contains(hypercubenPane)) {
+                flowPane.getChildren().add(hypercubenPane);
+            }
+            booleanHypercubeVisualization = new BooleanHypercubeVisualization(s.getSearchSpace(), s.getProblem(), this, hypercubenPane);
+        }
+
+        if (showTSPgraph.isSelected()) {
+            if (!flowPane.getChildren().contains(tspVisualization)) {
+                tspVisualization.setPrefSize(600, 400);
+                tspVisualization.setMinSize(600, 400);
+                tspVisualization.setMaxSize(600, 400);
+                tspVisualization.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
+                flowPane.getChildren().add(tspVisualization);
+            }
+        }
+    }
+    int runNr;
+    @FXML
+    public void nextAlgorithm() {
+        runNr++;
+                System.out.println("Current schedule changed");
+                if(runNr < queueSchedule.size()) {
+
+                    currentSchedule = queueSchedule.get(runNr);
+                    System.out.println(currentSchedule);
+                    System.out.println(queueSchedule.toString());
+                    startAllEvolutions(currentSchedule);
+                } else {
+                    nextAlgorithm.setDisable(true);
+                    runNr = 0;
+                    System.out.println("All schedules done");
+                }
+    }
+
+    @FXML
+    private void startEvolution() {
+        startAllEvolutions(currentSchedule);
+        if(queueSchedule.size() > 1) {
+            nextAlgorithm.setDisable(false);
+        }
+
+       // executeSchedules(queueSchedule);
+    }
+
+    private void updateUIPostAlgorithm(Schedule schedule) {
+        startAlgorithm();
+        System.out.println("running");
+
+
+        // Handle UI updates after algorithm completion
+        // Possibly displaying results, stopping animations, etc.
+    }
+
+    public void sliderController() {
+        Algorithm algorithm = currentSchedule.getAlgorithm();
+
+        if(i < algorithm.finalList.size()) {
+            Data data = algorithm.finalList.get(i);
+            if(data.getImproved()) {
+                if(fullspeed){
+                    int skips = skipIterations;
+                    if(i+skips < algorithm.finalList.size()) {
+                        i += skipIterations;
+                    }
+                }
+                runGraphics(algorithm,i);
+                i++;
+            } else {
+                while (!data.getImproved() && i < algorithm.finalList.size()-1) {
+                    i++;
+                    data = algorithm.finalList.get(i);
+                }
+            }
+        } else {
+            System.out.println("stopped graphics");
+            System.out.println(i + "i er " + algorithm.finalList.size());
+            animationDone = true;
+            System.out.println(runNr + " " + queueSchedule.size());
+            if(runNr >= queueSchedule.size()-1) {
+                System.out.println("All schedules done");
+                nextAlgorithm.setDisable(true);
+                runNr = 0;
+            }
+            stopGraphics();
+        }
+
+    }
+    Circle lastCircle = null;
+    public void runGraphics(Algorithm a, int i) {
+        int generation = 0;
+        String bitString = null;
+        Data data = a.finalList.get(i);
+
+        bitString = data.getBitString();
+        generation = data.getGeneration();
+        System.out.println("Generation: " + generation + "i er "+i);
+        int fitness = data.getFitness();
+        Optional<Double> temp = data.getTemp();
+        double max = a.finalList.size()-1;
+        generationSlider.setMax(max);
+        generationSlider.setBlockIncrement(10);
+        generationSlider.setMajorTickUnit(50);
+        generationSlider.setSnapToTicks(true);
+        generationSlider.adjustValue(i);
+
+            if (isHypercubeSelected()) {
+                Circle circle = booleanHypercubeVisualization.getDisplayCoordinates(bitString, false);
+                if (circle != null) {
+                    if (lastCircle != null) {
+                        booleanHypercubeVisualization.hypercubePane.getChildren().remove(lastCircle);
+                    }
+                    if (i + 1 == a.finalList.size()) {
+                        Circle perfectCircle = booleanHypercubeVisualization.getDisplayCoordinates(bitString, true);
+                        booleanHypercubeVisualization.hypercubePane.getChildren().add(perfectCircle);
+                    } else {
+                        lastCircle = circle;
+                        booleanHypercubeVisualization.hypercubePane.getChildren().add(circle);
+                    }
+                }
+            }
+
+            if (isTextSelected()) {
+                if (i == 0) {
+                    String initialText;
+                    if (temp.isPresent()) {
+                        initialText = ("Initial Solution: " + bitString + " with fitness: " + fitness + " temperature is " + temp + "\n");
+                    } else {
+                        initialText = ("Initial Solution: " + bitString + " with fitness: " + fitness + "\n");
+                    }
+                    solutionArea.appendText(initialText);
+                } else {
+
+
+                    String solutionText;
+                    if (temp.isPresent()) {
+                        solutionText = "Generation " + generation + ": New SA found: " + bitString + " with fitness: " + fitness + " temperature is " + temp + "\n";
+                    } else {
+                        solutionText = "Generation " + generation + ": New solution found: " + bitString + " with fitness: " + fitness + "\n";
+                    }
+                    solutionArea.appendText(solutionText);
+                }
+            }
+            if (isGraphSelected()) {
+                series.getData().add(new XYChart.Data<>(generation, fitness));
+            }
+
+            if (i == a.finalList.size() - 1) {
+                String finalText = "Perfect solution found in generation " + generation + "\n";
+                solutionArea.appendText(finalText);
+            }
+        }
+
+
+
+    private void showError(Throwable th) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, "Error running algorithm: " + th.getMessage(), ButtonType.OK);
+        alert.showAndWait();
+    }
+    int chartNr;
     public void initializeChart() {
         xAxis.setLabel("Generation");
         yAxis.setLabel("Fitness");
         lineChart.setTitle("Fitness Chart");
-
         lineChart.setAnimated(true);
         xAxis.setAnimated(true);
         yAxis.setAnimated(true);
         System.out.println("height + " + lineChart.getHeight() + "width " + lineChart.getWidth());
         series = new XYChart.Series<>();
-        series.setName("Run number " + (i + 1));
+        series.setName("Run number " + (chartNr + 1));
         lineChart.getData().add(series);
-        i++;
+        chartNr++;
+
     }
 
     @FXML
@@ -333,22 +464,35 @@ public class mainController implements Initializable {
     public boolean isHypercubeSelected() {
         return hypercubeSelected;
     }
+    ArrayList<Schedule> queueSchedule = new ArrayList<>();
 
-    public void recieveArray(String[] blueprintChoices) {
-        this.blueprintChoices = blueprintChoices;
-        stoppingCriteria = new ArrayList<>();
-        if (blueprintChoices[3].equals("Optimum reached")) {
-            stoppingCriteria.add(new OptimumReached());
-        } else if (blueprintChoices[3].equals("Iteration bound")) {
-            stoppingCriteria.add(new MaxGenerationsCriterion(Integer.parseInt(blueprintChoices[4])));
-        } else if (blueprintChoices[3].equals("Fitness bound")){
-            stoppingCriteria.add(new MaxFitnessCriterion(Integer.parseInt(blueprintChoices[4])));
+    public void recieveArray(ArrayList<Schedule> schedules) {
+        this.schedules = schedules;
+        currentSchedule = schedules.get(0);
+        Schedule s = currentSchedule;
+        queueSchedule.clear();
+        if(s.getTSP()){
+            showTSPgraph.setVisible(true);
+        } else {
+            showTSPgraph.setVisible(false);
         }
 
-        searchspaceLabel.setText(blueprintChoices[0]);
-        problemLabel.setText(blueprintChoices[1]);
-        algorithmLabel.setText(blueprintChoices[2]);
-        criteriasLabel.setText(blueprintChoices[3]);
+        searchspaceLabel.setText(s.getSearchSpaceString());
+        searchspaceLabel.setStyle("-fx-font-size: 10px;");
+        problemLabel.setText(s.getProblemString());
+        problemLabel.setStyle("-fx-font-size: 10px;");
+        algorithmLabel.setText(s.getAlgorithmString());
+        algorithmLabel.setStyle("-fx-font-size: 10px;");
+        criteriasLabel.setText(s.getCriterias());
+        criteriasLabel.setStyle("-fx-font-size: 10px;");
+        for (int j = 0; j < schedules.size(); j++) {
+            Schedule newSchedule = schedules.get(j);
+            for (int k = 0; k < newSchedule.getRuns(); k++) {
+            queueSchedule.add(newSchedule);
+            newSchedule.getAlgorithm().sendListener(this);
+            }
+        }
+
     }
 
     public void stopEvolution() {
@@ -356,7 +500,7 @@ public class mainController implements Initializable {
     }
 
     public void updateCanvas() {
-        algorithm.updateGraphics();
+        //algorithm.updateGraphics();
     }
 
     private void updateUIComponents() {
@@ -375,11 +519,11 @@ public class mainController implements Initializable {
 
     @FXML
     private void continueSlider() {
-        int i = algorithm.i;
         int newI = (int) generationSlider.getValue();
-        algorithm.clearAndContinue(i, newI);
+        currentSchedule.getAlgorithm().clearAndContinue(i, newI);
         isAnimationPaused = false;
     }
+
 
     public void stopGraphics() {
         //wait 5 sec
@@ -390,13 +534,40 @@ public class mainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        blueprintChoices[0] = "Bit strings";
-        blueprintChoices[1] = "OneMax";
-        blueprintChoices[2] = "RLS";
-        blueprintChoices[3] = "Optimum reached";
-        blueprintChoices[4] = "0.1";
-        blueprintChoices[5] = "100";
-        recieveArray(blueprintChoices);
+        Schedule schedule = new Schedule();
+        schedule.setRuns(1);
+        schedule.setOptimumReached(true);
+        schedule.setSearchSpaceString("Bit strings");
+        schedule.setProblemString("OneMax");
+        schedule.setAlgorithmString("RLS");
+        schedule.setDimension(100);
+
+        Schedule schedule2 = new Schedule();
+        schedule2.setRuns(1);
+        schedule2.setOptimumReached(true);
+        schedule2.setSearchSpaceString("Bit strings");
+        schedule2.setProblemString("OneMax");
+        schedule2.setAlgorithmString("(1+1) EA");
+        schedule2.setDimension(100);
+
+        Schedule schedule3 = new Schedule();
+        schedule3.setRuns(1);
+        schedule3.setOptimumReached(true);
+        schedule3.setSearchSpaceString("Bit strings");
+        schedule3.setProblemString("LeadingOnes");
+        schedule3.setAlgorithmString("RLS");
+        schedule3.setDimension(100);
+
+
+
+        queueSchedule.add(schedule);
+        queueSchedule.add(schedule2);
+        queueSchedule.add(schedule3);
+        currentSchedule = schedule;
+        nextAlgorithm.setDisable(true);
+        showTSPgraph.setVisible(false);
+        //recieveArray(queueSchedule);
+        //prepareUIBeforeAlgorithmRuns(new BitString(5000), new OneMax(new BitString(5000)));
 
 
     }
@@ -408,4 +579,32 @@ public class mainController implements Initializable {
     public boolean isGraphSelected() {
         return graphSelector.isSelected();
     }
+    @Override
+    public void tspGraphics(Solution _sl){
+        Platform.runLater(() -> {
+        tspVisualization.getChildren().clear();
+        int maxY = 1200; // Replace with the actual maximum Y value of your canvas
+        if (i == 0 && showTSPgraph.isSelected()) {
+            int prevX = 0;
+            int prevY = 0;
+            for (int j = 0; j < _sl.getListLength();j++) {
+                System.out.println("i er " + j + " og listlength er " + _sl.getListLength());
+                int x = _sl.getXSolution(j);
+                int y = maxY - _sl.getYSolution(j); // Subtract the y-coordinate from maxY to mirror it
+                Circle circle = new Circle(x/4, y/4, 3);
+                circle.setFill(Color.RED);
+                tspVisualization.getChildren().add(circle);
+                if (j > 0) { // Draw line from the previous point to the current point
+                    Line line = new Line(prevX / 4.0, prevY / 4.0, x / 4.0, y / 4.0);
+                    line.setStroke(Color.BLUE);
+                    tspVisualization.getChildren().add(line);
+                }
+                prevX = x;
+                prevY = y;
+                System.out.println(x + " x og er y" + y);
+            }
+        }
+        });
+    }
+
 }
