@@ -86,4 +86,7 @@ public class TSPParser extends SearchSpace {
     public String init() {
         return null;
     }
+    public int getDimension(){
+        return dimension;
+    }
 }

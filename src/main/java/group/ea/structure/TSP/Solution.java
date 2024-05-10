@@ -84,10 +84,19 @@ public class Solution extends Problem {
     public void printSolution(){
 
         for( City c : solution){
-            System.out.println(c.getId());
+            System.out.print(c.getId());
+            System.out.println("x " + c.getX() + " y "+  c.getY());
+
         }
     }
 
+    public double distanceBetweenIndex(int start, int end){
+        return solution.get(start).distanceToCity(solution.get(end));
+    }
+
+    public int getDimension(){
+        return _tsp.getDimension();
+    }
 
 
 

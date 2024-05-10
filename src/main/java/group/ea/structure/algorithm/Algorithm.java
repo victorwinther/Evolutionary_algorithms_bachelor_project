@@ -62,6 +62,12 @@ public abstract class Algorithm {
     public abstract void initialize();
 
     public void runAlgorithm() {
+        for(int i = 0; i < 5001; i++){
+            performSingleUpdate(i);
+            if(stoppingMet)
+                break;
+        }
+
         while (!checkStoppingCriteria()) {
             performSingleUpdate(generation);
             generation++;

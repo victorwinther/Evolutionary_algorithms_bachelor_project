@@ -93,7 +93,7 @@ public class blueprintController implements Initializable {
         //choiceBox.getItems().addAll(stopping);
         searchspaceSelector.setValue("Permutation");
         problemSelector.setValue("TSP");
-        algorithmSelector.setValue("TEMP");
+        algorithmSelector.setValue("Ant System");
         stoppingcriteriaSelector.setValue("Optimum reached");
 
 

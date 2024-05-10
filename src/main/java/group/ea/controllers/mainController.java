@@ -204,6 +204,9 @@ public class mainController implements Initializable {
                 case "TEMP":
                     algorithm = new PermutationSA(searchSpace, problem, this);
                     break;
+                case "Ant System":
+                    algorithm = new ACO(searchSpace, problem, this);
+                    break;
                 default:
                     algorithm = null;
                     break;
