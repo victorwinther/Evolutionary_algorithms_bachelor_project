@@ -1,5 +1,6 @@
 package group.ea;
 
+import group.ea.controllers.Schedule;
 import group.ea.structure.algorithm.Algorithm;
 import group.ea.structure.algorithm.RLS;
 import group.ea.structure.problem.OneMax;
@@ -15,7 +16,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 // make a forloop
 
@@ -44,10 +48,69 @@ public class main extends Application {
     }
 
     public static void main(String[] args) {
+        //runExperiment();
+        runSingle();
+        //launch(args);
 
-        launch(args);
     }
-}
+    public static void runSingle(){
+        int totalFitness = 0;
+        for(int i = 0; i < 200; i++) {
+            Schedule newSchedule = new Schedule();
+            newSchedule.setSearchSpaceString("Permutations");
+            newSchedule.setProblemString("TSP");
+            newSchedule.setAlgorithmString("Permutation1+1EA");
+            newSchedule.setIterationBound(10000);
+            newSchedule.setUpAlgorithm();
+            newSchedule.getAlgorithm().runAlgorithm();
+            totalFitness = totalFitness + newSchedule.getAlgorithm().getGeneration();
+
+
+        }
+        System.out.println("Average fitness: " + totalFitness/200);
+    }
+    public static void runExperiment(){
+        int[] bitStringLengths = {10, 20, 50, 100, 200, 500, 1000,2000}; // Example lengths
+        int runsPerObservation = 200;
+
+        List<DataPoint> dataPoints = new ArrayList<>();
+
+        for (int length : bitStringLengths) {
+            int totalIterations = 0;
+
+            for (int run = 0; run < runsPerObservation; run++) {
+                Schedule newSchedule = new Schedule();
+                newSchedule.setSearchSpaceString("Permutations");
+                newSchedule.setProblemString("TSP");
+                newSchedule.setAlgorithmString("Permutation1+1EA");
+                newSchedule.setIterationBound(10000000);
+                newSchedule.setUpAlgorithm();
+                newSchedule.getAlgorithm().runAlgorithm();
+                int iterations = newSchedule.getAlgorithm().getGeneration();
+                totalIterations = totalIterations + iterations;
+            }
+            dataPoints.add(new DataPoint(length, totalIterations/runsPerObservation));
+
+        }
+        System.out.println("Experiment done");
+        saveDataToCSV("onemax_experiment.csv", dataPoints);
+    }
+    public static void saveDataToCSV(String filename, List<DataPoint> dataPoints) {
+        try (FileWriter writer = new FileWriter(filename)) {
+            writer.append("BitStringLength,Iterations\n");
+            for (DataPoint dataPoint : dataPoints) {
+                writer.append(dataPoint.getBitStringLength()).append(",")
+                        .append(dataPoint.getIterations()).append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    }
+
+
+
+
 
 /*
 FXMLLoader fxmlLoader = new FXMLLoader(main.class.getResource("fxml/home.fxml"));

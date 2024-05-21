@@ -55,7 +55,6 @@ public abstract class Algorithm {
     protected boolean checkStoppingCriteria() {
         for (StoppingCriterion criterion : stoppingCriteria) {
             if (criterion.isMet(this)) {
-                System.out.println(criterion.getClass().getName() + "Stopping criterion met: " + criterion.getClass().getName() + "Generations" + generation + "done");
                 return true;
             }
         }
@@ -67,15 +66,18 @@ public abstract class Algorithm {
     public abstract void initialize();
 
     public void runAlgorithm() {
-        while (!checkStoppingCriteria()) {
-            System.out.println(currentTemp);
+        while (!checkStoppingCriteria() && !(bestFitness == 7544) ) {
             performSingleUpdate(generation);
             generation++;
-        }
-        stoppingMet = true;
-        finalList.get(finalList.size()-1).setYesNo(true);
+            if (generation % 500000 == 0) {
+                // Assuming you have a method to get the best fitness
+                System.out.println("Generation " + generation + ": Best Fitness = " + bestFitness);
+            }
 
-        System.out.println("Problem" + problem.name + "Stopping criterion met: "  + "Generations"+ generation + "done");
+        }
+        System.out.println("Best fitness " + bestFitness + "generation" + generation);
+        stoppingMet = true;
+        //finalList.get(finalList.size()-1).setYesNo(true);
     }
 
     public void clearAndContinue(int i, int newI) {
