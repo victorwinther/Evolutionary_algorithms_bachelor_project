@@ -137,3 +137,7 @@
 .table-cell {
     -fx-alignment: CENTER;
 }
+.chart-line-symbol {
+    -fx-background-radius: 3px; /* Makes the point round */
+    -fx-padding: 1px; /* Adjust padding to make point smaller */
+}

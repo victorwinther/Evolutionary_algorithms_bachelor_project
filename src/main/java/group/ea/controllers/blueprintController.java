@@ -515,6 +515,7 @@ public class blueprintController implements Initializable {
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 
         Platform.runLater(root::requestFocus);
+        scene.getStylesheets().add("chart-styles.css");
         stage.setScene(scene);
         stage.show();}
 

@@ -38,6 +38,9 @@ public abstract class Algorithm {
     private boolean hyperDone = true;
     private List<StoppingCriterion> stoppingCriteria = new ArrayList<>();
 
+    protected double currentTemp = 10000;
+
+    protected AlgorithmUpdateListener listener;
     public Algorithm(SearchSpace searchSpace, Problem problem) {
         this.searchSpace = searchSpace;
         bitLength = searchSpace.length;
@@ -63,12 +66,20 @@ public abstract class Algorithm {
     public abstract void initialize();
 
     public void runAlgorithm() {
-        while (!checkStoppingCriteria()) {
-            performSingleUpdate(generation);
+        while (!checkStoppingCriteria() && !(Solution.getGeneration() > 100000000) && (bestFitness != 7544)) {
             generation++;
+            performSingleUpdate(generation);
+            if (generation % 500000 == 0) {
+                // Assuming you have a method to get the best fitness
+
+            }
+
+
         }
+        //System.out.println("Generation " + generation + ": Best Fitness = " + bestFitness + "total generation sl" + Solution.getGeneration());
+        Solution.setGeneration(0);
         stoppingMet = true;
-        System.out.println("Problem" + problem.name + "Stopping criterion met: "  + "Generations"+ generation + "done");
+        //finalList.get(finalList.size()-1).setYesNo(true);
     }
 
     public void clearAndContinue(int i, int newI) {
@@ -84,5 +95,16 @@ public abstract class Algorithm {
 
     public int getGeneration() {
         return generation;
+    }
+
+    public int getCurrentTemp() {
+        return (int) currentTemp;
+    }
+    public Solution get_sl() {
+        return _sl;
+    }
+
+    public void sendListener(mainController mainController) {
+        this.listener = mainController;
     }
 }

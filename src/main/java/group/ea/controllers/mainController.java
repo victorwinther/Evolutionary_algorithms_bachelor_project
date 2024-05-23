@@ -30,6 +30,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.chart.XYChart;
@@ -42,7 +43,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class mainController implements Initializable {
+public class mainController implements Initializable, AlgorithmUpdateListener {
     private static AnimationTimer animationTimer;
     public final NumberAxis xAxis = new NumberAxis();
     public final NumberAxis yAxis = new NumberAxis();
@@ -57,8 +58,13 @@ public class mainController implements Initializable {
     public Pane hypercubenPane = new Pane();
 
     public Pane tspVisualization = new Pane();
+
     @FXML
     public TextArea solutionArea = new TextArea();
+    @FXML
+    private GridPane batchInfo;
+    @FXML
+    private GridPane statsBatch;
     @FXML
     Slider sliderSpeed;
     LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
@@ -75,7 +81,7 @@ public class mainController implements Initializable {
     @FXML
     private ChoiceBox<Integer> stringLength;
     @FXML
-    private CheckBox graphSelector;
+    private CheckBox graphSelector,graphicsToggle;
     @FXML
     private CheckBox textSelector;
     @FXML
@@ -103,6 +109,12 @@ public class mainController implements Initializable {
    public boolean fullspeed = false;
     private ArrayList<Schedule> schedules;
     Schedule currentSchedule;
+    int maxIterationsLabel = 0;
+    private Label batchNumberLabel = new Label();
+    private Label timesRunLabel = new Label();
+    private Label dimensionLabel = new Label();
+    private Label maxIterationsLabels = new Label();
+    private Label averageIterationsLabel = new Label();
 
     public mainController() {
 
@@ -202,7 +214,7 @@ public class mainController implements Initializable {
             };
             Algorithm algorithm = currentSchedule.getAlgorithm();
 
-
+            runAlgorithmTask.setOnSucceeded(event -> Platform.runLater(() -> updateStatistics(currentSchedule)));
             runAlgorithmTask.setOnSucceeded(event -> Platform.runLater(() -> updateUIPostAlgorithm(currentSchedule)));
             runAlgorithmTask.setOnFailed(event -> Platform.runLater(() -> showError(runAlgorithmTask.getException())));
 
@@ -212,10 +224,11 @@ public class mainController implements Initializable {
             isAnimationPaused = false;
         }
     }
+    private void updateStatistics(Schedule schedule){
+        schedule.setFinishedIterations(schedule.getAlgorithm().getGeneration());
 
-
-
-
+        // Update statistics here
+    }
 
     public void prepareUIBeforeAlgorithmRuns(Schedule s) {
         // Apply UI changes that need to occur before the algorithm runs
@@ -297,17 +310,19 @@ public class mainController implements Initializable {
     }
 
     private void updateUIPostAlgorithm(Schedule schedule) {
-        startAlgorithm();
-        System.out.println("running");
-
-
+        if(!graphicsToggle.isSelected()) {
+            startAlgorithm();
+            System.out.println("running");
+        } else {
+            updateUIStats();
+        }
+        
         // Handle UI updates after algorithm completion
         // Possibly displaying results, stopping animations, etc.
     }
 
     public void sliderController() {
         Algorithm algorithm = currentSchedule.getAlgorithm();
-
 
         if(i < algorithm.finalList.size()) {
             Data data = algorithm.finalList.get(i);
@@ -321,12 +336,13 @@ public class mainController implements Initializable {
                 runGraphics(algorithm,i);
                 i++;
             } else {
-                while (!data.getImproved() && i < algorithm.finalList.size()) {
+                while (!data.getImproved() && i < algorithm.finalList.size()-1) {
                     i++;
                     data = algorithm.finalList.get(i);
                 }
             }
         } else {
+            updateUIStats();
             System.out.println("stopped graphics");
             System.out.println(i + "i er " + algorithm.finalList.size());
             animationDone = true;
@@ -338,6 +354,25 @@ public class mainController implements Initializable {
             }
             stopGraphics();
         }
+
+    }
+    int sum = 0;
+    private void updateUIStats() {
+
+        timesRunLabel.setText(""+timesRun);
+        dimensionLabel.setText(""+currentSchedule.getDimension());
+
+
+        int iter = currentSchedule.getAlgorithm().getGeneration();
+        sum += iter;
+        if(iter > maxIterationsLabel) {
+            maxIterationsLabel = iter;
+            maxIterationsLabels.setText(""+maxIterationsLabel);
+        }
+
+
+        averageIterationsLabel.setText(""+sum/timesRun);
+
 
     }
     Circle lastCircle = null;
@@ -424,7 +459,9 @@ public class mainController implements Initializable {
         series.setName("Run number " + (chartNr + 1));
         lineChart.getData().add(series);
         chartNr++;
+
     }
+
 
     @FXML
     private void graphListener(ActionEvent event) {
@@ -488,6 +525,7 @@ public class mainController implements Initializable {
             Schedule newSchedule = schedules.get(j);
             for (int k = 0; k < newSchedule.getRuns(); k++) {
             queueSchedule.add(newSchedule);
+            newSchedule.getAlgorithm().sendListener(this);
             }
         }
 
@@ -532,6 +570,21 @@ public class mainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // Initial configuration of labels
+        batchInfo.add(batchNumberLabel, 1, 0);
+        batchInfo.add(timesRunLabel, 1, 1);
+        batchInfo.add(dimensionLabel, 1, 2);
+        statsBatch.add(maxIterationsLabels, 1, 0);
+        statsBatch.add(averageIterationsLabel, 1, 1);
+        batchInfo.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 14;");
+        statsBatch.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 14;");
+        batchNumberLabel.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 14;");
+        timesRunLabel.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 14;");
+        dimensionLabel.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 14;");
+        maxIterationsLabels.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 14;");
+        averageIterationsLabel.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 14;");
+
+
         Schedule schedule = new Schedule();
         schedule.setRuns(1);
         schedule.setOptimumReached(true);
@@ -558,6 +611,7 @@ public class mainController implements Initializable {
 
 
 
+
         queueSchedule.add(schedule);
         queueSchedule.add(schedule2);
         queueSchedule.add(schedule3);
@@ -577,4 +631,36 @@ public class mainController implements Initializable {
     public boolean isGraphSelected() {
         return graphSelector.isSelected();
     }
+    @Override
+    public void tspGraphics(Solution _sl){
+        Platform.runLater(() -> {
+        tspVisualization.getChildren().clear();
+        int maxY = 1200; // Replace with the actual maximum Y value of your canvas
+        if (i == 0 && showTSPgraph.isSelected()) {
+            int prevX = 0;
+            int prevY = 0;
+            for (int j = 0; j < _sl.getListLength();j++) {
+                System.out.println("i er " + j + " og listlength er " + _sl.getListLength());
+                int x = _sl.getXSolution(j);
+                int y = maxY - _sl.getYSolution(j); // Subtract the y-coordinate from maxY to mirror it
+                Circle circle = new Circle(x/4, y/4, 3);
+                circle.setFill(Color.RED);
+                tspVisualization.getChildren().add(circle);
+                if (j > 0) { // Draw line from the previous point to the current point
+                    Line line = new Line(prevX / 4.0, prevY / 4.0, x / 4.0, y / 4.0);
+                    line.setStroke(Color.BLUE);
+                    tspVisualization.getChildren().add(line);
+                }
+
+                prevX = x;
+                prevY = y;
+                System.out.println(x + " x og er y" + y);
+            }
+            Line line = new Line(prevX / 4.0, prevY / 4.0, _sl.getXSolution(0) / 4.0, maxY- _sl.getYSolution(0) / 4.0);
+            line.setStroke(Color.BLUE);
+            tspVisualization.getChildren().add(line);
+        }
+        });
+    }
+
 }

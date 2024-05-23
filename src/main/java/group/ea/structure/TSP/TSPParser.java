@@ -18,7 +18,6 @@ public class TSPParser extends SearchSpace {
 
     public TSPParser(String filename) {
         super();
-        System.out.println("TSP init");
         this.filename = filename;
         clearData();
         onFileSelected();
