@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public class PermutationOnePlusOneEA extends Algorithm {
     double chance = 0.5;
+    int noImprovementCounter = 0; // Counter to track iterations without improvement
+    final int RESTART_THRESHOLD = 150000; // Threshold for restarting the algorithm
     public PermutationOnePlusOneEA(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
         _sl = (Solution) problem;
@@ -30,19 +32,50 @@ public class PermutationOnePlusOneEA extends Algorithm {
     public void performSingleUpdate(int generation) {
         // Save the current solution
         // randomly at uniform
-        if(Math.random() < chance){
+        boolean twoOpt = false;
+        double tempChance = Math.random();
+        if (tempChance < chance) {
+            //_sl.twoOptMutate2();
+            //_sl.ls3Opt();
             _sl.twoOptMutate();
+
         } else {
-            _sl.ls3Opt();
+            //_sl.ls3Opt();
+            _sl.random3Opt();
+            twoOpt = true;
+        }
+        if (_sl.getSolution().isEmpty()) {
+
+            System.err.println("Error: Solution is empty." + generation + " " + "twoOpt: " + twoOpt);
         }
         int offspringFitness = _sl.computeFitness();
-        if(offspringFitness < bestFitness){
+        if (offspringFitness < bestFitness) {
             bestFitness = offspringFitness;
-            Data data = new Data("bitString", generation, bestFitness, false,Optional.empty() );
+            Data data = new Data("bitString", generation, bestFitness, false, Optional.empty());
             finalList.add(data);
+            // Adaptively adjust mutation probability
+            /*
+            if (Math.random() < chance) {
+                chance = Math.min(chance + 0.1, 1.0); // Increase chance of 2-opt
+            } else {
+                chance = Math.max(chance - 0.1, 0.0); // Decrease chance of 2-opt
+            }
+
+             */
         } else {
+            noImprovementCounter++;
             _sl.revert();
         }
 
+
+        if (noImprovementCounter > RESTART_THRESHOLD) {
+            //System.out.println("Restarting the algorithm... in generation"+ generation + " with fitness: " + bestFitness );
+            _sl.restart(); // Reinitialize the solution
+            bestFitness = _sl.computeFitness();
+            noImprovementCounter = 0; // Reset counter
+        }
+
+        }
+
     }
-}
+

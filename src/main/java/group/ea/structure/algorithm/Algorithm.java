@@ -66,16 +66,18 @@ public abstract class Algorithm {
     public abstract void initialize();
 
     public void runAlgorithm() {
-        while (!checkStoppingCriteria() && !(bestFitness == 7544) ) {
-            performSingleUpdate(generation);
+        while (!checkStoppingCriteria() && !(Solution.getGeneration() > 100000000) && (bestFitness != 7544)) {
             generation++;
+            performSingleUpdate(generation);
             if (generation % 500000 == 0) {
                 // Assuming you have a method to get the best fitness
-                System.out.println("Generation " + generation + ": Best Fitness = " + bestFitness);
+
             }
 
+
         }
-        System.out.println("Best fitness " + bestFitness + "generation" + generation);
+        //System.out.println("Generation " + generation + ": Best Fitness = " + bestFitness + "total generation sl" + Solution.getGeneration());
+        Solution.setGeneration(0);
         stoppingMet = true;
         //finalList.get(finalList.size()-1).setYesNo(true);
     }
