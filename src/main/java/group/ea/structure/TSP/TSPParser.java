@@ -18,7 +18,6 @@ public class TSPParser extends SearchSpace {
 
     public TSPParser(String filename) {
         super();
-        System.out.println("TSP init");
         this.filename = filename;
         clearData();
         onFileSelected();
@@ -85,5 +84,8 @@ public class TSPParser extends SearchSpace {
     @Override
     public String init() {
         return null;
+    }
+    public int getDimension(){
+        return dimension;
     }
 }

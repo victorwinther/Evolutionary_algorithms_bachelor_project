@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
@@ -16,6 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="735.0" prefWidth="1071.0" style="-fx-background-color: #353941;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.mainController">
    <left>
@@ -26,7 +26,7 @@
          <children>
             <ScrollPane layoutX="-22.0" layoutY="16.0" prefHeight="590.0" prefWidth="288.0" style="-fx-background-color: #353941;" stylesheets="@../../../css/styling.css" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="7.0">
                <content>
-                  <VBox fx:id="generalSettings" alignment="TOP_CENTER" prefHeight="665.0" prefWidth="340.0" style="-fx-background-color: #26282B;">
+                  <VBox fx:id="generalSettings" alignment="TOP_CENTER" prefHeight="589.0" prefWidth="197.0" style="-fx-background-color: #26282B;">
                      <children>
                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="63.0" prefWidth="189.0" spacing="10.0">
                            <children>
@@ -41,7 +41,7 @@
                            <VBox.margin>
                               <Insets left="10.0" />
                            </VBox.margin></Label>
-                        <Separator opacity="0.5" prefWidth="200.0">
+                        <Separator opacity="0.5" prefWidth="294.0">
                            <padding>
                               <Insets left="5.0" right="20.0" />
                            </padding>
@@ -49,10 +49,10 @@
                               <Insets bottom="5.0" />
                            </VBox.margin>
                         </Separator>
-                        <GridPane fx:id="gridGeneralSettings" prefHeight="100.0" prefWidth="189.0">
+                        <GridPane fx:id="gridGeneralSettings" prefHeight="93.0" prefWidth="187.0">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="118.1370620727539" minWidth="10.0" prefWidth="118.1370620727539" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="90.80224609375" minWidth="10.0" prefWidth="70.8629379272461" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="118.1370620727539" minWidth="10.0" prefWidth="79.5" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="110.0" minWidth="10.0" prefWidth="108.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -62,11 +62,26 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Searchspace:" textFill="WHITE" />
-                              <Label text="Problem:" textFill="#fffdfd" GridPane.rowIndex="1" />
-                              <Label text="Algorithms:" textFill="WHITE" GridPane.rowIndex="2" />
-                              <Label text="Criterias:" textFill="#fffdfd" GridPane.rowIndex="3" />
-                              <Label text="Mutation operater:" textFill="WHITE" GridPane.rowIndex="4" />
+                              <Label text="Searchspace:" textFill="WHITE">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font></Label>
+                              <Label text="Problem:" textFill="#fffdfd" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font></Label>
+                              <Label text="Algorithms:" textFill="WHITE" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font></Label>
+                              <Label text="Criterias:" textFill="#fffdfd" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font></Label>
+                              <Label text="Mutation operater:" textFill="WHITE" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font></Label>
                               <Label fx:id="searchspaceLabel" textFill="WHITE" GridPane.columnIndex="1" />
                               <Label fx:id="problemLabel" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Label fx:id="algorithmLabel" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
@@ -89,7 +104,7 @@
                               <Insets bottom="5.0" />
                            </VBox.margin>
                         </Separator>
-                        <GridPane prefHeight="50.0" prefWidth="189.0">
+                        <GridPane fx:id="batchInfo" prefHeight="50.0" prefWidth="189.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -100,9 +115,18 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Batch Number:" textFill="WHITE" />
-                              <Label text="Run number:" textFill="WHITE" GridPane.rowIndex="1" />
-                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="2" />
+                              <Label text="Batch Number:" textFill="WHITE">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font></Label>
+                              <Label text="Run number:" textFill="WHITE" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font></Label>
+                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font></Label>
                            </children>
                            <VBox.margin>
                               <Insets left="10.0" />
@@ -120,7 +144,7 @@
                               <Insets bottom="5.0" />
                            </VBox.margin>
                         </Separator>
-                        <GridPane prefWidth="189.0">
+                        <GridPane fx:id="statsBatch" prefWidth="189.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="126.0" minWidth="10.0" prefWidth="126.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="90.0" minWidth="10.0" prefWidth="63.0" />
@@ -167,23 +191,25 @@
    <bottom>
       <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0" BorderPane.alignment="CENTER">
          <children>
-            <CheckBox fx:id="hypercubeCheck" mnemonicParsing="false" onAction="#hypercubeListener" prefHeight="18.0" prefWidth="233.0" text="Boolean Hypercube" textFill="WHITE">
-               <HBox.margin>
-                  <Insets left="20.0" />
-               </HBox.margin>
-            </CheckBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="335.0" spacing="15.0">
+               <children>
+                  <Button fx:id="startButton" mnemonicParsing="false" onAction="#startEvolution" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="START" textFill="WHITE" />
+                  <Button fx:id="pauseButton" mnemonicParsing="false" onAction="#pauseGraphics" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="PAUSE" textFill="WHITE" />
+                  <Button mnemonicParsing="false" onAction="#stopEvolution" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="STOP" textFill="WHITE" />
+                  <Button fx:id="nextAlgorithm" mnemonicParsing="false" onAction="#nextAlgorithm" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="NEXT" textFill="WHITE" />
+               </children>
+            </HBox>
             <Separator opacity="0.5" orientation="VERTICAL" prefHeight="80.0" prefWidth="19.0">
                <HBox.margin>
                   <Insets bottom="10.0" top="10.0" />
                </HBox.margin>
             </Separator>
-            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="360.0" spacing="15.0">
+            <VBox spacing="10.0">
                <children>
-                  <Button fx:id="startButton" mnemonicParsing="false" onAction="#startEvolution" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="START" textFill="WHITE" />
-                  <Button fx:id="pauseButton" mnemonicParsing="false" onAction="#pauseGraphics" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="PAUSE" textFill="WHITE" />
-                  <Button mnemonicParsing="false" onAction="#stopEvolution" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="STOP" textFill="WHITE" />
-                  <GridPane prefHeight="100.0" prefWidth="96.0">
+                  <Label text="Display settings" textFill="#fffbfb" />
+                  <GridPane prefHeight="83.0" prefWidth="212.0">
                      <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.67095947265625" minWidth="10.0" prefWidth="155.34658813476562" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.67095947265625" minWidth="10.0" prefWidth="155.34658813476562" />
                      </columnConstraints>
                      <rowConstraints>
@@ -194,15 +220,12 @@
                      <children>
                         <CheckBox fx:id="graphSelector" mnemonicParsing="false" onAction="#graphListener" prefHeight="18.0" prefWidth="129.0" selected="true" text="Graph" textFill="WHITE" />
                         <CheckBox fx:id="textSelector" mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" text="Bitstrings" textFill="WHITE" GridPane.rowIndex="1" />
-                        <ChoiceBox fx:id="stringLength" prefWidth="150.0" GridPane.rowIndex="2">
-                           <GridPane.margin>
-                              <Insets bottom="10.0" right="5.0" top="5.0" />
-                           </GridPane.margin>
-                        </ChoiceBox>
+                        <CheckBox fx:id="hypercubeCheck" mnemonicParsing="false" onAction="#hypercubeListener" prefHeight="18.0" prefWidth="128.0" text="Boolean Hypercube" textFill="WHITE" GridPane.columnIndex="1" />
+                        <CheckBox fx:id="showTSPgraph" mnemonicParsing="false" prefHeight="18.0" prefWidth="145.0" text="Show  TSP graph" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                </children>
-            </HBox>
+            </VBox>
             <Separator opacity="0.5" orientation="VERTICAL" prefHeight="200.0">
                <HBox.margin>
                   <Insets bottom="10.0" top="10.0" />
@@ -211,7 +234,7 @@
             <VBox alignment="CENTER" prefHeight="100.0" prefWidth="156.0" spacing="6.0">
                <children>
                   <Label text="Speed" textFill="WHITE" />
-                  <Slider fx:id="sliderSpeed" blockIncrement="50.0" majorTickUnit="100.0" max="1000.0" prefHeight="26.0" prefWidth="129.0" showTickMarks="true" value="1000.0" />
+                  <Slider fx:id="sliderSpeed" blockIncrement="50.0" majorTickUnit="100.0" max="1000.0" prefHeight="26.0" prefWidth="129.0" showTickMarks="true" value="500.0" />
                </children>
             </VBox>
             <Separator opacity="0.5" orientation="VERTICAL" prefHeight="200.0">
@@ -230,16 +253,20 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <CheckBox fx:id="showTSPgraph" mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" text="Show graph" textFill="WHITE" />
                   <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" text="Expand label" textFill="WHITE" GridPane.rowIndex="1" />
                   <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" text="Stepwise mode" textFill="WHITE" GridPane.rowIndex="2" />
                   <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="145.0" text="Display temperature" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label text="Need to be done" textFill="WHITE" />
+                  <CheckBox fx:id="graphicsToggle" mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" text="Without graphics" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
                <padding>
                   <Insets bottom="5.0" top="5.0" />
                </padding>
             </GridPane>
          </children>
+         <padding>
+            <Insets left="20.0" />
+         </padding>
       </HBox>
    </bottom>
    <center>
@@ -250,7 +277,7 @@
          <center>
             <ScrollPane prefWidth="584.0" BorderPane.alignment="CENTER">
                <content>
-                  <FlowPane fx:id="flowPane" columnHalignment="CENTER" hgap="15.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="594.0" prefWidth="794.0" vgap="30.0">
+                  <FlowPane fx:id="flowPane" columnHalignment="CENTER" hgap="15.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="1189.0" vgap="30.0">
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>

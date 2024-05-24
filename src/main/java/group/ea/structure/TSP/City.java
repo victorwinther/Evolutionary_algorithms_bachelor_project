@@ -23,4 +23,11 @@ public class City {
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     }
 
+    public void setX(int xSolution) {
+        coords[0] = xSolution;
+    }
+
+    public void setY(int ySolution) {
+        coords[1] = ySolution;
+    }
 }
