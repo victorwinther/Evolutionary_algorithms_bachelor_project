@@ -20,6 +20,8 @@ public class Schedule {
     private String criterias = "";
     private boolean optimumReached;
 
+    private int finishedIterations = 0;
+
     private static ArrayList<Schedule> schedules = new ArrayList<>();
 
     private int numberOfRuns = 1;
@@ -125,15 +127,12 @@ public class Schedule {
 
     public void setUpAlgorithm() {
         criterias = "";
-        System.out.println("Search space: " + this.searchSpaceString);
         switch (this.searchSpaceString) {
 
             case "Bit strings":
-                System.out.println("bit string");
                 this.searchSpace = new BitString(this.dimension);
                 break;
             case "Permutations":
-                System.out.println("permutation");
                 this.searchSpace = new TSPParser("src/main/java/group/ea/controllers/berlin52.txt");
                 break;
         }
@@ -164,6 +163,12 @@ public class Schedule {
             case "(1+1) EA":
                 this.algorithm = new onePlusOneEA(this.searchSpace, this.problem);
                 break;
+            case "UY (1+1 EA":
+                this.algorithm = new uPlusyEA(this.searchSpace, this.problem);
+                break;
+            case "Permutation1+1EA":
+                this.algorithm = new PermutationOnePlusOneEA(this.searchSpace, this.problem);
+                break;
             case "TEMP":
                 System.out.println("temp");
                 this.algorithm = new PermutationSA(this.searchSpace, this.problem);
@@ -190,7 +195,6 @@ public class Schedule {
             criterias += " Fitness";
         }
         if (iterationBound != 0) {
-            System.out.println("Iteration bound: " + getIterationBound());
             this.algorithm.addStoppingCriterion((new MaxGenerationsCriterion(getIterationBound())));
             criterias += " Iteration";
         }
@@ -209,5 +213,13 @@ public class Schedule {
 
     public SearchSpace getSearchSpace() {
         return searchSpace;
+    }
+
+    public int getFinishedIterations() {
+        return finishedIterations;
+    }
+
+    public void setFinishedIterations(int finishedIterations) {
+        this.finishedIterations = finishedIterations;
     }
 }

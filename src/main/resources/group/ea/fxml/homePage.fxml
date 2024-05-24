@@ -104,7 +104,7 @@
                               <Insets bottom="5.0" />
                            </VBox.margin>
                         </Separator>
-                        <GridPane prefHeight="50.0" prefWidth="189.0">
+                        <GridPane fx:id="batchInfo" prefHeight="50.0" prefWidth="189.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -144,7 +144,7 @@
                               <Insets bottom="5.0" />
                            </VBox.margin>
                         </Separator>
-                        <GridPane prefWidth="189.0">
+                        <GridPane fx:id="statsBatch" prefWidth="189.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="126.0" minWidth="10.0" prefWidth="126.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="90.0" minWidth="10.0" prefWidth="63.0" />
@@ -257,6 +257,7 @@
                   <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" text="Stepwise mode" textFill="WHITE" GridPane.rowIndex="2" />
                   <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="145.0" text="Display temperature" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Label text="Need to be done" textFill="WHITE" />
+                  <CheckBox fx:id="graphicsToggle" mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" text="Without graphics" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
                <padding>
                   <Insets bottom="5.0" top="5.0" />

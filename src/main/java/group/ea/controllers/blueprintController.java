@@ -3,7 +3,6 @@ package group.ea.controllers;
 import group.ea.main;
 import group.ea.structure.helperClasses.BatchRow;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,7 +12,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -28,11 +26,11 @@ public class blueprintController implements Initializable {
     @FXML
     private Label explainingLabel;
     @FXML
-    private Label iterationLabel, dimensionLabel;
+    private Label iterationLabel, dimensionLabel, specialLbl1, specialLbl2, specialLbl3, specialLbl4, specialLbl5, runsLabel;
     @FXML
-    private TextField iterationTxtField, dimensionTxtField, fitnessTxtField;
-    @FXML
-    private TableView<BatchRow> batchTable;
+    private TextField iterationTxtField, dimensionTxtField, fitnessTxtField, specialTxtField1, specialTxtField2, specialTxtField3, specialTxtField4, specialTxtField5, runsTxtField;
+    //@FXML
+    //private TableView<BatchRow> batchTable;
     @FXML
     private ComboBox<String> searchspaceSelector;
     @FXML
@@ -40,19 +38,24 @@ public class blueprintController implements Initializable {
     @FXML
     private ComboBox<String> algorithmSelector;
     @FXML
-    private CheckBox optimumReached, fitnessBound, iterationBound;
+    private CheckBox optimumReached, fitnessBound, iterationBound, optimalSetting;
     @FXML
     Button saveButton;
+    @FXML
+    ListView<String> batchList;
     FileChooser fileChooser = new FileChooser();
 
     private Map<String, List<String>> categoryOptions = new HashMap<>();
     private HashMap<String, String> descriptions = new HashMap<>();
     private HashMap<String, List<String>> batchParameters = new HashMap<>();
+    private ArrayList<String> parameters = new ArrayList<>();
     private List<ComboBox<String>> allComboBoxes;
+    private List<TextField> allTextFields;
     private final String[] categories = {"searchSpace", "problem", "algorithm"};
     private ArrayList<String> dependencies = new ArrayList<>();
     private ArrayList<String> batchColumns = new ArrayList<>();
-    private ArrayList<ArrayList<String>> batchData = new ArrayList<>();
+    private ArrayList<String> batchData = new ArrayList<>();
+    private int idCount = 0;
 
 
     private final String[] searchspaces = {"Bit strings", "Permutations"};
@@ -71,6 +74,7 @@ public class blueprintController implements Initializable {
         //initialize components
         Schedule.getSchedules().clear();
         allComboBoxes = Arrays.asList(searchspaceSelector, problemSelector, algorithmSelector);
+        allTextFields = Arrays.asList(iterationTxtField, dimensionTxtField, fitnessTxtField, specialTxtField1, specialTxtField2, specialTxtField3, specialTxtField4, specialTxtField5, runsTxtField);
         addCategoryOptions();
         addDescriptions();
         initializeBatchParameters();
@@ -83,6 +87,8 @@ public class blueprintController implements Initializable {
         algorithmSelector.setValue("(1+1) EA");
         optimumReached.setSelected(true);
         dimensionTxtField.setText("100");
+
+        hideSpecialFields();
 
 
         //initialize filechooser object
@@ -122,13 +128,12 @@ public class blueprintController implements Initializable {
     private void addCategoryOptions() {
         categoryOptions.put("searchSpace", Arrays.asList("Bit strings", "Permutations"));
         categoryOptions.put("problem", Arrays.asList("OneMax", "LeadingOnes", "TSP"));
-        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System", "TEMP"));
+        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA","(μ+λ) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System", "TEMP"));
     }
 
     private void initializeBatchParameters() {
-        batchParameters.put("Ant System", List.of("ants", "colony"));
-        batchParameters.put("RLS", List.of("size"));
-        batchParameters.put("Graph", List.of("test"));
+        batchParameters.put("Ant System", List.of("Colony size", "Alpha", "Beta"));
+        batchParameters.put("(μ+λ) EA", List.of("μ","λ"));
         batchParameters.put("Fitness bound", List.of("F. Iterations"));
         batchParameters.put("Iteration bound", List.of("I. Iterations"));
     }
@@ -160,68 +165,6 @@ public class blueprintController implements Initializable {
         return categories[index];
     }
 
-    private void updateBatchTable() {
-        // Construct parameters for batch table
-        List<String> currentSelection = getParameterSelection();
-        batchColumns.clear(); // Clear previous batch columns
-        batchColumns.addAll(List.of("id", "No. runs", "Dimension"));
-
-        // Update batch columns based on the current selection
-        for (String selection : currentSelection) {
-            if (batchParameters.containsKey(selection)) {
-                batchColumns.addAll(batchParameters.get(selection));
-            }
-        }
-
-        // Remove columns not present in batchColumns
-        batchTable.getColumns().removeIf(column -> !batchColumns.contains(column.getText()));
-
-        // Add new columns from batchColumns
-        for (String columnName : batchColumns) {
-            if (!columnExists(columnName)) {
-                TableColumn<BatchRow, String> column = new TableColumn<>(columnName);
-                column.setCellValueFactory(data -> new SimpleStringProperty(batchTableInitialValue(columnName, String.valueOf(data.getValue().getId()))));
-                column.setCellFactory(TextFieldTableCell.forTableColumn()); // Set cell factory for editing
-                column.setOnEditCommit(event -> {
-                    int rowIndex = event.getTablePosition().getRow();
-                    int colIndex = batchColumns.indexOf(columnName);
-
-                    while (batchData.size() <= rowIndex) {
-                        batchData.add(new ArrayList<>(batchColumns.size()));
-                    }
-
-                    while (batchData.get(rowIndex).size() < batchColumns.size()) {
-                        batchData.get(rowIndex).add("");
-                    }
-
-                    // Update the data in the ArrayList
-                    batchData.get(rowIndex).set(colIndex, event.getNewValue());
-                });
-
-                batchTable.getColumns().add(column);
-            }
-        }
-
-        for (ArrayList<String> row : batchData) {
-            for (String element : row) {
-                System.out.print(element + " ");
-            }
-            System.out.println();
-        }
-    }
-
-
-    // Helper method to check if a column already exists in batchTable
-    private boolean columnExists(String columnName) {
-        for (TableColumn<BatchRow, ?> existingColumn : batchTable.getColumns()) {
-            if (existingColumn.getText().equals(columnName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
@@ -232,52 +175,20 @@ public class blueprintController implements Initializable {
 
     private void saveDataToFile(File file) {
         try (FileWriter writer = new FileWriter(file)) {
-            // Write header line
-            writer.write("Searchspace,Problem,Algorithm");
-
-            // Array of checkboxes and their corresponding text fields
-            CheckBox[] checkboxes = {optimumReached, fitnessBound, iterationBound};
-            TextField[] textFields = {fitnessTxtField, iterationTxtField};
-
-            // Loop through checkboxes and write column headers for selected ones
-            for (int i = 0; i < checkboxes.length; i++) {
-                if (checkboxes[i].isSelected()) {
-                    writer.write("," + checkboxes[i].getText());
-                }
-            }
-            writer.write("\n");
-
             // Write data values
-            writer.write(searchspaceSelector.getValue() + ",");
-            writer.write(problemSelector.getValue() + ",");
-            writer.write(algorithmSelector.getValue());
-            for (int i = 0; i < checkboxes.length; i++) {
-                if (checkboxes[i].isSelected()) {
-                    writer.write(", true" );
-                }
-            }
+            writer.write("Searchspace, ");
+            writer.write(searchspaceSelector.getValue() + "; ");
+            writer.write("Problem, ");
+            writer.write(problemSelector.getValue() + "; ");
+            writer.write("Algorithm, ");
+            writer.write(algorithmSelector.getValue() + ";");
             writer.write("\n");
 
             // Write batch table data to the file
             writer.write("batch\n");
-            for (String columnName : batchColumns) {
-                writer.write(columnName + ",");
+            for (String schedule : batchData) {
+                writer.write(schedule + "; \n");
             }
-            writer.write("\n");
-
-            for (ArrayList<String> rowData : batchData) {
-                for (String cellValue : rowData) {
-                    if (cellValue.equals("")){
-                        writer.write("0,");
-                    }
-                    else {
-                        writer.write(cellValue + ",");
-                    }
-
-                }
-                writer.write("\n");
-            }
-
             System.out.println("Data saved to file: " + file.getAbsolutePath());
         } catch (IOException e) {
             System.err.println("Error saving data to file: " + e.getMessage());
@@ -303,6 +214,60 @@ public class blueprintController implements Initializable {
         return checkBox.isSelected() ? checkBox.getText() : "";
     }
 
+    private void hideSpecialFields(){
+        specialLbl1.setVisible(false);
+        specialLbl2.setVisible(false);
+        specialLbl3.setVisible(false);
+        specialLbl4.setVisible(false);
+        specialLbl5.setVisible(false);
+
+
+        specialTxtField1.setVisible(false);
+        specialTxtField2.setVisible(false);
+        specialTxtField3.setVisible(false);
+        specialTxtField4.setVisible(false);
+        specialTxtField5.setVisible(false);
+
+        optimalSetting.setVisible(false);
+    }
+
+    private void checkSpecialParameters(String selectedAlgo){
+        if (selectedAlgo.equals("Ant System")){
+            specialLbl1.setText("Colony size");
+            specialLbl2.setText("Alpha");
+            specialLbl3.setText("Beta");
+            specialLbl1.setVisible(true);
+            specialLbl2.setVisible(true);
+            specialLbl3.setVisible(true);
+
+            specialTxtField1.setVisible(true);
+            specialTxtField2.setVisible(true);
+            specialTxtField3.setVisible(true);
+
+            optimalSetting.setVisible(true);
+        }
+        else if (selectedAlgo.equals("(μ+λ) EA")){
+            specialLbl1.setText(("μ"));
+            specialLbl2.setText("λ");
+            specialLbl1.setVisible(true);
+            specialLbl2.setVisible(true);
+
+            specialTxtField1.setVisible(true);
+            specialTxtField2.setVisible(true);
+
+            optimalSetting.setVisible(true);
+        }
+        else {
+            hideSpecialFields();
+        }
+    }
+
+    private void clearTxtFields(){
+        for (TextField txtField : allTextFields){
+            txtField.clear();
+        }
+    }
+
     @FXML
     void checkboxHandler(ActionEvent event){
         CheckBox checkbox = (CheckBox) event.getSource();
@@ -320,7 +285,30 @@ public class blueprintController implements Initializable {
 
         boolean anyCheckboxChecked = fitnessBound.isSelected() || iterationBound.isSelected();
         iterationLabel.setDisable(!anyCheckboxChecked);
-        updateBatchTable();
+        //updateBatchTable();
+    }
+
+    @FXML
+    void optimalSettingsHandler(ActionEvent event){
+        if (optimalSetting.isSelected()){
+            if (Objects.equals(algorithmSelector.getValue(), "Ant System")) {
+                specialTxtField1.setText("20");
+                specialTxtField2.setText("0.5");
+                specialTxtField3.setText("1");
+            }
+            else if (Objects.equals(algorithmSelector.getValue(), "(μ+λ) EA")){
+                specialTxtField1.setText("1");
+                specialTxtField2.setText("2");
+            }
+        }
+        else {
+            specialTxtField1.clear();
+            specialTxtField2.clear();
+            specialTxtField3.clear();
+            specialTxtField4.clear();
+            specialTxtField5.clear();
+        }
+
     }
 
     @FXML
@@ -337,6 +325,8 @@ public class blueprintController implements Initializable {
         if (selector == searchspaceSelector) {
                 dimensionLabel.setDisable(false);
                 dimensionTxtField.setDisable(false);
+                runsLabel.setDisable(false);
+                runsTxtField.setDisable(false);
         }
 
         //category dependencies logic
@@ -349,92 +339,123 @@ public class blueprintController implements Initializable {
         }
 
         //update depending on combobox selection
+        if (selector == algorithmSelector){
+            checkSpecialParameters(selectorValue);
+        }
         updateCategories();
-        updateBatchTable();
+        //updateBatchTable();
     }
 
     @FXML
     void createNewBatch(ActionEvent event) {
-        // Increment the id counter
-        int id = batchTable.getItems().size() + 1;
-
-        // Create a new row with default values
-        BatchRow newRow = new BatchRow(id);
-
-        //add id
-        //newRow.addData(String.valueOf(id));
-
-        for (String category : batchColumns){
-            newRow.addData(batchTableInitialValue(category, String.valueOf(id)));
+        if (checkParametersFilled()) {
+            showAlert("Please fill out missing information");
         }
+        else {
+            // Increment the id counter
+            idCount = idCount + 1;
 
-        // Fill the rest of the columns with "0"s
-        for (int i = 1; i < batchColumns.size(); i++) {
-            newRow.addData("0");
-        }
+            ArrayList<String> scheduleParameters = new ArrayList<>(List.of("id", "No. runs", "Dimension"));
 
-        // Add the new row to the batch table
-        batchTable.getItems().add(newRow);
-
-        // Add the new row data to the batch data list
-        batchData.add((ArrayList<String>) newRow.getRowData());
-        addSchedule();
-
-
-        }
-        public void addSchedule(){
-            Schedule newSchedule = new Schedule();
-            if ((!dimensionLabel.isDisable() && dimensionTxtField.getText().equals("")) ||( !fitnessTxtField.isDisable() && fitnessTxtField.getText().equals("")) || (!iterationTxtField.isDisable() && iterationTxtField.getText().equals(""))) {
-                showAlert("Please fill out missing information");
+            List<String> currentSelection = getParameterSelection();
+            for (String selection : currentSelection) {
+                if (batchParameters.containsKey(selection)) {
+                    scheduleParameters.addAll(batchParameters.get(selection));
+                }
             }
-            else {
-                try {
-                    int dimension = Integer.parseInt(dimensionTxtField.getText());
-                    newSchedule.setDimension(dimension);
-                    newSchedule.setSearchSpaceString(searchspaceSelector.getValue());
-                } catch (Exception e) {
-                    showAlert("Enter only integers for dimension");
-                    return;
 
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < scheduleParameters.size(); i++) {
+                String category = scheduleParameters.get(i);
+                String value = batchTableInitialValue(category, String.valueOf(idCount));
+                builder.append(category).append(", ").append(value);
+                if (i < scheduleParameters.size() - 1) {
+                    builder.append("; ");
                 }
-                newSchedule.setProblemString(problemSelector.getValue());
-                newSchedule.setAlgorithmString(algorithmSelector.getValue());
-                if (optimumReached.isSelected())
-                    newSchedule.setOptimumReached(true);
-                if (fitnessBound.isSelected()) {
-                    try {
-                        int fitnessBound = Integer.parseInt(fitnessTxtField.getText());
-                        newSchedule.setFitnessBound(fitnessBound);
-                        System.out.println("fitness bound: " + fitnessBound);
-                    } catch (Exception e) {
-                        showAlert("Enter only integers for fitness bound");
-                        return;
-                    }
-                }
+            }
 
-                if (iterationBound.isSelected()) {
-                    try {
-                        int iterationBound = Integer.parseInt(iterationTxtField.getText());
-                        newSchedule.setIterationBound(iterationBound);
-                        System.out.println("iteration bound: " + iterationBound);
-                    } catch (Exception e) {
-                        showAlert("Enter only integers for iteration bound");
-                        return ;
-                    }
+            batchList.getItems().add(builder.toString());
 
-                }
-                    newSchedule.setUpAlgorithm();
+            batchData.add(builder.toString());
+
+            //clearTxtFields();
+            addSchedule();
+        }
+    }
+
+
+    public void addSchedule(){
+        Schedule newSchedule = new Schedule();
+        try {
+            int dimension = Integer.parseInt(dimensionTxtField.getText());
+            newSchedule.setDimension(dimension);
+            newSchedule.setSearchSpaceString(searchspaceSelector.getValue());
+        } catch (Exception e) {
+            showAlert("Enter only integers for dimension");
+            return;
+
+        }
+        newSchedule.setProblemString(problemSelector.getValue());
+        newSchedule.setAlgorithmString(algorithmSelector.getValue());
+        if (optimumReached.isSelected())
+            newSchedule.setOptimumReached(true);
+        if (fitnessBound.isSelected()) {
+            try {
+                int fitnessBound = Integer.parseInt(fitnessTxtField.getText());
+                newSchedule.setFitnessBound(fitnessBound);
+            } catch (Exception e) {
+                showAlert("Enter only integers for fitness bound");
+                return;
             }
         }
+
+        if (iterationBound.isSelected()) {
+            try {
+                int iterationBound = Integer.parseInt(iterationTxtField.getText());
+                newSchedule.setIterationBound(iterationBound);
+            } catch (Exception e) {
+                showAlert("Enter only integers for iteration bound");
+                return ;
+            }
+
+        }
+        if (algorithmSelector.getValue().equals("Ant System")){
+            //TODO
+            String colonySize = specialTxtField1.getText();
+            String alpha = specialTxtField2.getText();
+            String beta = specialTxtField3.getText();
+            System.out.println("TODO pass colony,alpha,beta");
+        }
+        if (algorithmSelector.getValue().equals("(μ+λ) EA")){
+            //TODO
+            String mu = specialTxtField1.getText();
+            String lambda = specialTxtField2.getText();
+            System.out.println("TODO pass mu og lambda");
+        }
+            newSchedule.setUpAlgorithm();
+    }
+
+    private boolean checkParametersFilled(){
+        return (!iterationTxtField.isDisabled() && iterationTxtField.getText().isEmpty()) ||
+                (!dimensionTxtField.isDisabled() && dimensionTxtField.getText().isEmpty()) ||
+                (!runsTxtField.isDisabled() && runsTxtField.getText().isEmpty()) ||
+                (!fitnessTxtField.isDisabled() && fitnessTxtField.getText().isEmpty()) ||
+                (specialTxtField1.isVisible() && specialTxtField1.getText().isEmpty()) ||
+                (specialTxtField2.isVisible() && specialTxtField2.getText().isEmpty()) ||
+                (specialTxtField3.isVisible() && specialTxtField3.getText().isEmpty()) ||
+                (specialTxtField4.isVisible() && specialTxtField4.getText().isEmpty()) ||
+                (specialTxtField5.isVisible() && specialTxtField5.getText().isEmpty());
+    }
+
 
     private String batchTableInitialValue(String category, String id){
-        String res = "0";
+        String res = "";
 
         if (category.equals("id")){
             res = id;
         }
         else if (category.equals("No. runs")){
-            res = "1";
+            res = runsTxtField.getText();
         }
         else if (category.equals("Dimension") && !dimensionTxtField.isDisable()){
             res = dimensionTxtField.getText();
@@ -445,8 +466,21 @@ public class blueprintController implements Initializable {
         else if(category.equals("I. Iterations") && !iterationTxtField.isDisable()){
             res = iterationTxtField.getText();
         }
-
-
+        else if(category.equals("Colony size")){
+            res = specialTxtField1.getText();
+        }
+        else if(category.equals("Alpha")){
+            res = specialTxtField2.getText();
+        }
+        else if(category.equals("Beta")){
+            res = specialTxtField3.getText();
+        }
+        else if(category.equals("μ")){
+            res = specialTxtField1.getText();
+        }
+        else if(category.equals("λ")){
+            res = specialTxtField2.getText();
+        }
 
         return res;
     }
@@ -454,13 +488,16 @@ public class blueprintController implements Initializable {
 
     @FXML
     void removeBatch(ActionEvent event){
-        //TODO
+        String selectedItem = batchList.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            batchList.getItems().remove(selectedItem);
+        }
     }
 
     @FXML
     void saveHandler(ActionEvent event) {
-        if (!dimensionLabel.isDisable() && dimensionTxtField.getText().equals("")){
-            showAlert("Dimension must be filled when \"" + searchspaceSelector.getValue() + "\" is chosen");
+        if (checkParametersFilled()){
+            showAlert("Please fill out missing information");
         }
         else{
             File file = fileChooser.showSaveDialog(stage);
