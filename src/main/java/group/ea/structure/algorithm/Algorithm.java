@@ -39,6 +39,7 @@ public abstract class Algorithm {
     private List<StoppingCriterion> stoppingCriteria = new ArrayList<>();
 
     protected double currentTemp = 10000;
+    protected int maxGeneration = 999;
 
     protected AlgorithmUpdateListener listener;
     public Algorithm(SearchSpace searchSpace, Problem problem) {
@@ -106,5 +107,8 @@ public abstract class Algorithm {
 
     public void sendListener(mainController mainController) {
         this.listener = mainController;
+    }
+    public void setValues(double a, double b, double r){
+
     }
 }

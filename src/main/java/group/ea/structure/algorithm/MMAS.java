@@ -25,27 +25,21 @@ public class MMAS extends ACO {
 
 
     @Override
-    public void updatePheremone(Ant a) {
-        super.updatePheremone(a);
-        for(int i = 0; i < dimension; i ++){
-            int h = 0;
-            if (i + 1 < dimension) {
-                h = a.getTrailOfAnt()[i + 1];
-            } else {
-                h = a.getTrailOfAnt()[0];
-            }
-            int j = a.getTrailOfAnt()[i];
+    public void updatePheromone(Ant ant) {
+        double dTau = Q / ant.getCost();
+        for (int i = 0; i < dimension; i++) {
+            int j = ant.getTrailOfAnt()[i];
+            int k = (i + 1 < dimension) ? ant.getTrailOfAnt()[i + 1] : ant.getTrailOfAnt()[0];
+            pheromone[j][k] += dTau;
+            pheromone[k][j] = pheromone[j][k]; // Ensure symmetry
 
-            if(pheromone[j][h] > maxPheremone){
-                pheromone[h][j] = maxPheremone;
-                pheromone[j][h] = maxPheremone;
+            if (pheromone[j][k] > maxPheremone) {
+                pheromone[j][k] = maxPheremone;
+                pheromone[k][j] = maxPheremone;
+            } else if (pheromone[j][k] < minPheremone) {
+                pheromone[j][k] = minPheremone;
+                pheromone[k][j] = minPheremone;
             }
-
-            else if(pheromone[j][h] < minPheremone){
-                pheromone[h][j] = minPheremone;
-                pheromone[j][h] = minPheremone;
-            }
-
         }
     }
 }

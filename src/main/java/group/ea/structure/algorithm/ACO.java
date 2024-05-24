@@ -36,7 +36,6 @@ public class ACO extends Algorithm{
     protected double fuzzyRandom = 0.001;
     protected ArrayList<Ant> ants;
     protected Solution _sl;
-    protected int maxGeneration = 500;
     protected double bestInGeneration;
 
 
@@ -47,7 +46,7 @@ public class ACO extends Algorithm{
         setupAnts();
         setupStructure();
         bestInGeneration = Double.MAX_VALUE;
-        _localSearch = true;
+        _localSearch = false;
     }
     @Override
     public void initialize(){
@@ -60,7 +59,7 @@ public class ACO extends Algorithm{
                 localSearch(3);
             }
             System.out.println("done");
-            System.out.println("Best " + bestAnt.getCost());
+            System.out.println("Best" + bestAnt.getCost());
             for(int i = 0; i< dimension; i++){
                 System.out.print(bestAnt.getTrailOfAnt()[i] + " ");
             }
@@ -71,14 +70,13 @@ public class ACO extends Algorithm{
         Ants();
         updateEvaporation();
         //Using only the trail of the best ant
-        updatePheremone(bestAnt);
+        updatePheromone(bestAnt);
 
     }
 
     //First step of an update, here we take an enitre walkthrough of a city, first we clear data, then we place ants, then we go for the walk.
     public void Ants(){
         int step = 0;
-
         for(Ant a : ants){
             a.clearData();
 
@@ -111,20 +109,13 @@ public class ACO extends Algorithm{
     }
 
     //Then we add which paths has walked the most
-    public void updatePheremone(Ant a){
-        double dTau = 1.0 / a.getCost();
+    public void updatePheromone(Ant a) {
+        double dTau = Q / a.getCost();
         for (int i = 0; i < dimension; i++) {
-            int h = 0;
-            if (i + 1 < dimension) {
-                h = a.getTrailOfAnt()[i + 1];
-            } else {
-                h = a.getTrailOfAnt()[0];
-            }
             int j = a.getTrailOfAnt()[i];
-
-            pheromone[j][h] = pheromone[j][h] + dTau;
-            //Symetrical
-            pheromone[h][j] = pheromone[j][h];
+            int k = a.getTrailOfAnt()[(i + 1) % dimension];
+            pheromone[j][k] += dTau;
+            pheromone[k][j] = pheromone[j][k]; // Ensure symmetry
         }
     }
 
@@ -294,5 +285,21 @@ public class ACO extends Algorithm{
         to.setCost(from.getCost());
     }
 
+    public void setAlpha(double s){
+        this.alpha = s;
+    }
+    public void setBeta(double s){
+        this.beta = s;
+    }
+    public void setAnts(int s){
+        this.numberOfAnts = s;
+    }
+
+    public void setValues(double a, double b, int r){
+        System.out.println("Called " + a + b + r );
+        setAlpha(a);
+        setBeta(b);
+        setAnts(r);
+    }
 
 }

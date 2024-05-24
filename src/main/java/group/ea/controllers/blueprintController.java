@@ -62,6 +62,8 @@ public class blueprintController implements Initializable {
     private final String[] problems = {"OneMax", "LeadingOnes", "BinVal", "Trap", "Jump_k"};
     private final String[] algorithms = {"(1+1) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System"};
 
+    private String[] optionalValues;
+
 
     private Stage stage;
     public HashMap<String,String> blueprintChoices = new HashMap<>();
@@ -386,6 +388,7 @@ public class blueprintController implements Initializable {
 
     public void addSchedule(){
         Schedule newSchedule = new Schedule();
+
         try {
             int dimension = Integer.parseInt(dimensionTxtField.getText());
             newSchedule.setDimension(dimension);
@@ -420,17 +423,20 @@ public class blueprintController implements Initializable {
 
         }
         if (algorithmSelector.getValue().equals("Ant System")){
-            //TODO
             String colonySize = specialTxtField1.getText();
             String alpha = specialTxtField2.getText();
             String beta = specialTxtField3.getText();
-            System.out.println("TODO pass colony,alpha,beta");
+            optionalValues = new String[]{colonySize, alpha, beta};
+            System.out.println(optionalValues[0]);
+            newSchedule.setOptional(optionalValues);
+
         }
         if (algorithmSelector.getValue().equals("(μ+λ) EA")){
             //TODO
             String mu = specialTxtField1.getText();
             String lambda = specialTxtField2.getText();
             System.out.println("TODO pass mu og lambda");
+            optionalValues = new String[2];
         }
             newSchedule.setUpAlgorithm();
     }
@@ -534,7 +540,7 @@ public class blueprintController implements Initializable {
             // Here you would get the controller if you need to call methods on it
             mainController controller = loader.getController();
             controller.recieveArray(Schedule.getSchedules()); // Call methods on the controller if needed
-        System.out.println(Schedule.getSchedules().toString());
+            System.out.println(Schedule.getSchedules().toString());
 
             // Set the scene to the home page
             Scene scene = new Scene(root);
@@ -561,6 +567,7 @@ public class blueprintController implements Initializable {
     public String getAlgorithmSelector() {
         return algorithmSelector.getValue();
     }
+
     /*
     public String getSelectioncriteriaSelector() {
         return stoppingcriteriaSelector.getValue();

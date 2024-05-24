@@ -28,19 +28,21 @@ public class main extends Application {
     static TspResultController controller;
     @Override
     public void start(Stage stage) throws IOException {
-        /*
+
         Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
         Scene scene = new Scene(root);
 
-         */
+
         //stage.initStyle(StageStyle.UNDECORATED); // no border
         // Load the FXML file
+          /*
         FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/singlePage.fxml")));
         Parent root = loader.load();
 
         Platform.runLater(root::requestFocus); // don't focus any element initially
-        controller = loader.getController();
 
+        controller = loader.getController();
+         */
 
         root.setOnMousePressed( event -> {
             x = event.getSceneX();
@@ -52,15 +54,15 @@ public class main extends Application {
         });
 
         // Set up the scene and stage
-        Scene scene = new Scene(root);
+        //Scene scene = new Scene(root);
         stage.setScene( scene);
         stage.show();
-        runSingle();
+        //runSingle();
     }
 
     public static void main(String[] args) {
-        runExperiment();
-        //launch(args);
+        //runExperiment();
+        launch(args);
         //runSingle();
        // runSingle2();
 

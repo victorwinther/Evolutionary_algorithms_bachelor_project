@@ -430,6 +430,10 @@ public class Solution extends Problem {
         solution.get(index1).setY(ySolution);
     }
 
+    public int getDimension() {
+        return _tsp.getDimension();
+    }
+
     enum Reconnection3OptCase {
         OPT3_CASE_0, OPT3_CASE_1, OPT3_CASE_2, OPT3_CASE_3,
         OPT3_CASE_4, OPT3_CASE_5, OPT3_CASE_6, OPT3_CASE_7

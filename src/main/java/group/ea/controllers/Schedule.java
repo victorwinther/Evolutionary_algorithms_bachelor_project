@@ -19,6 +19,7 @@ public class Schedule {
     private Problem problem; // To keep the problem instance
     private String criterias = "";
     private boolean optimumReached;
+    private String[] optionalValues;
 
     private int finishedIterations = 0;
 
@@ -177,6 +178,8 @@ public class Schedule {
             case "Ant System":
                 System.out.println("ANT");
                 this.algorithm = new ACO(this.searchSpace, this.problem);
+                this.algorithm.setValues(Double.parseDouble(optionalValues[0]), Double.parseDouble(optionalValues[1]), Integer.parseInt(optionalValues[2]));
+                System.out.println(optionalValues[0]);
                 algorithm.addStoppingCriterion(new TempStopping());
                 break;
             default:
@@ -222,4 +225,10 @@ public class Schedule {
     public void setFinishedIterations(int finishedIterations) {
         this.finishedIterations = finishedIterations;
     }
+
+    public void setOptional(String[] set){
+        this.optionalValues = set;
+    }
+
+
 }
