@@ -118,7 +118,7 @@ public class main extends Application {
 
     }
     public static void runExperiment(){
-        int[] bitStringLengths = {10, 20, 50, 100, 200, 500, 1000,2000}; // Example lengths
+        int[] bitStringLengths = {200}; // Example lengths
         int runsPerObservation = 200;
 
         List<DataPoint> dataPoints = new ArrayList<>();
@@ -138,6 +138,7 @@ public class main extends Application {
                 newSchedule.getAlgorithm().runAlgorithm();
                 int iterations = newSchedule.getAlgorithm().getGeneration();
                 totalIterations = totalIterations + iterations;
+                System.out.println("Done with run nr " + run + "with " + iterations + " iterations");
             }
             dataPoints.add(new DataPoint(length, totalIterations/runsPerObservation));
             saveDataToCSV("LeadingOnes_experiment.csv", dataPoints);
