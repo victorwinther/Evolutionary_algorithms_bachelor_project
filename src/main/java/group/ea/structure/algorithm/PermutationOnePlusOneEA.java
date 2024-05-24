@@ -44,10 +44,6 @@ public class PermutationOnePlusOneEA extends Algorithm {
             _sl.random3Opt();
             twoOpt = true;
         }
-        if (_sl.getSolution().isEmpty()) {
-
-            System.err.println("Error: Solution is empty." + generation + " " + "twoOpt: " + twoOpt);
-        }
         int offspringFitness = _sl.computeFitness();
         if (offspringFitness < bestFitness) {
             bestFitness = offspringFitness;
