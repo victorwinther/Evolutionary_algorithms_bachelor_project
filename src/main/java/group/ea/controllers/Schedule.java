@@ -167,7 +167,7 @@ public class Schedule {
             case "UY (1+1 EA":
                 this.algorithm = new uPlusyEA(this.searchSpace, this.problem);
                 break;
-            case "Permutation1+1EA":
+            case "1+1 EA TSP":
                 this.algorithm = new PermutationOnePlusOneEA(this.searchSpace, this.problem);
                 break;
             case "TEMP":

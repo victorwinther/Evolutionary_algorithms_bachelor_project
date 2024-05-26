@@ -209,6 +209,7 @@ public class TspResultController {
 }
 
  */
+/*
 package group.ea;
 
 
@@ -233,6 +234,11 @@ import java.util.*;
 
 public class TspResultController implements AlgorithmUpdateListener {
 
+    private final boolean firstCall = true;
+    private final Map<Edge, Line> edgeMap = new HashMap<>();
+    ArrayList<TSPDATA> allSolutions;
+    double speed;
+    int maxY = 1200;
     @FXML
     private Pane tspVisualization;
     @FXML
@@ -243,22 +249,12 @@ public class TspResultController implements AlgorithmUpdateListener {
     private Button pauseButton;
     @FXML
     private Button resetButton;
-
-    ArrayList<TSPDATA> allSolutions;
-
     private Timeline timeline;
     private boolean isPaused = false;
     private int currentStep = 0;
-
     private TSPDATA currentSolution;
     private TSPDATA nextSolution; // This represents the solution after mutation
     private Set<Edge> changedEdges; // To keep track of edges that have changed
-
-    private boolean firstCall = true;
-
-    private Map <Edge, Line> edgeMap = new HashMap<>();
-    double speed;
-    int maxY = 1200;
     private Label fitnessLabel;
     private Label numberOfEdgesLabel;
     private Label gainLabel;
@@ -297,7 +293,7 @@ public class TspResultController implements AlgorithmUpdateListener {
 
 
 
-    private Queue<TSPDATA> updateQueue = new LinkedList<>();
+    private final Queue<TSPDATA> updateQueue = new LinkedList<>();
 
     public void setSolution(TSPDATA initialSolution) {
         this.currentSolution = initialSolution;
@@ -701,7 +697,7 @@ public class TspResultController implements AlgorithmUpdateListener {
         }
     }
 }
-
+*/
 /*
 import group.ea.structure.TSP.City;
 import group.ea.structure.TSP.Solution;

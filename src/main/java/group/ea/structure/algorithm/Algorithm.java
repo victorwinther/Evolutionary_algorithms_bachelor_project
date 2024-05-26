@@ -1,6 +1,5 @@
 package group.ea.structure.algorithm;
 
-import group.ea.TspResultController;
 import group.ea.controllers.mainController;
 import group.ea.structure.TSP.Solution;
 import group.ea.structure.problem.Problem;
@@ -68,19 +67,19 @@ public abstract class Algorithm {
     public abstract void initialize();
 
     public void runAlgorithm() {
-        while (!checkStoppingCriteria() && !(Solution.getGeneration() > 100000000) && (bestFitness != 7544)) {
+        while (!checkStoppingCriteria()  && (bestFitness != 7544)) {
        // while(bestFitness != 7544) {
 
             performSingleUpdate(generation);
             generation++;
             if (generation % 1000000 == 0) {
-                System.out.println("1m + fitness = " + bestFitness);
+                //System.out.println("1m + fitness = " + bestFitness);
 
             }
 
 
         }
-        //System.out.println("Generation " + generation + ": Best Fitness = " + bestFitness + "total generation sl" + Solution.getGeneration());
+        System.out.println("Generation " + generation + ": Best Fitness = " + bestFitness + "total generation sl" + Solution.getGeneration());
         Solution.setGeneration(0);
         stoppingMet = true;
         //finalList.get(finalList.size()-1).setYesNo(true);
@@ -108,9 +107,9 @@ public abstract class Algorithm {
         return _sl;
     }
 
-    public void sendListener(TspResultController controller) {
+    public void sendListener(mainController controller) {
         this.listener = controller;
-        System.out.println("Listener set" + listener + " Controller sent= "+ controller);
+        //System.out.println("Listener set" + listener + " Controller sent= "+ controller);
     }
     public void setValues(double a, double b, double r){
 

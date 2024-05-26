@@ -60,7 +60,7 @@ public class blueprintController implements Initializable {
 
     private final String[] searchspaces = {"Bit strings", "Permutations"};
     private final String[] problems = {"OneMax", "LeadingOnes", "BinVal", "Trap", "Jump_k"};
-    private final String[] algorithms = {"(1+1) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System"};
+    private final String[] algorithms = {"(1+1) EA", "RLS", "1+1 EA Permutations", "Simulated Annealing", "Ant System"};
 
     private String[] optionalValues;
 
@@ -130,7 +130,7 @@ public class blueprintController implements Initializable {
     private void addCategoryOptions() {
         categoryOptions.put("searchSpace", Arrays.asList("Bit strings", "Permutations"));
         categoryOptions.put("problem", Arrays.asList("OneMax", "LeadingOnes", "TSP"));
-        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA","(μ+λ) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System", "TEMP"));
+        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA","(μ+λ) EA", "RLS", "1+1 EA TSP", "Simulated Annealing", "Ant System", "TEMP"));
     }
 
     private void initializeBatchParameters() {

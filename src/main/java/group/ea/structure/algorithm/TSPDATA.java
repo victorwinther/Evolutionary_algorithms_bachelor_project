@@ -1,6 +1,5 @@
 package group.ea.structure.algorithm;
 
-import group.ea.TspResultController;
 import group.ea.structure.TSP.City;
 import group.ea.structure.TSP.Solution;
 
@@ -19,7 +18,7 @@ public class TSPDATA {
 
     public boolean opt3;
 
-    private static List<TspResultController> listeners = new ArrayList<>();
+   // private static List<TspResultController> listeners = new ArrayList<>();
     static ArrayList<TSPDATA> allSolutions = new ArrayList<>();
     public TSPDATA (Solution solution, ArrayList<City> slSolution, int generation, int fitness, double improvement, City X1, City X2, City X3, City X4, Optional<City> A5, Optional<City> A6, Optional<Integer> optCase, boolean b) {
         this.solution = solution;
@@ -44,9 +43,7 @@ public class TSPDATA {
         return solution;
     }
 
-    public static void addListener(TspResultController listener) {
-        listeners.add(listener);
-    }
+
 
     public void setSolution(Solution solution) {
         this.solution = solution;

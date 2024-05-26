@@ -1,6 +1,7 @@
 package group.ea;
 
 import group.ea.controllers.Schedule;
+import group.ea.controllers.mainController;
 import group.ea.structure.algorithm.Algorithm;
 import group.ea.structure.algorithm.RLS;
 import group.ea.structure.algorithm.TSPDATA;
@@ -26,25 +27,27 @@ import java.util.Objects;
 
 public class main extends Application {
     double x,y = 0;
-    static TspResultController controller;
+    static mainController controller;
     @Override
     public void start(Stage stage) throws IOException {
-        /*
 
-        Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
+
+        //FXMLLoader loader  = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
+        Parent root = loader.load();
         Scene scene = new Scene(root);
+        controller = loader.getController();
 
-        */
-        //stage.initStyle(StageStyle.UNDECORATED); // no border
+       // stage.initStyle(StageStyle.UNDECORATED); // no border
         // Load the FXML file
-
+        /*
         FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/singlePage.fxml")));
         Parent root = loader.load();
 
         Platform.runLater(root::requestFocus); // don't focus any element initially
 
         controller = loader.getController();
-
+*/
 
         root.setOnMousePressed( event -> {
             x = event.getSceneX();
@@ -56,16 +59,16 @@ public class main extends Application {
         });
 
         // Set up the scene and stage
-        Scene scene = new Scene(root);
+        //Scene scene = new Scene(root);
         stage.setScene( scene);
         stage.show();
-        runSingle();
+        //runSingle();
     }
 
     public static void main(String[] args) {
         //runExperiment();
         launch(args);
-        //runSingle();
+       // runSingle();
        // runSingle2();
 
 
@@ -81,11 +84,11 @@ public class main extends Application {
                 newSchedule.setSearchSpaceString("Permutations");
                 newSchedule.setProblemString("TSP");
                 newSchedule.setAlgorithmString("Permutation1+1EA");
-                newSchedule.setIterationBound(10000);
+                newSchedule.setIterationBound(1000);
                 newSchedule.setUpAlgorithm();
                 newSchedule.getAlgorithm().sendListener(controller);
                 newSchedule.getAlgorithm().runAlgorithm();
-                int thisRunFitness = newSchedule.getAlgorithm().getGeneration();
+                int thisRunFitness = newSchedule.getAlgorithm().getFitness();
                 if(thisRunFitness == 7544){
                     perfectCount++;
                 }
@@ -93,7 +96,7 @@ public class main extends Application {
 
                 //controller.setSolution(newSchedule.getAlgorithm().get_sl());
             }
-        System.out.println("Average fitness: " + totalFitness/iterations + " Perfect runs: " + perfectCount + " out of " + iterations);
+        System.out.println("Average iterations: " + totalFitness/iterations + " Perfect runs: " + perfectCount + " out of " + iterations);
 
                // controller.tspGraphics(newSchedule.getAlgorithm().get_sl());
 

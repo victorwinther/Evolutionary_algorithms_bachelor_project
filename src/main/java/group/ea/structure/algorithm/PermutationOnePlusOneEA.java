@@ -11,7 +11,10 @@ import java.util.Optional;
 public class PermutationOnePlusOneEA extends Algorithm {
     double chance = 0.5;
     int noImprovementCounter = 0; // Counter to track iterations without improvement
-    final int RESTART_THRESHOLD = 150000; // Threshold for restarting the algorithm
+    final int RESTART_THRESHOLD = 1000000; // Threshold for restarting the algorithm
+
+
+
     public PermutationOnePlusOneEA(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
         _sl = (Solution) problem;
@@ -31,13 +34,14 @@ public class PermutationOnePlusOneEA extends Algorithm {
     @Override
     public void performSingleUpdate(int generation) {
         if(generation == 0){
-            listener.firstSolution(_sl);
+            //listener.firstSolution(_sl);
         }
         // Save the current solution
         // randomly at uniform
         boolean threeOpt = false;
         double tempChance = Math.random();
         _sl.clearData();
+
         if (tempChance < chance) {
             //_sl.twoOptMutate2();
             //_sl.ls3Opt();
@@ -70,19 +74,19 @@ public class PermutationOnePlusOneEA extends Algorithm {
 
              */
         } else {
-            //noImprovementCounter++;
+            noImprovementCounter++;
             _sl.revert();
         }
 
 
-/*
+
         if (noImprovementCounter > RESTART_THRESHOLD) {
             //System.out.println("Restarting the algorithm... in generation"+ generation + " with fitness: " + bestFitness );
             _sl.restart(); // Reinitialize the solution
             bestFitness = _sl.computeFitness();
             noImprovementCounter = 0; // Reset counter
         }
-*/
+
         }
 
     }

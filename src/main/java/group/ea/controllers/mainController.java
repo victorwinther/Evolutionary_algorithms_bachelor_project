@@ -1,5 +1,6 @@
 package group.ea.controllers;
 
+
 import group.ea.main;
 import group.ea.structure.TSP.Solution;
 import group.ea.structure.TSP.TSPParser;
@@ -15,6 +16,8 @@ import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.BitString;
 import group.ea.structure.searchspace.SearchSpace;
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -24,8 +27,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -34,6 +40,7 @@ import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.chart.XYChart;
+import javafx.util.Duration;
 
 
 import java.io.IOException;
@@ -43,10 +50,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class mainController implements Initializable {//,AlgorithmUpdateListener {
+public class mainController implements Initializable, AlgorithmUpdateListener {
     private static AnimationTimer animationTimer;
-    public final NumberAxis xAxis = new NumberAxis();
-    public final NumberAxis yAxis = new NumberAxis();
+    public NumberAxis xAxis = new NumberAxis();
+    public NumberAxis yAxis = new NumberAxis();
     private final FileChooser fileChooser = new FileChooser();
     @FXML
     public FlowPane flowPane;
@@ -86,6 +93,7 @@ public class mainController implements Initializable {//,AlgorithmUpdateListener
     private CheckBox textSelector;
     @FXML
     private CheckBox hypercubeCheck;
+
     @FXML
     public CheckBox showTSPgraph;
     @FXML
@@ -116,6 +124,40 @@ public class mainController implements Initializable {//,AlgorithmUpdateListener
     private Label maxIterationsLabels = new Label();
     private Label averageIterationsLabel = new Label();
 
+    private boolean firstCall = true;
+    private final Map<Edge, Line> edgeMap = new HashMap<>();
+    ArrayList<TSPDATA> allSolutions;
+    double speed;
+    int maxY = 1300;
+    /*@FXML
+    private Pane tspVisualization;
+
+
+
+    @FXML
+    private Button startButton;
+    @FXML
+     */
+    @FXML
+    private Slider speedSlider;
+    private Button pauseButton;
+    @FXML
+    private Button resetButton;
+    private Timeline timeline;
+    private boolean isPaused = false;
+    private int currentStep = 0;
+    private TSPDATA currentSolution;
+    private TSPDATA nextSolution; // This represents the solution after mutation
+    private Set<Edge> changedEdges; // To keep track of edges that have changed
+    private Label fitnessLabel;
+    private Label numberOfEdgesLabel;
+    private Label gainLabel;
+    private Label edgesDeletedLabel;
+    private Label edgesAddedLabel;
+
+    int edgesDeleted = 0;
+    int edgesAdded = 0;
+
     public mainController() {
 
         animationTimer = new AnimationTimer() {
@@ -126,9 +168,9 @@ public class mainController implements Initializable {//,AlgorithmUpdateListener
                     if (!isAnimationPaused) {
                         sliderController();
                         lastUpdate = l;
-                        double speed = sliderSpeed.getValue();
-                        if(speed < (sliderSpeed.getMax()*0.5)) {
-                            duration = (TimeUnit.MILLISECONDS.toNanos(1000) * (1 - speed / sliderSpeed.getMax()));
+                        double speed = speedSlider.getValue();
+                        if(speed < (speedSlider.getMax()*0.5)) {
+                            duration = (TimeUnit.MILLISECONDS.toNanos(1000) * (1 - speed / speedSlider.getMax()));
                             fullspeed = false;
                         } else{
                             duration = TimeUnit.MILLISECONDS.toNanos(0);
@@ -191,37 +233,42 @@ public class mainController implements Initializable {//,AlgorithmUpdateListener
     }
     @FXML
     private void startAllEvolutions(Schedule schedule) {
-
-        if (!isAnimationPaused) {
-            isRunning = true;
-            solutionArea.clear();
-            container.getChildren().clear();
-            hypercubenPane.getChildren().clear();
-            tspVisualization.getChildren().clear();
-            i=0;
-
-            timesRun++;
-            //currentSchedule.setUpAlgorithm();
-            prepareUIBeforeAlgorithmRuns(schedule);
-
-
-            Task<Void> runAlgorithmTask = new Task<>() {
-                @Override
-                protected Void call() {
-                    schedule.run();  // This is where the algorithm runs on a background thread
-                    return null;
-                }
-            };
-            Algorithm algorithm = currentSchedule.getAlgorithm();
-
-            runAlgorithmTask.setOnSucceeded(event -> Platform.runLater(() -> updateStatistics(currentSchedule)));
-            runAlgorithmTask.setOnSucceeded(event -> Platform.runLater(() -> updateUIPostAlgorithm(currentSchedule)));
-            runAlgorithmTask.setOnFailed(event -> Platform.runLater(() -> showError(runAlgorithmTask.getException())));
-
-            new Thread(runAlgorithmTask).start();  // Start the task on a new thread
-
+        if (currentSchedule.getProblemString() == "TSP") {
+            resetVisualization();
+            startVisualization();
         } else {
-            isAnimationPaused = false;
+
+            if (!isAnimationPaused) {
+                isRunning = true;
+                solutionArea.clear();
+                container.getChildren().clear();
+                hypercubenPane.getChildren().clear();
+                tspVisualization.getChildren().clear();
+                i = 0;
+
+                timesRun++;
+                //currentSchedule.setUpAlgorithm();
+                prepareUIBeforeAlgorithmRuns(schedule);
+                schedule.getAlgorithm().sendListener(this);
+
+                Task<Void> runAlgorithmTask = new Task<>() {
+                    @Override
+                    protected Void call() {
+                        schedule.run();  // This is where the algorithm runs on a background thread
+                        return null;
+                    }
+                };
+                Algorithm algorithm = currentSchedule.getAlgorithm();
+
+                runAlgorithmTask.setOnSucceeded(event -> Platform.runLater(() -> updateStatistics(currentSchedule)));
+                runAlgorithmTask.setOnSucceeded(event -> Platform.runLater(() -> updateUIPostAlgorithm(currentSchedule)));
+                runAlgorithmTask.setOnFailed(event -> Platform.runLater(() -> showError(runAlgorithmTask.getException())));
+
+                new Thread(runAlgorithmTask).start();  // Start the task on a new thread
+
+            } else {
+                isAnimationPaused = false;
+            }
         }
     }
     private void updateStatistics(Schedule schedule){
@@ -279,7 +326,7 @@ public class mainController implements Initializable {//,AlgorithmUpdateListener
                 tspVisualization.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
                 flowPane.getChildren().add(tspVisualization);
             }
-        }
+            }
     }
     int runNr;
     @FXML
@@ -316,7 +363,7 @@ public class mainController implements Initializable {//,AlgorithmUpdateListener
         } else {
             updateUIStats();
         }
-        
+
         // Handle UI updates after algorithm completion
         // Possibly displaying results, stopping animations, etc.
     }
@@ -570,7 +617,8 @@ public class mainController implements Initializable {//,AlgorithmUpdateListener
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Initial configuration of labels
+
+
         batchInfo.add(batchNumberLabel, 1, 0);
         batchInfo.add(timesRunLabel, 1, 1);
         batchInfo.add(dimensionLabel, 1, 2);
@@ -631,36 +679,496 @@ public class mainController implements Initializable {//,AlgorithmUpdateListener
     public boolean isGraphSelected() {
         return graphSelector.isSelected();
     }
-    /*@Override
-    public void tspGraphics(Solution _sl){
-        Platform.runLater(() -> {
-        tspVisualization.getChildren().clear();
-        int maxY = 1200; // Replace with the actual maximum Y value of your canvas
-        if (i == 0 && showTSPgraph.isSelected()) {
-            int prevX = 0;
-            int prevY = 0;
-            for (int j = 0; j < _sl.getListLength();j++) {
-                System.out.println("i er " + j + " og listlength er " + _sl.getListLength());
-                int x = _sl.getXSolution(j);
-                int y = maxY - _sl.getYSolution(j); // Subtract the y-coordinate from maxY to mirror it
-                Circle circle = new Circle(x/4, y/4, 3);
-                circle.setFill(Color.RED);
-                tspVisualization.getChildren().add(circle);
-                if (j > 0) { // Draw line from the previous point to the current point
-                    Line line = new Line(prevX / 4.0, prevY / 4.0, x / 4.0, y / 4.0);
-                    line.setStroke(Color.BLUE);
-                    tspVisualization.getChildren().add(line);
-                }
+    @FXML
+    private ScatterChart<Number, Number> scatterChart;
+    @FXML
+    private Pane overlayPane;
+    @FXML
+    private Canvas coordinateCanvas = new Canvas(1600/4, 1200/4);
+    public void tspIntialize(){
+        // Initialize controls
+        //pauseButton.setDisable(true);
+        //resetButton.setDisable(true);
+        /*
+        tspVisualization.setPrefSize(600, 400);
+        tspVisualization.setMinSize(600, 400);
+        tspVisualization.setMaxSize(600, 400);
+        tspVisualization.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
+        flowPane.getChildren().add(tspVisualization);
+        tspVisualization.getChildren().add(coordinateCanvas);
+        */
+        xAxis = new NumberAxis(0, 1800, 100);
+        yAxis = new NumberAxis(0, 1200, 100);
+        yAxis.setTickLabelRotation(90);
 
-                prevX = x;
-                prevY = y;
-                System.out.println(x + " x og er y" + y);
+        scatterChart = new ScatterChart<>(xAxis, yAxis);
+        scatterChart.setPrefSize(600, 400);
+        scatterChart.setMinSize(600, 400);
+        scatterChart.setMaxSize(600, 400);
+        scatterChart.setLegendVisible(false);
+
+        overlayPane = new Pane();
+        overlayPane.setPrefSize(600, 400);
+        overlayPane.setMinSize(600, 400);
+        overlayPane.setMaxSize(600, 400);
+
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(scatterChart, overlayPane);
+        flowPane.getChildren().add(stackPane);
+
+        fitnessLabel = new Label("Fitness: ");
+        numberOfEdgesLabel = new Label("Number of Edges: ");
+        gainLabel = new Label("Gain: ");
+        edgesDeletedLabel = new Label("Edges Deleted: 0");
+        edgesAddedLabel = new Label("Edges Added: 0");
+
+        VBox infoBox = new VBox(fitnessLabel, numberOfEdgesLabel, gainLabel, edgesDeletedLabel, edgesAddedLabel);
+        infoBox.setSpacing(5);
+        //tspVisualization.getChildren().add(infoBox);
+
+        drawCoordinateSystem();
+
+        speedSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (timeline != null) {
+                timeline.stop(); // Stop the timeline to reset the key frame duration
+                double speed = newValue.doubleValue();
+                KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
+                    System.out.println("hey 1");
+                    processQueue();
+                });
+                timeline.getKeyFrames().setAll(keyFrame); // Set the new key frame with the updated speed
+                timeline.play(); // Restart the timeline with the new speed
             }
-            Line line = new Line(prevX / 4.0, prevY / 4.0, _sl.getXSolution(0) / 4.0, maxY- _sl.getYSolution(0) / 4.0);
-            line.setStroke(Color.BLUE);
-            tspVisualization.getChildren().add(line);
-        }
         });
     }
-*/
+    private final Queue<TSPDATA> updateQueue = new LinkedList<>();
+
+    public void setSolution(TSPDATA initialSolution) {
+        if(firstCall){
+            firstSolution(initialSolution.solution);
+            firstCall = false;
+        }
+        this.currentSolution = initialSolution;
+        this.nextSolution = initialSolution;// Copy initial solution
+       // this.changedEdges = new HashSet<>();
+        //resetVisualization();
+    }
+    @FXML
+    private void startVisualization() {
+        speedSlider.setBlockIncrement(1.0);
+        speedSlider.setMax(10.0);
+        speedSlider.setMin(0.1);
+        speedSlider.setValue(1.0);
+        speedSlider.setMajorTickUnit(2.0);
+        currentSchedule.getAlgorithm().sendListener(this);
+        currentSchedule.run();
+        if (isPaused) {
+            timeline.play();
+            isPaused = false;
+            pauseButton.setDisable(false);
+            startButton.setDisable(true);
+            return;
+        }
+
+        //resetVisualization();
+        tspIntialize();
+        timeline = new Timeline();
+        timeline.setCycleCount(Timeline.INDEFINITE);
+
+        speed = speedSlider.getValue();
+
+
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
+            processQueue();
+            System.out.println("hey 2");
+
+        });
+
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.play();
+
+        startButton.setDisable(true);
+        //pauseButton.setDisable(false);
+        //resetButton.setDisable(false);
+    }
+
+    @FXML
+    private void pauseVisualization() {
+        if (timeline != null) {
+            timeline.pause();
+            isPaused = true;
+            startButton.setDisable(false);
+            pauseButton.setDisable(true);
+        }
+    }
+
+    @FXML
+    private void resetVisualization() {
+        if (timeline != null) {
+            timeline.stop();
+        }
+        tspVisualization.getChildren().clear();
+        currentStep = 0;
+        /*
+        startButton.setDisable(false);
+        pauseButton.setDisable(true);
+        resetButton.setDisable(true);
+        isPaused = false;
+
+         */
+    }
+    private void drawCoordinateSystem() {
+        GraphicsContext gc = coordinateCanvas.getGraphicsContext2D();
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(1);
+        double maxY = coordinateCanvas.getHeight();
+
+        // Draw X and Y axis
+        gc.strokeLine(0, maxY, coordinateCanvas.getWidth(), maxY); // X-axis
+        gc.strokeLine(0, 0, 0, maxY); // Y-axis
+
+        // Draw tick marks
+        for (int i = 0; i <= 1800; i += 100) {
+            gc.strokeLine(i, maxY, i, maxY - 10); // X-axis ticks
+            gc.strokeText(Integer.toString(i), i, maxY + 15); // X-axis labels
+        }
+        for (int i = 0; i <= 1200; i += 100) {
+            gc.strokeLine(0, maxY - i, 10, maxY - i); // Y-axis ticks
+            gc.strokeText(Integer.toString(i), -20, maxY - i); // Y-axis labels
+        }
+    }
+    double xScaling = 4.0;
+    double yScaling = 4.0;
+    @Override
+    public void firstSolution(Solution solution) {
+        System.out.println( "First solution");
+        Solution firstSolution = solution;
+        int numPoints = firstSolution.getListLength();
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
+        // Draw the nodes
+        for (int i = 0; i < numPoints; i++) {
+            int x = firstSolution.getXSolution(i);
+            int y = maxY - firstSolution.getYSolution(i);
+            Circle circle = new Circle(x / xScaling, y / yScaling, 1, Color.RED);
+            tspVisualization.getChildren().add(circle);
+            series.getData().add(new XYChart.Data<>(x, y));
+        }
+        System.out.println(series.toString());
+        scatterChart.getData().add(series);
+        // Draw the edges
+        for (int i = 0; i < numPoints; i++) {
+            int x1 = firstSolution.getXSolution(i);
+            int y1 = maxY - firstSolution.getYSolution(i);
+            int x2 = firstSolution.getXSolution((i + 1) % numPoints);
+            int y2 = maxY - firstSolution.getYSolution((i + 1) % numPoints);
+            Line line = new Line(x1 / xScaling, y1 / yScaling, x2 / xScaling, y2 / yScaling);
+            edgeMap.put(new Edge(x1, y1, x2, y2), line);
+            tspVisualization.getChildren().add(line);
+            overlayPane.getChildren().add(line);
+        }
+        printEdgeMapDetails();
+
+    }
+    private void updateVisualization() {
+
+        // Clear previous visualization
+        speed = speedSlider.getValue();
+        overlayPane.getChildren().removeIf(node -> node instanceof Line);
+        //removed edges
+        int x1 = (int) currentSolution.X1.getX();
+        int y1 = maxY - (int) currentSolution.X1.getY();
+        int x2 = (int) currentSolution.X2.getX();
+        int y2 = maxY - (int) currentSolution.X2.getY();
+        int x3 = (int) currentSolution.X3.getX();
+        int y3 = maxY - (int) currentSolution.X3.getY();
+        int x4 = (int) currentSolution.X4.getX();
+        int y4 = maxY - (int) currentSolution.X4.getY();
+        List<Edge> newEdges = new ArrayList<>();
+
+       Edge edge1 = new Edge(x1, y1, x2, y2);
+        Edge edge2 = new Edge(x2, y2, x1, y1);
+        Edge edge3 = new Edge(x3, y3, x4, y4);
+        Edge edge4 = new Edge(x4, y4, x3, y3);
+
+        Line line1 = edgeMap.get(edge1);
+        Line line2 = edgeMap.get(edge2);
+        Line line3 = edgeMap.get(edge3);
+        Line line4 = edgeMap.get(edge4);
+
+        if (line1 != null) {
+            tspVisualization.getChildren().remove(line1);
+            overlayPane.getChildren().remove(line1);
+            edgeMap.remove(edge1);
+            edgesDeleted++;
+        }
+
+        if (line2 != null) {
+            tspVisualization.getChildren().remove(line2);
+            overlayPane.getChildren().remove(line2);
+            edgeMap.remove(edge2);
+            edgesDeleted++;
+        }
+        if (line3 != null) {
+            tspVisualization.getChildren().remove(line3);
+            overlayPane.getChildren().remove(line3);
+            edgeMap.remove(edge3);
+            edgesDeleted++;
+        }
+        if (line4 != null) {
+            tspVisualization.getChildren().remove(line4);
+            overlayPane.getChildren().remove(line4);
+            edgeMap.remove(edge4);
+            edgesDeleted++;
+        }
+        if(line1 == null && line2 == null || line3 == null && line4 == null){
+            if(line1 == null) {
+                System.out.println("Line1 not found for edge: " + new Edge(x1, y1, x2, y2));
+            }
+            if(line2 == null) {
+                System.out.println("Line2 not found for edge: " + new Edge(x2, y2, x1, y1));
+            }
+            if(line3 == null) {
+                System.out.println("Line3 not found for edge: " + new Edge(x3, y3, x4, y4));
+            }
+            if(line4 == null) {
+                System.out.println("Line4 not found for edge: " + new Edge(x4, y4, x3, y3));
+            }
+            System.out.println(currentSolution.opt3 + " 3 opt");
+            System.out.println("Line4 not found for edge: " + new Edge(x4, y4, x3, y3));
+            System.out.println("deleted 1 and 2"+ new Edge(x1,y1,x2,y2) + " "+ new Edge(x3,y3,x4,y4));
+
+            printEdgeMapDetails();
+        }
+
+
+
+        if (currentSolution.opt3) {
+            // X -> X+1  Y -> Y+1 Z -> Z + 1
+            int x5 = (int) currentSolution.X5.getX();
+            int y5 = maxY - (int) currentSolution.X5.getY();
+            int x6 = (int) currentSolution.X6.getX();
+            int y6 = maxY - (int) currentSolution.X6.getY();
+            System.out.println("X1 "+ x1 + " Y1 " + y1 + " X2 " + x2 + " Y2 " + y2);
+            System.out.println("X3 "+ x3 + " Y3 " + y3 + " X4 " + x4 + " Y4 " + y4);
+            System.out.println("X5 "+ x5 + " Y5 " + y5 + " X6 " + x6 + " Y6 " + y6);
+            Edge edge5 = new Edge(x5, y5, x6, y6);
+            Edge edge6 = new Edge(x6, y6, x5, y5);
+            Line line5 = edgeMap.get(edge5);
+            Line line6 = edgeMap.get(edge6);
+
+            if (line5 != null) {
+                tspVisualization.getChildren().remove(line5);
+                overlayPane.getChildren().remove(line5);
+
+                edgeMap.remove(new Edge(x5, y5, x6, y6));
+                edgesDeleted++;
+            }
+            if (line6 != null) {
+                tspVisualization.getChildren().remove(line6);
+                overlayPane.getChildren().remove(line6);
+                edgeMap.remove(new Edge(x6, y6, x5, y5));
+                edgesDeleted++;
+            }
+            if(line5 == null && line6 == null){
+                System.out.println("Line6 not found for edge: " +new Edge(x5, y5, x6, y6));
+                System.out.println("deleted 1 and 2"+ new Edge(x1,y1,x2,y2) + " "+ new Edge(x3,y3,x4,y4));
+
+                printEdgeMapDetails();
+            }
+
+            switch (currentSolution.optCase) {
+                //x1x2, z1z2, y1,y2
+                //x1x2, x3x4 ,x5x6
+                // X1  Y Z
+                // I J K
+                case 1:
+                    // i -> k and i + 1 -> k + 1 and remain j -> j +1
+                    newEdges.add(new Edge(x1, y1, x5, y5));
+                    newEdges.add(new Edge(x2, y2, x6, y6));
+                    newEdges.add(new Edge(x3, y3, x4, y4));
+                    //new edges added:
+                    System.out.println("Case 1");
+                    System.out.println("x1: " + x1 + " y1: " + y1 + " x5: " + x5 + " y5: " + y5);
+                    System.out.println("x2: " + x2 + " y2: " + y2 + " x6: " + x6 + " y6: " + y6);
+                    System.out.println("x3: " + x3 + " y3: " + y3 + " x4: " + x4 + " y4: " + y4);
+
+                    break;
+                case 2:
+                    // j -> k and j + 1 -> k + 1 and remain i-> i +1
+                    newEdges.add(new Edge(x3, y3, x5, y5));
+                    newEdges.add(new Edge(x4, y4, x6, y6));
+                    newEdges.add(new Edge(x1, y1, x2, y2));
+                    System.out.println("Case 2");
+                    System.out.println("x3: " + x3 + " y3: " + y3 + " x5: " + x5 + " y5: " + y5);
+                    System.out.println("x4: " + x4 + " y4: " + y4 + " x6: " + x6 + " y6: " + y6);
+                    System.out.println("x1: " + x1 + " y1: " + y1 + " x2: " + x2 + " y2: " + y2);
+                    break;
+                case 3:
+                    // i -> j and i + 1 -> j +1 and remain k -> k +1
+                    newEdges.add(new Edge(x1, y1, x3, y3));
+                    newEdges.add(new Edge(x2, y2, x4, y4));
+                    newEdges.add(new Edge(x5, y5, x6, y6));
+                    System.out.println("Case 3");
+                    System.out.println("x1: " + x1 + " y1: " + y1 + " x3: " + x3 + " y3: " + y3);
+                    System.out.println("x2: " + x2 + " y2: " + y2 + " x4: " + x4 + " y4: " + y4);
+                    System.out.println("x5: " + x5 + " y5: " + y5 + " x6: " + x6 + " y6: " + y6);
+
+
+                    break;
+                case 4:
+                    // i -> j and i + 1 -> k
+                    // k +1 -> j +1
+                    newEdges.add(new Edge(x1, y1, x3, y3));
+                    newEdges.add(new Edge(x2, y2, x5, y5));
+                    newEdges.add(new Edge(x6, y6, x4, y4));
+                    System.out.println("Case 4");
+                    System.out.println("x1: " + x1 + " y1: " + y1 + " x3: " + x3 + " y3: " + y3);
+                    System.out.println("x2: " + x2 + " y2: " + y2 + " x5: " + x5 + " y5: " + y5);
+                    System.out.println("x6: " + x6 + " y6: " + y6 + " x4: " + x4 + " y4: " + y4);
+                    break;
+                case 5:
+                    newEdges.add(new Edge(x1, y1, x5, y5));
+                    newEdges.add(new Edge(x2, y2, x4, y4));
+                    newEdges.add(new Edge(x3, y3, x6, y6));
+                    System.out.println("Case 5");
+                    System.out.println("x1: " + x1 + " y1: " + y1 + " x5: " + x5 + " y5: " + y5);
+                    System.out.println("x2: " + x2 + " y2: " + y2 + " x4: " + x4 + " y4: " + y4);
+                    System.out.println("x3: " + x3 + " y3: " + y3 + " x6: " + x6 + " y6: " + y6);
+                    break;
+                case 6:
+                    newEdges.add(new Edge(x1, y1, x4, y4));
+                    newEdges.add(new Edge(x2, y2, x6, y6));
+                    newEdges.add(new Edge(x3, y3, x5, y5));
+                    System.out.println("Case 6");
+                    System.out.println("x1: " + x1 + " y1: " + y1 + " x4: " + x4 + " y4: " + y4);
+                    System.out.println("x2: " + x2 + " y2: " + y2 + " x6: " + x6 + " y6: " + y6);
+                    System.out.println("x3: " + x3 + " y3: " + y3 + " x5: " + x5 + " y5: " + y5);
+
+                    break;
+                case 7:
+                    newEdges.add(new Edge(x1, y1, x4, y4));
+                    newEdges.add(new Edge(x2, y2, x5, y5));
+                    newEdges.add(new Edge(x3, y3, x6, y6));
+                    System.out.println("Case 7");
+                    System.out.println("x1: " + x1 + " y1: " + y1 + " x4: " + x4 + " y4: " + y4);
+                    System.out.println("x2: " + x2 + " y2: " + y2 + " x5: " + x5 + " y5: " + y5);
+                    System.out.println("x3: " + x3 + " y3: " + y3 + " x6: " + x6 + " y6: " + y6);
+                    break;
+                default:
+                    break;
+
+            }
+
+        }else {
+
+            //draw the new edges
+            Line newLine1 = new Line(x1 / xScaling, y1 / yScaling, x3 / xScaling, y3 / yScaling);
+            Line newLine2 = new Line(x2 / xScaling, y2 / yScaling, x4 / xScaling, y4 / yScaling);
+            edgesAdded++;
+            edgesAdded++;
+
+            newLine1.setStroke(Color.GREEN);
+            newLine2.setStroke(Color.GREEN);
+            tspVisualization.getChildren().add(newLine1);
+            overlayPane.getChildren().add(newLine1);
+            tspVisualization.getChildren().add(newLine2);
+            overlayPane.getChildren().add(newLine2);
+            edgeMap.put(new Edge(x1, y1, x3, y3), newLine1);
+            edgeMap.put(new Edge(x2, y2, x4, y4), newLine2);
+        }
+        for (Edge edge : newEdges) {
+            Line newLine = new Line(edge.x1 / xScaling, edge.y1 / yScaling, edge.x2 / xScaling, edge.y2 / yScaling);
+            newLine.setStroke(Color.GREEN);
+            overlayPane.getChildren().add(newLine);
+            tspVisualization.getChildren().add(newLine);
+            edgeMap.put(edge, newLine);
+            edgesAdded++;
+        }
+        updateLabels();
+
+
+
+    }
+    private void printEdgeMapDetails() {
+        System.out.println("Current edges in edgeMap:");
+        for (Map.Entry<Edge, Line> entry : edgeMap.entrySet()) {
+            Edge edge = entry.getKey();
+            Line line = entry.getValue();
+            System.out.println("Edge: (" + edge.x1 + ", " + edge.y1 + ") -> (" + edge.x2 + ", " + edge.y2 + ")");
+        }
+    }
+    private void updateLabels() {
+        fitnessLabel.setText("Fitness: " + currentSolution.fitness);
+        numberOfEdgesLabel.setText("Number of Edges: " + edgeMap.size());
+        gainLabel.setText("Gain: " + currentSolution.improvement);
+        edgesDeletedLabel.setText("Edges Deleted: " + edgesDeleted);
+        edgesAddedLabel.setText("Edges Added: " + edgesAdded);
+    }
+
+    @Override
+    public void tspGraphics(ArrayList<TSPDATA> solution) {
+        allSolutions = solution;
+    }
+
+    @Override
+    public void receiveUpdate(TSPDATA solution){
+        updateQueue.add(solution);
+    }
+
+    private void processQueue() {
+        if (!updateQueue.isEmpty()) {
+            TSPDATA nextSolution = updateQueue.poll();
+            setSolution(nextSolution);
+            updateVisualization();
+        }
+    }
+
+    // Helper class to track edges
+    private static class Edge {
+        int x1, y1, x2, y2;
+
+        Edge(int x1, int y1, int x2, int y2) {
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Edge edge = (Edge) o;
+
+            if (x1 != edge.x1) return false;
+            if (y1 != edge.y1) return false;
+            if (x2 != edge.x2) return false;
+            return y2 == edge.y2;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = x1;
+            result = 31 * result + y1;
+            result = 31 * result + x2;
+            result = 31 * result + y2;
+            return result;
+        }
+        @Override
+        public String toString() {
+            return "Edge{" +
+                    "x1=" + x1 +
+                    ", y1=" + y1 +
+                    ", x2=" + x2 +
+                    ", y2=" + y2 +
+                    '}';
+        }
+    }
 }
+
+
+
+
+
