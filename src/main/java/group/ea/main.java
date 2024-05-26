@@ -31,6 +31,7 @@ public class main extends Application {
 
         Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
         Scene scene = new Scene(root);
+        //runSingle();
 
 
         //stage.initStyle(StageStyle.UNDECORATED); // no border
@@ -78,7 +79,7 @@ public class main extends Application {
                 newSchedule.setSearchSpaceString("Permutations");
                 newSchedule.setProblemString("TSP");
                 newSchedule.setAlgorithmString("Permutation1+1EA");
-                newSchedule.setIterationBound(1000000);
+                newSchedule.setIterationBound(100000);
                 newSchedule.setUpAlgorithm();
                 newSchedule.getAlgorithm().runAlgorithm();
                 int thisRunFitness = newSchedule.getAlgorithm().getFitness();

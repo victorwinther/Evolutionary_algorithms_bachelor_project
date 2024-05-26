@@ -8,14 +8,7 @@ import group.ea.structure.searchspace.SearchSpace;
 import java.util.ArrayList;
 import java.util.Random;
 
-//TODO
-/*
-FIX SO IT CAN BOTH THE BEST ANt AND EVERY ANT
-TRY TO GET IT ON BITSTRING?
-MAKE 1+1 EA work on TSP
-MERGE SO IT WORKS WITH GRAPH
 
- */
 
 
 public class ACO extends Algorithm{

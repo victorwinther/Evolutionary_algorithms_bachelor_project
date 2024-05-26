@@ -63,7 +63,7 @@ public class PermutationOnePlusOneEA extends Algorithm {
 
              */
         } else {
-            noImprovementCounter++;
+            //noImprovementCounter++;
             _sl.revert();
         }
 

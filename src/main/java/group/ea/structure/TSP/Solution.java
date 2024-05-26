@@ -85,8 +85,8 @@ public class Solution extends Problem {
         City firstCity = solution.get(firstIndex);
         City secondCity = solution.get(secondIndex);
         //System.out.println("swapping " + firstIndex + "which is " + firstCity.getId() + " with " + secondIndex + "which " + secondCity.getId());
-        solution.set(firstIndex, secondCity);
-        solution.set(secondIndex, firstCity);
+        //solution.set(firstIndex, secondCity);
+        //solution.set(secondIndex, firstCity);
         make_2_Opt_move(solution, firstIndex, secondIndex);
 
         if(graphicsOn){
