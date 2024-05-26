@@ -1,6 +1,5 @@
 package group.ea.structure.algorithm;
 
-import group.ea.structure.TSP.City;
 import group.ea.structure.TSP.Solution;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
@@ -17,6 +16,7 @@ public class PermutationOnePlusOneEA extends Algorithm {
         super(searchSpace, problem);
         _sl = (Solution) problem;
         bestFitness = _sl.computeFitness();
+
     }
 
     @Override
@@ -30,23 +30,33 @@ public class PermutationOnePlusOneEA extends Algorithm {
     }
     @Override
     public void performSingleUpdate(int generation) {
+        if(generation == 0){
+            listener.firstSolution(_sl);
+        }
         // Save the current solution
         // randomly at uniform
-        boolean twoOpt = false;
+        boolean threeOpt = false;
         double tempChance = Math.random();
         if (tempChance < chance) {
             //_sl.twoOptMutate2();
             //_sl.ls3Opt();
             _sl.twoOptMutate();
+            threeOpt = false;
 
         } else {
             //_sl.ls3Opt();
             _sl.random3Opt();
-            twoOpt = true;
+            threeOpt = true;
         }
         int offspringFitness = _sl.computeFitness();
+
         if (offspringFitness < bestFitness) {
             bestFitness = offspringFitness;
+            TSPDATA tspdata = new TSPDATA(_sl,generation,offspringFitness,_sl.getImprovement,_sl.A1,_sl.A2,_sl.A3,_sl.A4,Optional.ofNullable(_sl.A5),Optional.ofNullable(_sl.A6),Optional.ofNullable(_sl.optCase), threeOpt);
+            listener.receiveUpdate(tspdata);
+            //listener.tspGraphics(TSPDATA.allSolutions);
+
+
             Data data = new Data("bitString", generation, bestFitness, false, Optional.empty());
             finalList.add(data);
             // Adaptively adjust mutation probability
@@ -59,18 +69,18 @@ public class PermutationOnePlusOneEA extends Algorithm {
 
              */
         } else {
-            noImprovementCounter++;
+            //noImprovementCounter++;
             _sl.revert();
         }
 
-
+/*
         if (noImprovementCounter > RESTART_THRESHOLD) {
             //System.out.println("Restarting the algorithm... in generation"+ generation + " with fitness: " + bestFitness );
             _sl.restart(); // Reinitialize the solution
             bestFitness = _sl.computeFitness();
             noImprovementCounter = 0; // Reset counter
         }
-
+*/
         }
 
     }

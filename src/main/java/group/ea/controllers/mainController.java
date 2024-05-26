@@ -43,7 +43,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class mainController implements Initializable, AlgorithmUpdateListener {
+public class mainController implements Initializable {//,AlgorithmUpdateListener {
     private static AnimationTimer animationTimer;
     public final NumberAxis xAxis = new NumberAxis();
     public final NumberAxis yAxis = new NumberAxis();
@@ -525,7 +525,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             Schedule newSchedule = schedules.get(j);
             for (int k = 0; k < newSchedule.getRuns(); k++) {
             queueSchedule.add(newSchedule);
-            newSchedule.getAlgorithm().sendListener(this);
+           // newSchedule.getAlgorithm().sendListener(this);
             }
         }
 
@@ -631,7 +631,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     public boolean isGraphSelected() {
         return graphSelector.isSelected();
     }
-    @Override
+    /*@Override
     public void tspGraphics(Solution _sl){
         Platform.runLater(() -> {
         tspVisualization.getChildren().clear();
@@ -662,5 +662,5 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         }
         });
     }
-
+*/
 }

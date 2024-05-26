@@ -61,7 +61,7 @@ public class PermutationSA extends  Algorithm {
         System.out.println(offspringFitness + " " + bestFitness);
 
         if (offspringFitness < bestFitness) {
-            listener.tspGraphics(_sl);
+            //listener.tspGraphics(_sl);
             System.out.println("Better in generation " + generation);
             data.setYesNo(true);
             bestFitness = offspringFitness;

@@ -1,23 +1,28 @@
 package group.ea.structure.TSP;
 
+import group.ea.structure.algorithm.TSPDATA;
 import group.ea.structure.problem.Problem;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Optional;
 
 
 public class Solution extends Problem {
 
+    public double getImprovement;
+    public City A1,A2,A3,A4,A5,A6;
     TSPParser _tsp;
     private ArrayList<City> solution = new ArrayList<>();
     private ArrayList<City> prevSolution = new ArrayList<>();
 
     private ArrayList<City> initialSolution = new ArrayList<>();
+    public int optCase;
 
     public static void setGeneration(int i) {
         generationSolution = i;
     }
-    boolean graphicsOn = false;
+    boolean graphicsOn = true;
     ArrayList<ArrayList<City>> solutions = new ArrayList<ArrayList<City>>();
 
     @Override
@@ -32,6 +37,7 @@ public class Solution extends Problem {
             solution.add(temp);
         }
         initialSolution = new ArrayList<>(solution);
+
         solutions.add(solution);
     }
     public void restart(){
@@ -85,18 +91,38 @@ public class Solution extends Problem {
         City firstCity = solution.get(firstIndex);
         City secondCity = solution.get(secondIndex);
         //System.out.println("swapping " + firstIndex + "which is " + firstCity.getId() + " with " + secondIndex + "which " + secondCity.getId());
-        solution.set(firstIndex, secondCity);
-        solution.set(secondIndex, firstCity);
-        make_2_Opt_move(solution, firstIndex, secondIndex);
+        double gains = gainFrom2Opt(firstCity,solution.get(((firstIndex+1)% solution.size())),solution.get(secondIndex),solution.get(((secondIndex+1) % solution.size())));
 
         if(graphicsOn){
-            double gains = gainFrom2Opt(firstCity,solution.get(((firstIndex+1)% solution.size())),solution.get(secondIndex),solution.get(((secondIndex+1) % solution.size())));
-            if(gains < 0){
-                solutions.add(solution);
-               // System.out.println("2-opt move optimal and edges saved" + gains);
+            //System.out.println(gains + " gains er");
+            if(gains > 0){
+                //solutions.add(solution);
+                // System.out.println("2-opt move optimal and edges saved" + gains);
+                TSPDATA tspdata = new TSPDATA(this,generationSolution,computeFitness(),gains,firstCity,solution.get(((firstIndex+1)% solution.size())),solution.get(secondIndex),solution.get(((secondIndex+1) % solution.size())), Optional.empty(),Optional.empty(),Optional.empty(),false);
+              getImprovement = gains;
+                A1 = firstCity;
+                A2 = solution.get(((firstIndex+1)% solution.size()));
+                A3 = solution.get(secondIndex);
+                A4 = solution.get(((secondIndex+1) % solution.size()));
 
+               // System.out.println(generationSolution + " " + computeFitness() + " " + gains + " " + firstCity + " " + solution.get(((firstIndex+1)% solution.size())) + " " + solution.get(secondIndex) + " " + solution.get(((secondIndex+1) % solution.size())));
+
+            } else {
+                A1 = null;
+                A2 = null;
+                A3 = null;
+                A4 = null;
             }
         }
+
+       // System.out.println(gains + " Fitness before + " + computeFitness());
+
+        make_2_Opt_move(solution, firstIndex, secondIndex);
+
+
+      //  System.out.println(gains + " Fitness after+ " + computeFitness());
+
+
 
 
     }
@@ -104,7 +130,7 @@ public class Solution extends Problem {
         reverseSegment(tour,(i+1) % solution.size(),j);
 
 
-
+        /*
         if(graphicsOn){
             double gains = gainFrom2Opt(solution.get(i),solution.get((i+1) % solution.size()),solution.get(j),solution.get((j+1) % solution.size()));
             if(gains < 0){
@@ -112,6 +138,8 @@ public class Solution extends Problem {
 
             }
         }
+
+         */
 
     }
     public static double gainFrom2Opt(City X1, City X2, City Y1, City Y2) {
@@ -187,7 +215,7 @@ public class Solution extends Problem {
     public void printSolution() {
 
         for (City c : solution) {
-            System.out.println(c.getId());
+            System.out.print(c.getId() + " ");
         }
     }
 
@@ -601,6 +629,8 @@ public class Solution extends Problem {
             }
         }*/
     public void reverseSegment(ArrayList<City> tour, int startIndex, int endIndex) {
+
+
         int N = tour.size();
         int inversionSize = ((N + endIndex - startIndex + 1) % N) / 2;
 
@@ -616,7 +646,11 @@ public class Solution extends Problem {
             // Move indices towards the center of the segment
             left = (left + 1) % N;
             right = (N + right - 1) % N;
+
+
         }
+
+
     }
 
     private ArrayList<City> swap(ArrayList<City> cities, int i, int j) {
@@ -740,14 +774,15 @@ public void ls3Opt() {
                     City Z1 = solution.get(k);
                     City Z2 = solution.get((k + 1) % N);
                     iterations++;
-                    for (Reconnection3OptCase optCase : new Reconnection3OptCase[] {Reconnection3OptCase.OPT3_CASE_3, Reconnection3OptCase.OPT3_CASE_6, Reconnection3OptCase.OPT3_CASE_7}) {
+                    //for (Reconnection3OptCase optCase : new Reconnection3OptCase[] {Reconnection3OptCase.OPT3_CASE_3, Reconnection3OptCase.OPT3_CASE_6, Reconnection3OptCase.OPT3_CASE_7}) {
+                      for(Reconnection3OptCase optCase : Reconnection3OptCase.values()){
                         generationSolution++;
                         if (optCase != Reconnection3OptCase.OPT3_CASE_0) {
                             double gainExpected = gainFrom3Opt(X1, X2, Y1, Y2, Z1, Z2, optCase);
                             if (gainExpected > 0) {
-                                System.out.println("fitness before more in gainExpected" + computeFitness());
+                                //System.out.println("fitness before more in gainExpected" + computeFitness());
                                 make3OptMove(solution, i, j, k, optCase);
-                                System.out.println("fitness after more in gainExpected" + computeFitness());
+                                //System.out.println("fitness after more in gainExpected" + computeFitness());
                                 locallyOptimal = false;
                                 break outerLoop;
                             }
@@ -787,21 +822,37 @@ public void random3Opt(){
 
     Reconnection3OptCase bestOpt = Reconnection3OptCase.OPT3_CASE_0;
     double bestGain = 0;
-    int bestMove = bestMove(X1,X2,Y1,Y2,Z1,Z2);
+    //int bestMove = bestMove(X1,X2,Y1,Y2,Z1,Z2);
 
-    make3OptMove(solution,i,j,k,Reconnection3OptCase.values()[bestMove]);
-    /*
+    //make3OptMove(solution,i,j,k,Reconnection3OptCase.values()[bestMove]);
+
     for (Reconnection3OptCase optCase : Reconnection3OptCase.values()) {
-        //double gain = gainFrom3Opt(X1,X2,Y1,Y2,Z1,Z2,optCase);
-        int bestMove = bestMove(X1,X2,Y1,Y2,Z1,Z2);
+        double gain = gainFrom3Opt(X1,X2,Y1,Y2,Z1,Z2,optCase);
+       // int bestMove = bestMove(X1,X2,Y1,Y2,Z1,Z2);
         //int newFitness = makeBestMove(solution,i,j,k,optCase);
-        /*if(gain > bestGain){
+        if(gain > bestGain){
             //System.out.println("gain" + gain);
             bestGain = gain;
             bestOpt = optCase;
         }
         }
-     */
+    if(graphicsOn && bestGain > 0){
+        A1 = X1;
+        A2 = X2;
+        A3 = Y1;
+        A4 = Y2;
+        A5 = Z1;
+        A6 = Z2;
+        getImprovement = bestGain;
+        optCase = bestOpt.ordinal();
+        System.out.println("best gain " + bestGain + " opt case "+optCase + "optcase er");
+
+    } else {
+        A5 = null;
+        A6 = null;
+    }
+    make3OptMove(solution,i,j,k,bestOpt);
+
 
 
 }

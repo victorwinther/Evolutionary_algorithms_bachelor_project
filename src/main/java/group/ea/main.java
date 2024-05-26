@@ -3,6 +3,7 @@ package group.ea;
 import group.ea.controllers.Schedule;
 import group.ea.structure.algorithm.Algorithm;
 import group.ea.structure.algorithm.RLS;
+import group.ea.structure.algorithm.TSPDATA;
 import group.ea.structure.problem.OneMax;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.BitString;
@@ -28,21 +29,22 @@ public class main extends Application {
     static TspResultController controller;
     @Override
     public void start(Stage stage) throws IOException {
+        /*
 
         Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
         Scene scene = new Scene(root);
 
-
+        */
         //stage.initStyle(StageStyle.UNDECORATED); // no border
         // Load the FXML file
-          /*
+
         FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/singlePage.fxml")));
         Parent root = loader.load();
 
         Platform.runLater(root::requestFocus); // don't focus any element initially
 
         controller = loader.getController();
-         */
+
 
         root.setOnMousePressed( event -> {
             x = event.getSceneX();
@@ -54,10 +56,10 @@ public class main extends Application {
         });
 
         // Set up the scene and stage
-        //Scene scene = new Scene(root);
+        Scene scene = new Scene(root);
         stage.setScene( scene);
         stage.show();
-        //runSingle();
+        runSingle();
     }
 
     public static void main(String[] args) {
@@ -70,24 +72,26 @@ public class main extends Application {
 
     }
     public static void runSingle(){
+
         int totalFitness = 0;
-        int iterations = 100;
+        int iterations = 1;
         int perfectCount = 0;
             for(int i = 0; i < iterations; i++) {
                 Schedule newSchedule = new Schedule();
                 newSchedule.setSearchSpaceString("Permutations");
                 newSchedule.setProblemString("TSP");
                 newSchedule.setAlgorithmString("Permutation1+1EA");
-                newSchedule.setIterationBound(1000000);
+                newSchedule.setIterationBound(10000);
                 newSchedule.setUpAlgorithm();
+                newSchedule.getAlgorithm().sendListener(controller);
                 newSchedule.getAlgorithm().runAlgorithm();
-                int thisRunFitness = newSchedule.getAlgorithm().getFitness();
+                int thisRunFitness = newSchedule.getAlgorithm().getGeneration();
                 if(thisRunFitness == 7544){
                     perfectCount++;
                 }
                 totalFitness += thisRunFitness;
 
-                //controller.tspGraphics(newSchedule.getAlgorithm().get_sl());
+                //controller.setSolution(newSchedule.getAlgorithm().get_sl());
             }
         System.out.println("Average fitness: " + totalFitness/iterations + " Perfect runs: " + perfectCount + " out of " + iterations);
 
