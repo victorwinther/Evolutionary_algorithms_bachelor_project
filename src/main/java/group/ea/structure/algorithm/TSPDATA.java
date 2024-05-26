@@ -13,6 +13,7 @@ public class TSPDATA {
     public Solution solution;
     public int generation;
     public int fitness;
+    public ArrayList<City> slSolution;
     public double improvement;
     public City X1,X2,X3,X4,X5,X6;
 
@@ -20,7 +21,7 @@ public class TSPDATA {
 
     private static List<TspResultController> listeners = new ArrayList<>();
     static ArrayList<TSPDATA> allSolutions = new ArrayList<>();
-    public TSPDATA (Solution solution, int generation, int fitness, double improvement, City X1, City X2, City X3, City X4, Optional<City> A5, Optional<City> A6, Optional<Integer> optCase, boolean b) {
+    public TSPDATA (Solution solution, ArrayList<City> slSolution, int generation, int fitness, double improvement, City X1, City X2, City X3, City X4, Optional<City> A5, Optional<City> A6, Optional<Integer> optCase, boolean b) {
         this.solution = solution;
         this.generation = generation;
         this.fitness = fitness;
@@ -33,6 +34,7 @@ public class TSPDATA {
         this.X6 = A6.orElse(null); // Assign null if A6 is not present
         this.optCase = optCase.orElse(-1); // Assign null if optCase is not present
         this.opt3 = b;
+        this.slSolution = slSolution;
         allSolutions.add(this);
     }
 

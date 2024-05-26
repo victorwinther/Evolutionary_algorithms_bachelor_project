@@ -98,7 +98,7 @@ public class Solution extends Problem {
             if(gains > 0){
                 //solutions.add(solution);
                 // System.out.println("2-opt move optimal and edges saved" + gains);
-                TSPDATA tspdata = new TSPDATA(this,generationSolution,computeFitness(),gains,firstCity,solution.get(((firstIndex+1)% solution.size())),solution.get(secondIndex),solution.get(((secondIndex+1) % solution.size())), Optional.empty(),Optional.empty(),Optional.empty(),false);
+                // TSPDATA tspdata = new TSPDATA(this, _sl.getSolution(), generationSolution,computeFitness(),gains,firstCity,solution.get(((firstIndex+1)% solution.size())),solution.get(secondIndex),solution.get(((secondIndex+1) % solution.size())), Optional.empty(),Optional.empty(),Optional.empty(),false);
               getImprovement = gains;
                 A1 = firstCity;
                 A2 = solution.get(((firstIndex+1)% solution.size()));
@@ -460,6 +460,16 @@ public class Solution extends Problem {
 
     public int getDimension() {
         return _tsp.getDimension();
+    }
+
+    public void clearData() {
+        A1 = null;
+        A2 = null;
+        A3 = null;
+        A4 = null;
+        A5 = null;
+        A6 = null;
+
     }
 
     enum Reconnection3OptCase {

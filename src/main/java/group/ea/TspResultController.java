@@ -389,8 +389,10 @@ public class TspResultController implements AlgorithmUpdateListener {
         System.out.println("called");
         // Clear previous visualization
         speed = speedSlider.getValue();
-        //tspVisualization.getChildren().clear();
+        tspVisualization.getChildren().clear();
+        updateLabels();
         Solution firstSolution = currentSolution.solution;
+        ArrayList<City> slSolution = currentSolution.slSolution;
         int numPoints = firstSolution.getListLength();
 
         // Draw the nodes
@@ -402,16 +404,15 @@ public class TspResultController implements AlgorithmUpdateListener {
         }
         // Draw the edges
         for (int i = 0; i < numPoints; i++) {
-            int x1 = firstSolution.getXSolution(i);
-            int y1 = maxY - firstSolution.getYSolution(i);
-            int x2 = firstSolution.getXSolution((i + 1) % numPoints);
-            int y2 = maxY - firstSolution.getYSolution((i + 1) % numPoints);
+            int x1 = (int) slSolution.get(i).getX();
+            int y1 =  (maxY - (int) slSolution.get(i).getY());
+            int x2 = (int) slSolution.get((i + 1) % numPoints).getX();
+            int y2 =  (maxY - (int) slSolution.get((i + 1) % numPoints).getY());
             Line line = new Line(x1 / 4.0, y1 / 4.0, x2 / 4.0, y2 / 4.0);
             edgeMap.put(new Edge(x1, y1, x2, y2), line);
             tspVisualization.getChildren().add(line);
 
         }
-        updateLabels();
 
     }
 
@@ -430,8 +431,8 @@ public class TspResultController implements AlgorithmUpdateListener {
         List<Edge> newEdges = new ArrayList<>();
 
         Edge edge1 = new Edge(x1, y1, x2, y2);
-        Edge edge2 = new Edge(x3, y3, x4, y4);
-        Edge edge3 = new Edge(x2, y2, x1, y1);
+        Edge edge2 = new Edge(x2, y2, x1, y1);
+        Edge edge3 = new Edge(x3, y3, x4, y4);
         Edge edge4 = new Edge(x4, y4, x3, y3);
 
         Line line1 = edgeMap.get(edge1);
@@ -460,11 +461,30 @@ public class TspResultController implements AlgorithmUpdateListener {
             edgeMap.remove(edge4);
             edgesDeleted++;
         }
+        if(line1 == null && line2 == null || line3 == null && line4 == null){
+            if(line1 == null) {
+                System.out.println("Line1 not found for edge: " + new Edge(x1, y1, x2, y2));
+            }
+            if(line2 == null) {
+                System.out.println("Line2 not found for edge: " + new Edge(x2, y2, x1, y1));
+            }
+            if(line3 == null) {
+                System.out.println("Line3 not found for edge: " + new Edge(x3, y3, x4, y4));
+            }
+            if(line4 == null) {
+                System.out.println("Line4 not found for edge: " + new Edge(x4, y4, x3, y3));
+            }
+            System.out.println(currentSolution.opt3 + " 3 opt");
+            System.out.println("Line4 not found for edge: " + new Edge(x4, y4, x3, y3));
+            System.out.println("deleted 1 and 2"+ new Edge(x1,y1,x2,y2) + " "+ new Edge(x3,y3,x4,y4));
+
+            printEdgeMapDetails();
+        }
 
 
 
         if (currentSolution.opt3) {
-
+            // X -> X+1  Y -> Y+1 Z -> Z + 1
             int x5 = (int) currentSolution.X5.getX();
             int y5 = maxY - (int) currentSolution.X5.getY();
             int x6 = (int) currentSolution.X6.getX();
