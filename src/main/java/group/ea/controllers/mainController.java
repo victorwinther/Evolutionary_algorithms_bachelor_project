@@ -155,12 +155,14 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             private long lastUpdate = 0;
             @Override
             public void handle(long l) {
-
+                System.out.println("running");
                 if (l - lastUpdate >= duration) { // Update every second
                    if (!isAnimationPaused) {
+                       System.out.println("running");
                         sliderController();
                         lastUpdate = l;
                         double speed = speedSlider.getValue();
+                       System.out.println("Speed: " + speed);
                         if(speed < (speedSlider.getMax()*0.5)) {
                             duration = (TimeUnit.MILLISECONDS.toNanos(1000) * (1 - speed / sliderSpeed.getMax()));
                             fullspeed = false;
@@ -712,6 +714,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 timeline.play(); // Restart the timeline with the new speed
             }
         });
+
     }
 
     private final Queue<TSPDATA> updateQueue = new LinkedList<>();
@@ -728,6 +731,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     }
     @FXML
     private void startVisualization() {
+
         sliderSpeed.setBlockIncrement(1.0);
         sliderSpeed.setMax(10.0);
         sliderSpeed.setMin(0.1);
@@ -769,7 +773,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private void pauseVisualization() {
         if (timeline != null) {
             timeline.pause();
-            isPaused = true;
+           // isPaused = true;
             startButton.setDisable(false);
             pauseButton.setDisable(true);
         }

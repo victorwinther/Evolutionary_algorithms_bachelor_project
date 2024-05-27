@@ -40,9 +40,7 @@ public class onePlusOneEA extends Algorithm {
             }
             generation++;
             finalList.add(data);
-            if (finalList.size() > 1000) { // Example threshold, adjust based on your use case
-                finalList.clear(); // Or implement a more sophisticated memory management strategy
-            }
+
         }
         stoppingMet = true;
     }
