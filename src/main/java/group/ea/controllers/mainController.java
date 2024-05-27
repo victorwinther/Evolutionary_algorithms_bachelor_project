@@ -7,14 +7,6 @@ import group.ea.structure.TSP.TSPParser;
 import group.ea.structure.algorithm.*;
 import group.ea.structure.algorithm.BooleanHypercubeVisualization;
 import group.ea.structure.algorithm.Algorithm;
-import group.ea.structure.algorithm.RLS;
-import group.ea.structure.algorithm.SA;
-import group.ea.structure.algorithm.onePlusOneEA;
-import group.ea.structure.problem.OneMax;
-import group.ea.structure.problem.LeadingOnes;
-import group.ea.structure.problem.Problem;
-import group.ea.structure.searchspace.BitString;
-import group.ea.structure.searchspace.SearchSpace;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -27,8 +19,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
@@ -140,9 +130,10 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
      */
     @FXML
     private Slider speedSlider;
+    @FXML
     private Button pauseButton;
     @FXML
-    private Button resetButton;
+    private Button stopButton;
     private Timeline timeline;
     private boolean isPaused = false;
     private int currentStep = 0;
@@ -598,6 +589,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private void pauseGraphics() {
         isAnimationPaused = true;
+        pauseVisualization();
     }
 
     @FXML
@@ -610,6 +602,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     public void stopGraphics() {
         //wait 5 sec
+        resetVisualization();
 
         animationTimer.stop(); // Stop the animation
         isRunning = false; // Set running state to false to stop the algorithm
@@ -686,35 +679,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private ScrollPane scrollPaneMain;
 
-    private Canvas coordinateCanvas = new Canvas(1800, 1200);
     public void tspIntialize(){
-        // Initialize controls
-        //pauseButton.setDisable(true);
-        //resetButton.setDisable(true);
-        /*
-        tspVisualization.setPrefSize(600, 400);
-        tspVisualization.setMinSize(600, 400);
-        tspVisualization.setMaxSize(600, 400);
-        tspVisualization.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
-        flowPane.getChildren().add(tspVisualization);
-        tspVisualization.getChildren().add(coordinateCanvas);
-        */
-        xAxis = new NumberAxis(0, 1800, 100);
-        yAxis = new NumberAxis(0, 1200, 100);
-        yAxis.setTickLabelRotation(90);
-
-        scatterChart = new ScatterChart<>(xAxis, yAxis);
-        scatterChart.setPrefSize(600, 400);
-        scatterChart.setMinSize(600, 400);
-        scatterChart.setMaxSize(600, 400);
-        scatterChart.setLegendVisible(false);
-
-
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(scatterChart, tspVisualization);
-        flowPane.getChildren().add(stackPane);
-
-
 
 
         fitnessLabel = new Label("Fitness: ");
@@ -726,7 +691,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         VBox infoBox = new VBox(fitnessLabel, numberOfEdgesLabel, gainLabel, edgesDeletedLabel, edgesAddedLabel);
         infoBox.setSpacing(5);
         flowPane.getChildren().add(infoBox);
-        //tspVisualization.getChildren().add(coordinateCanvas);
 
 
 
@@ -735,7 +699,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 timeline.stop(); // Stop the timeline to reset the key frame duration
                 double speed = newValue.doubleValue();
                 KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
-                    System.out.println("hey 1");
+                    System.out.println("Keyframe 1 running");
                     processQueue();
                 });
                 timeline.getKeyFrames().setAll(keyFrame); // Set the new key frame with the updated speed
@@ -783,7 +747,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
             processQueue();
-            System.out.println("hey 2");
+            System.out.println("Keyframe 2 running");
 
         });
 
@@ -791,8 +755,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         timeline.play();
 
         startButton.setDisable(true);
-        //pauseButton.setDisable(false);
-        //resetButton.setDisable(false);
+        pauseButton.setDisable(false);
+        stopButton.setDisable(false);
     }
 
     @FXML
@@ -810,38 +774,22 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         if (timeline != null) {
             timeline.stop();
         }
-        tspVisualization.getChildren().clear();
+        stackPane.getChildren().clear();
         currentStep = 0;
-        /*
+
         startButton.setDisable(false);
         pauseButton.setDisable(true);
-        resetButton.setDisable(true);
+        stopButton.setDisable(true);
         isPaused = false;
 
-         */
-    }
-    private void drawCoordinateSystem() {
-        coordinateCanvas = new Canvas(1800, 1200);
-        GraphicsContext gc = coordinateCanvas.getGraphicsContext2D();
-        gc.setStroke(Color.BLACK);
-        gc.setLineWidth(1);
 
-        // Draw X axis
-        for (int x = 1800; x >= 0; x -= 100) {
-            gc.strokeLine(x, 0, x, 1200);
-        }
-
-        // Draw Y axis
-        for (int y = 1200; y >= 0; y -= 100) {
-            gc.strokeLine(0, y, 1800, y);
-        }
-
-        tspVisualization.getChildren().add(coordinateCanvas);
     }
 
     double xScaling = 3.4;
     double yScaling = 3.4;
-    double xPush = 50;
+    double xPush = 35;
+
+    StackPane stackPane = new StackPane();
     @Override
     public void firstSolution(Solution solution) {
 
@@ -863,7 +811,23 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             }
 
         }
-        maxY = (int) maxYFirst + 10 ;
+        xAxis = new NumberAxis(0, maxXFirst, maxXFirst/10);
+        yAxis = new NumberAxis(0, maxYFirst, maxYFirst/10);
+        yAxis.setTickLabelRotation(90);
+
+        scatterChart = new ScatterChart<>(xAxis, yAxis);
+        scatterChart.setPrefSize(600, 400);
+        scatterChart.setMinSize(600, 400);
+        scatterChart.setMaxSize(600, 400);
+        scatterChart.setLegendVisible(false);
+
+
+
+        stackPane.getChildren().addAll(scatterChart, tspVisualization);
+        flowPane.getChildren().add(stackPane);
+
+        double yPush = 40 / (1200 / maxXFirst);
+        maxY = (int) ((int) maxYFirst + yPush);
         System.out.println(maxXFirst + " " + maxYFirst);
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
 

@@ -134,7 +134,7 @@ public class Schedule {
                 this.searchSpace = new BitString(this.dimension);
                 break;
             case "Permutations":
-                this.searchSpace = new TSPParser("src/main/java/group/ea/controllers/berlin52.txt");
+                this.searchSpace = new TSPParser("src/main/java/group/ea/controllers/bier127.txt");
                 break;
         }
 
