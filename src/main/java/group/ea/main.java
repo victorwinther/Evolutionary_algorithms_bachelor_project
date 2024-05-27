@@ -70,10 +70,14 @@ public class main extends Application {
         launch(args);
        // runSingle();
        // runSingle2();
+        //runExperimentTSP();
 
 
 
     }
+
+
+
     public static void runSingle(){
 
         int totalFitness = 0;
@@ -83,7 +87,7 @@ public class main extends Application {
                 Schedule newSchedule = new Schedule();
                 newSchedule.setSearchSpaceString("Permutations");
                 newSchedule.setProblemString("TSP");
-                newSchedule.setAlgorithmString("Permutation1+1EA");
+                newSchedule.setAlgorithmString("1+1 EA TSP");
                 newSchedule.setIterationBound(1000);
                 newSchedule.setUpAlgorithm();
                 newSchedule.getAlgorithm().sendListener(controller);
@@ -124,6 +128,36 @@ public class main extends Application {
         System.out.println("Average fitness: " + totalFitness/iterations + " Perfect runs: " + perfectCount + " out of " + iterations);
 
         // controller.tspGraphics(newSchedule.getAlgorithm().get_sl());
+
+    }
+    private static void runExperimentTSP() {
+        int iterations = 1;
+        int perfectCount = 0;
+        int[] iterationsLength = {1,2,3,4,5,10,50,100,1000,2000,5000,10000,20000,30000,40000,50000,60000,70000,80000,90000,100000}; // Example lengths
+        int runsPerObservation = 200;
+        List<DataPoint> dataPoints = new ArrayList<>();
+        for (int length : iterationsLength) {
+            int totalFitness = 0;
+            for (int run = 0; run < runsPerObservation; run++) {
+                Schedule newSchedule = new Schedule();
+                newSchedule.setSearchSpaceString("Permutations");
+                newSchedule.setProblemString("TSP");
+                newSchedule.setAlgorithmString("1+1 EA TSP");
+                newSchedule.setIterationBound(length);
+                newSchedule.setUpAlgorithm();
+                newSchedule.getAlgorithm().runAlgorithm();
+                int thisRunFitness = newSchedule.getAlgorithm().getFitness();
+
+                totalFitness += thisRunFitness;
+                System.out.println("Done with run nr " + run + "with " + iterations + " iterations");
+
+                //controller.setSolution(newSchedule.getAlgorithm().get_sl());
+            }
+            dataPoints.add(new DataPoint(length, totalFitness/runsPerObservation));
+            saveDataToCSV("LeadingOnes_experiment.csv", dataPoints);
+            System.out.println("Done with length " + length);
+        }
+        System.out.println("Experiment done");
 
     }
     public static void runExperiment(){

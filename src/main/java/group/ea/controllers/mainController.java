@@ -155,13 +155,18 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             private long lastUpdate = 0;
             @Override
             public void handle(long l) {
+                sliderSpeed.setBlockIncrement(50.0);
+                sliderSpeed.setMax(1000.0);
+                sliderSpeed.setMin(0.1);
+                sliderSpeed.setValue(500.0);
+                sliderSpeed.setMajorTickUnit(100.0);
                 if (l - lastUpdate >= duration) { // Update every second
                     if (!isAnimationPaused) {
                         sliderController();
                         lastUpdate = l;
-                        double speed = speedSlider.getValue();
-                        if(speed < (speedSlider.getMax()*0.5)) {
-                            duration = (TimeUnit.MILLISECONDS.toNanos(1000) * (1 - speed / speedSlider.getMax()));
+                        double speed = sliderSpeed.getValue();
+                        if(speed < (sliderSpeed.getMax()*0.5)) {
+                            duration = (TimeUnit.MILLISECONDS.toNanos(1000) * (1 - speed / sliderSpeed.getMax()));
                             fullspeed = false;
                         } else{
                             duration = TimeUnit.MILLISECONDS.toNanos(0);

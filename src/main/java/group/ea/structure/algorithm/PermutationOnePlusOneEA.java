@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public class PermutationOnePlusOneEA extends Algorithm {
-    double chance = 0.5;
+    double chance = 1;
     int noImprovementCounter = 0; // Counter to track iterations without improvement
     final int RESTART_THRESHOLD = 1000000; // Threshold for restarting the algorithm
 
