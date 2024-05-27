@@ -155,24 +155,20 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             private long lastUpdate = 0;
             @Override
             public void handle(long l) {
-                sliderSpeed.setBlockIncrement(50.0);
-                sliderSpeed.setMax(1000.0);
-                sliderSpeed.setMin(0.1);
-                sliderSpeed.setValue(500.0);
-                sliderSpeed.setMajorTickUnit(100.0);
+
                 if (l - lastUpdate >= duration) { // Update every second
-                    if (!isAnimationPaused) {
+                   if (!isAnimationPaused) {
                         sliderController();
                         lastUpdate = l;
-                        double speed = sliderSpeed.getValue();
-                        if(speed < (sliderSpeed.getMax()*0.5)) {
+                        double speed = speedSlider.getValue();
+                        if(speed < (speedSlider.getMax()*0.5)) {
                             duration = (TimeUnit.MILLISECONDS.toNanos(1000) * (1 - speed / sliderSpeed.getMax()));
                             fullspeed = false;
                         } else{
                             duration = TimeUnit.MILLISECONDS.toNanos(0);
                             fullspeed = true;
                             skipIterations = (int) (speed - 500)/10;
-                        }
+                       }
                     }
                 }
             }
@@ -230,9 +226,14 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private void startAllEvolutions(Schedule schedule) {
         if (currentSchedule.getProblemString() == "TSP") {
+            sliderSpeed.setVisible(true);
+            speedSlider.setVisible(false);
             resetVisualization();
             startVisualization();
+
         } else {
+            sliderSpeed.setVisible(false);
+            speedSlider.setVisible(true);
 
             if (!isAnimationPaused) {
                 isRunning = true;
@@ -593,8 +594,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     @FXML
     private void pauseGraphics() {
-        isAnimationPaused = true;
-        pauseVisualization();
+       // isAnimationPaused = true;
+       // pauseVisualization();
     }
 
     @FXML

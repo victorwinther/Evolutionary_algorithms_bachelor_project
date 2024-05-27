@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -234,11 +235,12 @@
             <VBox alignment="CENTER" prefHeight="100.0" prefWidth="156.0" spacing="6.0">
                <children>
                   <Label text="Speed" textFill="WHITE" />
-                  <Slider fx:id="sliderSpeed" blockIncrement="50.0" majorTickUnit="100.0" max="1000.0" prefHeight="26.0" prefWidth="129.0" showTickMarks="true" value="500.0" />
-                  <!---
-                  <Slider fx:id="speedSlider" blockIncrement="1.0" max="10.0" min="0.1" value="1.0" />
-
-               -->
+                  <StackPane>
+                     <children>
+                        <Slider fx:id="speedSlider" blockIncrement="50.0" majorTickUnit="100.0" max="1000.0" prefHeight="26.0" prefWidth="129.0" showTickMarks="true" value="500.0" />
+                        <Slider fx:id="sliderSpeed" blockIncrement="1.0" max="10.0" min="0.1" showTickMarks="true" value="1.0" visible="false" />
+                     </children>
+                  </StackPane>
                </children>
             </VBox>
             <Separator opacity="0.5" orientation="VERTICAL" prefHeight="200.0">
