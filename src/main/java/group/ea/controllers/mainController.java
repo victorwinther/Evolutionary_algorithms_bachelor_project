@@ -128,7 +128,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private final Map<Edge, Line> edgeMap = new HashMap<>();
     ArrayList<TSPDATA> allSolutions;
     double speed;
-    int maxY = 1300;
+    int maxY;
     /*@FXML
     private Pane tspVisualization;
 
@@ -684,7 +684,9 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private Pane overlayPane;
     @FXML
-    private Canvas coordinateCanvas = new Canvas(1600/4, 1200/4);
+    private ScrollPane scrollPaneMain;
+
+    private Canvas coordinateCanvas = new Canvas(1800, 1200);
     public void tspIntialize(){
         // Initialize controls
         //pauseButton.setDisable(true);
@@ -707,14 +709,13 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         scatterChart.setMaxSize(600, 400);
         scatterChart.setLegendVisible(false);
 
-        overlayPane = new Pane();
-        overlayPane.setPrefSize(600, 400);
-        overlayPane.setMinSize(600, 400);
-        overlayPane.setMaxSize(600, 400);
 
         StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(scatterChart, overlayPane);
+        stackPane.getChildren().addAll(scatterChart, tspVisualization);
         flowPane.getChildren().add(stackPane);
+
+
+
 
         fitnessLabel = new Label("Fitness: ");
         numberOfEdgesLabel = new Label("Number of Edges: ");
@@ -724,11 +725,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
         VBox infoBox = new VBox(fitnessLabel, numberOfEdgesLabel, gainLabel, edgesDeletedLabel, edgesAddedLabel);
         infoBox.setSpacing(5);
-        //tspVisualization.getChildren().add(infoBox);
+        flowPane.getChildren().add(infoBox);
+        //tspVisualization.getChildren().add(coordinateCanvas);
 
-        drawCoordinateSystem();
 
-        speedSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+
+        sliderSpeed.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (timeline != null) {
                 timeline.stop(); // Stop the timeline to reset the key frame duration
                 double speed = newValue.doubleValue();
@@ -741,13 +743,14 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             }
         });
     }
+
     private final Queue<TSPDATA> updateQueue = new LinkedList<>();
 
     public void setSolution(TSPDATA initialSolution) {
-        if(firstCall){
+       /* if(firstCall){
             firstSolution(initialSolution.solution);
             firstCall = false;
-        }
+        }*/
         this.currentSolution = initialSolution;
         this.nextSolution = initialSolution;// Copy initial solution
        // this.changedEdges = new HashSet<>();
@@ -755,11 +758,11 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     }
     @FXML
     private void startVisualization() {
-        speedSlider.setBlockIncrement(1.0);
-        speedSlider.setMax(10.0);
-        speedSlider.setMin(0.1);
-        speedSlider.setValue(1.0);
-        speedSlider.setMajorTickUnit(2.0);
+        sliderSpeed.setBlockIncrement(1.0);
+        sliderSpeed.setMax(10.0);
+        sliderSpeed.setMin(0.1);
+        sliderSpeed.setValue(1.0);
+        sliderSpeed.setMajorTickUnit(2.0);
         currentSchedule.getAlgorithm().sendListener(this);
         currentSchedule.run();
         if (isPaused) {
@@ -775,7 +778,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         timeline = new Timeline();
         timeline.setCycleCount(Timeline.INDEFINITE);
 
-        speed = speedSlider.getValue();
+        speed = sliderSpeed.getValue();
 
 
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
@@ -818,54 +821,90 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
          */
     }
     private void drawCoordinateSystem() {
+        coordinateCanvas = new Canvas(1800, 1200);
         GraphicsContext gc = coordinateCanvas.getGraphicsContext2D();
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1);
-        double maxY = coordinateCanvas.getHeight();
 
-        // Draw X and Y axis
-        gc.strokeLine(0, maxY, coordinateCanvas.getWidth(), maxY); // X-axis
-        gc.strokeLine(0, 0, 0, maxY); // Y-axis
+        // Draw X axis
+        for (int x = 1800; x >= 0; x -= 100) {
+            gc.strokeLine(x, 0, x, 1200);
+        }
 
-        // Draw tick marks
-        for (int i = 0; i <= 1800; i += 100) {
-            gc.strokeLine(i, maxY, i, maxY - 10); // X-axis ticks
-            gc.strokeText(Integer.toString(i), i, maxY + 15); // X-axis labels
+        // Draw Y axis
+        for (int y = 1200; y >= 0; y -= 100) {
+            gc.strokeLine(0, y, 1800, y);
         }
-        for (int i = 0; i <= 1200; i += 100) {
-            gc.strokeLine(0, maxY - i, 10, maxY - i); // Y-axis ticks
-            gc.strokeText(Integer.toString(i), -20, maxY - i); // Y-axis labels
-        }
+
+        tspVisualization.getChildren().add(coordinateCanvas);
     }
-    double xScaling = 4.0;
-    double yScaling = 4.0;
+
+    double xScaling = 3.4;
+    double yScaling = 3.4;
+    double xPush = 50;
     @Override
     public void firstSolution(Solution solution) {
+
+
         System.out.println( "First solution");
         Solution firstSolution = solution;
         int numPoints = firstSolution.getListLength();
+        double maxXFirst = 0;
+        double maxYFirst = 0;
+
+        for (int i = 0; i < numPoints; i++) {
+            int x = firstSolution.getXSolution(i);
+            int y = firstSolution.getYSolution(i);
+            if (x > maxXFirst) {
+                maxXFirst = x;
+            }
+            if (y > maxYFirst) {
+                maxYFirst = y;
+            }
+
+        }
+        maxY = (int) maxYFirst + 10 ;
+        System.out.println(maxXFirst + " " + maxYFirst);
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
+        Circle circle4 = new Circle(40,360, 3, Color.RED);
+        tspVisualization.getChildren().add(circle4);
+        Circle circle1 = new Circle(40,18, 3, Color.RED);
+        tspVisualization.getChildren().add(circle1);
+        Circle circle2 = new Circle(590,360, 3, Color.RED);
+        tspVisualization.getChildren().add(circle2);
+        Circle circle3 = new Circle(590,18, 3, Color.RED);
+        tspVisualization.getChildren().add(circle3);
+
+        double graphWidth = 590 - 40;
+        double graphHeight = 360 - 18;
+        double extraScaleX = 1800 / maxXFirst;
+        double extraScaleY = 1200 / maxYFirst;
+        xScaling = (1800 / graphWidth) / extraScaleX;
+        yScaling = 1200 / graphHeight / extraScaleY;
+
 
         // Draw the nodes
         for (int i = 0; i < numPoints; i++) {
             int x = firstSolution.getXSolution(i);
             int y = maxY - firstSolution.getYSolution(i);
-            Circle circle = new Circle(x / xScaling, y / yScaling, 1, Color.RED);
+            Circle circle = new Circle(xPush+x / xScaling, y / yScaling, 3, Color.RED);
             tspVisualization.getChildren().add(circle);
-            series.getData().add(new XYChart.Data<>(x, y));
+            //series.getData().add(new XYChart.Data<>(x, y));
         }
         System.out.println(series.toString());
-        scatterChart.getData().add(series);
+        //scatterChart.getData().add(series);
         // Draw the edges
         for (int i = 0; i < numPoints; i++) {
             int x1 = firstSolution.getXSolution(i);
             int y1 = maxY - firstSolution.getYSolution(i);
             int x2 = firstSolution.getXSolution((i + 1) % numPoints);
             int y2 = maxY - firstSolution.getYSolution((i + 1) % numPoints);
-            Line line = new Line(x1 / xScaling, y1 / yScaling, x2 / xScaling, y2 / yScaling);
+            Line line = new Line(xPush+x1 / xScaling, y1 / yScaling, xPush+x2 / xScaling, y2 / yScaling);
             edgeMap.put(new Edge(x1, y1, x2, y2), line);
             tspVisualization.getChildren().add(line);
-            overlayPane.getChildren().add(line);
+            System.out.println("Adding line "+ new Edge(x1, y1, x2, y2));
+            //overlayPane.getChildren().add(line);
         }
         printEdgeMapDetails();
 
@@ -873,8 +912,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private void updateVisualization() {
 
         // Clear previous visualization
-        speed = speedSlider.getValue();
-        overlayPane.getChildren().removeIf(node -> node instanceof Line);
+        speed = sliderSpeed.getValue();
         //removed edges
         int x1 = (int) currentSolution.X1.getX();
         int y1 = maxY - (int) currentSolution.X1.getY();
@@ -898,26 +936,26 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
         if (line1 != null) {
             tspVisualization.getChildren().remove(line1);
-            overlayPane.getChildren().remove(line1);
+
             edgeMap.remove(edge1);
             edgesDeleted++;
         }
 
         if (line2 != null) {
             tspVisualization.getChildren().remove(line2);
-            overlayPane.getChildren().remove(line2);
+
             edgeMap.remove(edge2);
             edgesDeleted++;
         }
         if (line3 != null) {
             tspVisualization.getChildren().remove(line3);
-            overlayPane.getChildren().remove(line3);
+
             edgeMap.remove(edge3);
             edgesDeleted++;
         }
         if (line4 != null) {
             tspVisualization.getChildren().remove(line4);
-            overlayPane.getChildren().remove(line4);
+
             edgeMap.remove(edge4);
             edgesDeleted++;
         }
@@ -959,14 +997,14 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
             if (line5 != null) {
                 tspVisualization.getChildren().remove(line5);
-                overlayPane.getChildren().remove(line5);
+
 
                 edgeMap.remove(new Edge(x5, y5, x6, y6));
                 edgesDeleted++;
             }
             if (line6 != null) {
                 tspVisualization.getChildren().remove(line6);
-                overlayPane.getChildren().remove(line6);
+
                 edgeMap.remove(new Edge(x6, y6, x5, y5));
                 edgesDeleted++;
             }
@@ -1063,24 +1101,25 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         }else {
 
             //draw the new edges
-            Line newLine1 = new Line(x1 / xScaling, y1 / yScaling, x3 / xScaling, y3 / yScaling);
-            Line newLine2 = new Line(x2 / xScaling, y2 / yScaling, x4 / xScaling, y4 / yScaling);
+            Line newLine1 = new Line(xPush + x1 / xScaling, y1 / yScaling, xPush + x3 / xScaling, y3 / yScaling);
+            Line newLine2 = new Line(xPush + x2 / xScaling, y2 / yScaling, xPush + x4 / xScaling, y4 / yScaling);
             edgesAdded++;
             edgesAdded++;
 
             newLine1.setStroke(Color.GREEN);
             newLine2.setStroke(Color.GREEN);
             tspVisualization.getChildren().add(newLine1);
-            overlayPane.getChildren().add(newLine1);
             tspVisualization.getChildren().add(newLine2);
-            overlayPane.getChildren().add(newLine2);
+            System.out.println("Adding 2 line "+ new Edge(x1, y1, x3, y3));
+            System.out.println("Adding 2 line "+ new Edge(x2, y2, x4, y4));
             edgeMap.put(new Edge(x1, y1, x3, y3), newLine1);
             edgeMap.put(new Edge(x2, y2, x4, y4), newLine2);
         }
         for (Edge edge : newEdges) {
-            Line newLine = new Line(edge.x1 / xScaling, edge.y1 / yScaling, edge.x2 / xScaling, edge.y2 / yScaling);
+            Line newLine = new Line(xPush + edge.x1 / xScaling, edge.y1 / yScaling, xPush +edge.x2 / xScaling, edge.y2 / yScaling);
             newLine.setStroke(Color.GREEN);
-            overlayPane.getChildren().add(newLine);
+            System.out.println("Adding 3 lines");
+            System.out.println("Adding 3 lines "+ edge);
             tspVisualization.getChildren().add(newLine);
             edgeMap.put(edge, newLine);
             edgesAdded++;

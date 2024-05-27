@@ -34,7 +34,7 @@ public class PermutationOnePlusOneEA extends Algorithm {
     @Override
     public void performSingleUpdate(int generation) {
         if(generation == 0){
-            //listener.firstSolution(_sl);
+            listener.firstSolution(_sl);
         }
         // Save the current solution
         // randomly at uniform
