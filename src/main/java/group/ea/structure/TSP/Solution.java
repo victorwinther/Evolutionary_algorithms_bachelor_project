@@ -64,6 +64,9 @@ public class Solution extends Problem implements Cloneable {
 
         }
     }
+    public Solution(){
+        init();
+    }
 
     public int getXSolution(int i) {
         return (int) solution.get(i).getX();
@@ -83,6 +86,13 @@ public class Solution extends Problem implements Cloneable {
 
     public ArrayList<City> getSolution() {
         return solution;
+    }
+
+    public TSPParser get_tsp(){
+        return _tsp;
+    }
+    public void set_tsp(TSPParser tsp){
+        _tsp = tsp;
     }
 
     public ArrayList<ArrayList<City>> getSolutions() {
@@ -305,9 +315,8 @@ public class Solution extends Problem implements Cloneable {
     }
 
     public void printSolution() {
-
-        for (City c : solution) {
-            System.out.print(c.getId() + " ");
+        for(int i = 0; i < solution.size(); i ++){
+            System.out.print(solution.get(i).getId() + " ");
         }
     }
 
@@ -508,6 +517,26 @@ public class Solution extends Problem implements Cloneable {
         A6 = null;
 
     }
+
+    public ArrayList<City> computeNewList(int[] list) {
+        ArrayList<City> temp = new ArrayList<>(solution.size());
+        for (int i = 0; i < list.length; i++) {
+            int cityId = list[i];
+            for (City city : solution) {
+                if (city.getId() == cityId) {
+                    temp.add(city);
+                    break;
+                }
+            }
+        }
+        return temp;
+    }
+
+
+    public void setSolution(ArrayList<City> s) {
+        this.solution = s;
+    }
+
 
 
 
@@ -915,6 +944,7 @@ public void ls3Opt() {
 
         return bestTour;
     }
+
 
 }
 
