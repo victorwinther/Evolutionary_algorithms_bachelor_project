@@ -67,10 +67,11 @@ public class main extends Application {
 
     public static void main(String[] args) {
         //runExperiment();
-        launch(args);
-       // runSingle();
+        //runExperiment3();
+         launch(args);
+       //runSingle();
        // runSingle2();
-        //runExperimentTSP();
+       // runExperimentTSP();
 
 
 
@@ -81,22 +82,23 @@ public class main extends Application {
     public static void runSingle(){
 
         int totalFitness = 0;
-        int iterations = 1;
+        int iterations = 10;
         int perfectCount = 0;
             for(int i = 0; i < iterations; i++) {
                 Schedule newSchedule = new Schedule();
                 newSchedule.setSearchSpaceString("Permutations");
                 newSchedule.setProblemString("TSP");
-                newSchedule.setAlgorithmString("1+1 EA TSP");
-                newSchedule.setIterationBound(1000);
+                newSchedule.setAlgorithmString("u+y EA TSP");
+                newSchedule.setIterationBound(10000000);
                 newSchedule.setUpAlgorithm();
-                newSchedule.getAlgorithm().sendListener(controller);
+                //newSchedule.getAlgorithm().sendListener(controller);
                 newSchedule.getAlgorithm().runAlgorithm();
                 int thisRunFitness = newSchedule.getAlgorithm().getFitness();
                 if(thisRunFitness == 7544){
                     perfectCount++;
                 }
                 totalFitness += thisRunFitness;
+                System.out.println(thisRunFitness);
 
                 //controller.setSolution(newSchedule.getAlgorithm().get_sl());
             }
@@ -121,6 +123,8 @@ public class main extends Application {
             newSchedule.getAlgorithm().runAlgorithm();
             int thisRunFitness = newSchedule.getAlgorithm().getGeneration();
 
+
+
             totalFitness += thisRunFitness;
 
             //controller.tspGraphics(newSchedule.getAlgorithm().get_sl());
@@ -133,62 +137,120 @@ public class main extends Application {
     private static void runExperimentTSP() {
         int iterations = 1;
         int perfectCount = 0;
-        int[] iterationsLength = {1,2,3,4,5,10,50,100,1000,2000,5000,10000,20000,30000,40000,50000,60000,70000,80000,90000,100000}; // Example lengths
+        int[] iterationsLength = {100000,200000,300000,400000,500000,600000,700000,800000,900000,1000000}; // Example lengths
+
         int runsPerObservation = 200;
         List<DataPoint> dataPoints = new ArrayList<>();
-        for (int length : iterationsLength) {
-            int totalFitness = 0;
-            for (int run = 0; run < runsPerObservation; run++) {
-                Schedule newSchedule = new Schedule();
-                newSchedule.setSearchSpaceString("Permutations");
-                newSchedule.setProblemString("TSP");
-                newSchedule.setAlgorithmString("1+1 EA TSP");
-                newSchedule.setIterationBound(length);
-                newSchedule.setUpAlgorithm();
-                newSchedule.getAlgorithm().runAlgorithm();
-                int thisRunFitness = newSchedule.getAlgorithm().getFitness();
+        int optimumAverage = 0;
 
-                totalFitness += thisRunFitness;
-                System.out.println("Done with run nr " + run + "with " + iterations + " iterations");
+            for (int length : iterationsLength) {
+                int totalFitness = 0;
+                perfectCount = 0;
+                optimumAverage = 0;
 
-                //controller.setSolution(newSchedule.getAlgorithm().get_sl());
+                for (int run = 0; run < runsPerObservation; run++) {
+                    Schedule newSchedule = new Schedule();
+                    newSchedule.setSearchSpaceString("Permutations");
+                    newSchedule.setProblemString("TSP");
+                    newSchedule.setAlgorithmString("1+1 EA TSP");
+                    newSchedule.setIterationBound(length);
+                    newSchedule.setUpAlgorithm();
+                    newSchedule.getAlgorithm().runAlgorithm();
+                    int thisRunFitness = newSchedule.getAlgorithm().getFitness();
+                    if (thisRunFitness == 7544) {
+                        perfectCount++;
+                        optimumAverage += newSchedule.getAlgorithm().getGeneration();
+                    }
+
+                    totalFitness += thisRunFitness;
+                    // System.out.println("Done with run nr " + run + "with " + iterations + " iterations");
+
+                    //controller.setSolution(newSchedule.getAlgorithm().get_sl());
+                }
+                dataPoints.add(new DataPoint(length, totalFitness / runsPerObservation));
+                saveDataToCSV("TSP_experiment.csv", dataPoints);
+                System.out.println("Done with length " + length);
+                System.out.println(perfectCount);
+                if (perfectCount > 0) {
+                    System.out.println(optimumAverage / perfectCount);
+                } else {
+                    System.out.println("No perfect runs");
+                }
             }
-            dataPoints.add(new DataPoint(length, totalFitness/runsPerObservation));
-            saveDataToCSV("LeadingOnes_experiment.csv", dataPoints);
-            System.out.println("Done with length " + length);
-        }
+
         System.out.println("Experiment done");
 
     }
     public static void runExperiment(){
-        int[] bitStringLengths = {200}; // Example lengths
+        int[] bitStringLengths = {100,200,300,400,500}; // Example lengths
+        int [] variableValue = {1};
         int runsPerObservation = 200;
 
         List<DataPoint> dataPoints = new ArrayList<>();
-
-        for (int length : bitStringLengths) {
-            int totalIterations = 0;
-
-            for (int run = 0; run < runsPerObservation; run++) {
-                Schedule newSchedule = new Schedule();
-                newSchedule.setSearchSpaceString("Bit strings");
-                newSchedule.setDimension(length);
-                newSchedule.setProblemString("LeadingOnes");
-                newSchedule.setAlgorithmString("(1+1) EA");
-                //newSchedule.setIterationBound(100000);
-                newSchedule.setOptimumReached(true);
-                newSchedule.setUpAlgorithm();
-                newSchedule.getAlgorithm().runAlgorithm();
-                int iterations = newSchedule.getAlgorithm().getGeneration();
-                totalIterations = totalIterations + iterations;
-                System.out.println("Done with run nr " + run + "with " + iterations + " iterations");
+        for (int value : variableValue) {
+            for (int length : bitStringLengths) {
+                int totalIterations = 0;
+                for (int run = 0; run < runsPerObservation; run++) {
+                    Schedule newSchedule = new Schedule();
+                    newSchedule.setSearchSpaceString("Bit strings");
+                    newSchedule.setDimension(length);
+                    newSchedule.setProblemString("LeadingOnes");
+                    newSchedule.setAlgorithmString("UY (1+1 EA");
+                    //newSchedule.setIterationBound(100000);
+                    newSchedule.setOptimumReached(true);
+                    newSchedule.setUpAlgorithm();
+                    newSchedule.getAlgorithm().lambda = 1;
+                    newSchedule.getAlgorithm().runAlgorithm();
+                    int iterations = newSchedule.getAlgorithm().getGeneration();
+                    totalIterations = totalIterations + iterations;
+                    //System.out.println("Done with run nr " + run + "with " + iterations + " iterations");
+                }
+                dataPoints.add(new DataPoint(length, totalIterations / runsPerObservation));
+                saveDataToCSV("OneMaxUYmuLeadingOnes_experiment.csv", dataPoints);
+                System.out.println("Done with length " + length + " and value " + value);
             }
-            dataPoints.add(new DataPoint(length, totalIterations/runsPerObservation));
-            saveDataToCSV("LeadingOnes_experiment.csv", dataPoints);
-            System.out.println("Done with length " + length);
+
         }
         System.out.println("Experiment done");
        // saveDataToCSV("onemax_experiment.csv", dataPoints);
+    }
+
+    public static void runExperiment3(){
+        int[] bitStringLengths = {100,200,300,400,500}; // Example lengths
+        int [] variableValue = {9};
+        int runsPerObservation = 200;
+        int realMuValue = 1;
+
+        List<DataPoint> dataPoints = new ArrayList<>();
+        for (int value : variableValue) {
+            for (int length : bitStringLengths) {
+                int totalIterations = 0;
+
+                for (int run = 0; run < runsPerObservation; run++) {
+                    Schedule newSchedule = new Schedule();
+                    newSchedule.setSearchSpaceString("Bit strings");
+                    newSchedule.setDimension(length);
+                    newSchedule.setProblemString("OneMax");
+                    newSchedule.setAlgorithmString("UY (1+1 EA");
+                    //newSchedule.setIterationBound(100000);
+                    newSchedule.setOptimumReached(true);
+                    newSchedule.setUpAlgorithm();
+                    newSchedule.getAlgorithm().lambda = 1;
+                    newSchedule.getAlgorithm().mu = value;
+                    newSchedule.getAlgorithm().runAlgorithm();
+                    realMuValue = newSchedule.getAlgorithm().mu;
+                    int iterations = newSchedule.getAlgorithm().getGeneration();
+                    totalIterations = totalIterations + iterations;
+                    //System.out.println("Done with run nr " + run + "with " + iterations + " iterations");
+                }
+                dataPoints.add(new DataPoint(length, totalIterations / runsPerObservation));
+                saveDataToCSV("OneMaxUYMU_experiment.csv", dataPoints);
+                System.out.println("Done with length " + length + " and value " + realMuValue);
+            }
+
+        }
+        System.out.println("Experiment done");
+        // saveDataToCSV("onemax_experiment.csv", dataPoints);
     }
     public static void saveDataToCSV(String filename, List<DataPoint> dataPoints) {
         try (FileWriter writer = new FileWriter(filename)) {

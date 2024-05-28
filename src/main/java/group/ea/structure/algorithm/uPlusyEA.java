@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.*;
 public class uPlusyEA extends Algorithm{
-    int mu = 1;
-    int lambda = 1;
+    public int mu = 9;
     ArrayList<String> population = new ArrayList<>();
     Random rand = new Random();
     public uPlusyEA(SearchSpace searchSpace, Problem problem) {
@@ -23,6 +22,7 @@ public class uPlusyEA extends Algorithm{
     public void performSingleUpdate(int gen) {
         int n = searchSpace.length;
         generation = 0;
+        //System.out.println("Performing single update og lambda værdi = " + lambda);
         while (true) {
             List<String> newPopulation = new ArrayList<>(population);
             Data data = new Data(bitString, generation, bestFitness, false, Optional.empty());
@@ -63,5 +63,6 @@ public class uPlusyEA extends Algorithm{
             bitString = searchSpace.init();
             population.add(bitString);
         }
+
     }
 }

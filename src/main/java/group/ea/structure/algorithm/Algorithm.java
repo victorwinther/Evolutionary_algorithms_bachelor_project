@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class Algorithm {
+    public int mu = 1;
+    public int lambda = 1;
     Problem problem;
 
     Solution _sl;
@@ -79,7 +81,7 @@ public abstract class Algorithm {
 
 
         }
-        System.out.println("Generation " + generation + ": Best Fitness = " + bestFitness + "total generation sl" + Solution.getGeneration());
+        //System.out.println("Generation " + generation + ": Best Fitness = " + bestFitness + "total generation sl" + Solution.getGeneration());
         Solution.setGeneration(0);
         stoppingMet = true;
         //finalList.get(finalList.size()-1).setYesNo(true);

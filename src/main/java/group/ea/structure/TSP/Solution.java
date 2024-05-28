@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 
-public class Solution extends Problem {
+public class Solution extends Problem implements Cloneable {
 
     public double getImprovement;
     public City A1,A2,A3,A4,A5,A6;
@@ -47,6 +47,22 @@ public class Solution extends Problem {
     public Solution(TSPParser tsp) {
         _tsp = tsp;
         init();
+    }
+    public void shuffle(int suffleAmount){
+        for(int i = 0; i < suffleAmount; i++){
+            int firstIndex = randomIndex();
+            int secondIndex = randomIndex();
+
+            while (firstIndex == secondIndex) {
+                secondIndex = randomIndex();
+            }
+
+            City temp = solution.get(firstIndex);
+            solution.set(firstIndex, solution.get(secondIndex));
+            solution.set(secondIndex, temp);
+
+
+        }
     }
 
     public int getXSolution(int i) {
@@ -493,6 +509,9 @@ public class Solution extends Problem {
 
     }
 
+
+
+
     enum Reconnection3OptCase {
         OPT3_CASE_0, OPT3_CASE_1, OPT3_CASE_2, OPT3_CASE_3,
         OPT3_CASE_4, OPT3_CASE_5, OPT3_CASE_6, OPT3_CASE_7
@@ -609,6 +628,19 @@ public class Solution extends Problem {
                 reverseSegment(tour, (j + 1) % tour.size(), k);
                 break;
 
+        }
+    }
+    @Override
+    public Solution clone() {
+        try {
+            Solution cloned = (Solution) super.clone();
+            cloned.solution = new ArrayList<>(this.solution);
+            cloned.prevSolution = new ArrayList<>(this.prevSolution);
+            cloned.initialSolution = new ArrayList<>(this.initialSolution);
+            // Clone any other mutable fields if necessary
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(); // Should never happen
         }
     }
 
