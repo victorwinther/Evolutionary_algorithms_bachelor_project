@@ -186,9 +186,10 @@ public class Solution extends Problem {
 
     public void printSolution() {
 
-        for (City c : solution) {
-            System.out.println(c.getId());
+        for(int i = 0; i < solution.size(); i ++){
+            System.out.print(solution.get(i).getId() + " ");
         }
+
     }
 
     public double distanceBetweenIndex(int start, int end){
@@ -432,6 +433,25 @@ public class Solution extends Problem {
 
     public int getDimension() {
         return _tsp.getDimension();
+    }
+
+    public ArrayList<City> computeNewList(int[] list) {
+        ArrayList<City> temp = new ArrayList<>(solution.size());
+        for (int i = 0; i < list.length; i++) {
+            int cityId = list[i];
+            for (City city : solution) {
+                if (city.getId() == cityId) {
+                    temp.add(city);
+                    break;
+                }
+            }
+        }
+        return temp;
+    }
+
+
+    public void setSolution(ArrayList<City> s) {
+        this.solution = s;
     }
 
     enum Reconnection3OptCase {
@@ -716,95 +736,96 @@ public class Solution extends Problem {
     }
 
  */
-public void ls3Opt() {
-    prevSolution = new ArrayList<>(solution);
-    int iterations = 0;
-    boolean locallyOptimal = false;
-    int N = solution.size();
+    public void ls3Opt() {
+        prevSolution = new ArrayList<>(solution);
+        int iterations = 0;
+        boolean locallyOptimal = false;
+        int N = solution.size();
 
-    while (!locallyOptimal) {
-        locallyOptimal = true;
-        outerLoop:
-        for (int counter_1 = 0; counter_1 < N - 1; counter_1++) {
-            int i = counter_1;
-            City X1 = solution.get(i);
-            City X2 = solution.get((i + 1) % N);
+        while (!locallyOptimal) {
+            locallyOptimal = true;
+            outerLoop:
+            for (int counter_1 = 0; counter_1 < N - 1; counter_1++) {
+                int i = counter_1;
+                City X1 = solution.get(i);
+                City X2 = solution.get((i + 1) % N);
 
-            for (int counter_2 =  1; counter_2 < N - 3; counter_2++) {
-                int j = (i + counter_2) % N;
-                City Y1 = solution.get(j);
-                City Y2 = solution.get((j + 1) % N);
+                for (int counter_2 =  1; counter_2 < N - 3; counter_2++) {
+                    int j = (i + counter_2) % N;
+                    City Y1 = solution.get(j);
+                    City Y2 = solution.get((j + 1) % N);
 
-                for (int counter_3 = counter_2 + 1; counter_3 < N - 1; counter_3++) {
-                    int k = (i + counter_3) % N;
-                    City Z1 = solution.get(k);
-                    City Z2 = solution.get((k + 1) % N);
-                    iterations++;
-                    for (Reconnection3OptCase optCase : new Reconnection3OptCase[] {Reconnection3OptCase.OPT3_CASE_3, Reconnection3OptCase.OPT3_CASE_6, Reconnection3OptCase.OPT3_CASE_7}) {
-                        generationSolution++;
-                        if (optCase != Reconnection3OptCase.OPT3_CASE_0) {
-                            double gainExpected = gainFrom3Opt(X1, X2, Y1, Y2, Z1, Z2, optCase);
-                            if (gainExpected > 0) {
-                                System.out.println("fitness before more in gainExpected" + computeFitness());
-                                make3OptMove(solution, i, j, k, optCase);
-                                System.out.println("fitness after more in gainExpected" + computeFitness());
-                                locallyOptimal = false;
-                                break outerLoop;
+                    for (int counter_3 = counter_2 + 1; counter_3 < N - 1; counter_3++) {
+                        int k = (i + counter_3) % N;
+                        City Z1 = solution.get(k);
+                        City Z2 = solution.get((k + 1) % N);
+                        iterations++;
+                        for (Reconnection3OptCase optCase : new Reconnection3OptCase[] {Reconnection3OptCase.OPT3_CASE_3, Reconnection3OptCase.OPT3_CASE_6, Reconnection3OptCase.OPT3_CASE_7}) {
+                            generationSolution++;
+                            if (optCase != Reconnection3OptCase.OPT3_CASE_0) {
+                                double gainExpected = gainFrom3Opt(X1, X2, Y1, Y2, Z1, Z2, optCase);
+                                if (gainExpected > 0) {
+                                    System.out.println("fitness before more in gainExpected" + computeFitness());
+                                    make3OptMove(solution, i, j, k, optCase);
+                                    System.out.println("fitness after more in gainExpected" + computeFitness());
+                                    locallyOptimal = false;
+                                    break outerLoop;
+                                }
                             }
                         }
                     }
                 }
             }
+           // System.out.println("Three opt iterations: " + iterations + "generation" + generation);
         }
-       // System.out.println("Three opt iterations: " + iterations + "generation" + generation);
+       // System.out.println("Three opt generation "+ generation);
     }
-   // System.out.println("Three opt generation "+ generation);
-}
-public void random3Opt(){
-    prevSolution = new ArrayList<>(solution);
-    int N = solution.size();
-    int i = randomIndex();
-    int j = randomIndex();
-    int k = randomIndex();
-    while (i == j) {
-        j = randomIndex();
-    }
-    while (k == i || k == j) {
-        k = randomIndex();
-    }
-    //if any of them are the same then we need to change them
-    if(i == j || k == i || k == j){
-        System.out.println("Error: i,j,k are the same");
-    }
-    City X1 = solution.get(i);
-    City X2 = solution.get((i + 1) % N);
+    public void random3Opt(){
+        prevSolution = new ArrayList<>(solution);
+        int N = solution.size();
+        int i = randomIndex();
+        int j = randomIndex();
+        int k = randomIndex();
+        while (i == j) {
+            j = randomIndex();
+        }
+        while (k == i || k == j) {
+            k = randomIndex();
+        }
+        //if any of them are the same then we need to change them
+        if(i == j || k == i || k == j){
+            System.out.println("Error: i,j,k are the same");
+        }
+        City X1 = solution.get(i);
+        City X2 = solution.get((i + 1) % N);
 
-    City Y1 = solution.get(j);
-    City Y2 = solution.get((j + 1) % N);
+        City Y1 = solution.get(j);
+        City Y2 = solution.get((j + 1) % N);
 
-    City Z1 = solution.get(k);
-    City Z2 = solution.get((k + 1) % N);
+        City Z1 = solution.get(k);
+        City Z2 = solution.get((k + 1) % N);
 
-    Reconnection3OptCase bestOpt = Reconnection3OptCase.OPT3_CASE_0;
-    double bestGain = 0;
-    int bestMove = bestMove(X1,X2,Y1,Y2,Z1,Z2);
-
-    make3OptMove(solution,i,j,k,Reconnection3OptCase.values()[bestMove]);
-    /*
-    for (Reconnection3OptCase optCase : Reconnection3OptCase.values()) {
-        //double gain = gainFrom3Opt(X1,X2,Y1,Y2,Z1,Z2,optCase);
+        Reconnection3OptCase bestOpt = Reconnection3OptCase.OPT3_CASE_0;
+        double bestGain = 0;
         int bestMove = bestMove(X1,X2,Y1,Y2,Z1,Z2);
-        //int newFitness = makeBestMove(solution,i,j,k,optCase);
-        /*if(gain > bestGain){
-            //System.out.println("gain" + gain);
-            bestGain = gain;
-            bestOpt = optCase;
-        }
-        }
-     */
+
+        make3OptMove(solution,i,j,k,Reconnection3OptCase.values()[bestMove]);
+        /*
+        for (Reconnection3OptCase optCase : Reconnection3OptCase.values()) {
+            //double gain = gainFrom3Opt(X1,X2,Y1,Y2,Z1,Z2,optCase);
+            int bestMove = bestMove(X1,X2,Y1,Y2,Z1,Z2);
+            //int newFitness = makeBestMove(solution,i,j,k,optCase);
+            /*if(gain > bestGain){
+                //System.out.println("gain" + gain);
+                bestGain = gain;
+                bestOpt = optCase;
+            }
+            }
+         */
 
 
-}
+    }
+
 
 }
 
