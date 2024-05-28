@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="mainBorderPane" prefHeight="684.0" prefWidth="961.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.blueprintController">
+<BorderPane fx:id="mainBorderPane" prefHeight="684.0" prefWidth="961.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.blueprintController">
    <top>
       <HBox prefHeight="53.0" prefWidth="600.0" style="-fx-background-color: #26282B;" BorderPane.alignment="CENTER">
          <children>
@@ -97,16 +97,41 @@
                                           </VBox>
                                        </children>
                                     </HBox>
-                                    <Label text="Problem" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="12.0" />
-                                       </font>
-                                    </Label>
-                                    <ComboBox fx:id="problemSelector" onAction="#selectionHandler" prefWidth="170.0" stylesheets="@../../../css/styling.css">
-                                       <VBox.margin>
-                                          <Insets bottom="20.0" top="10.0" />
-                                       </VBox.margin>
-                                    </ComboBox>
+                                    <HBox>
+                                       <children>
+                                          <VBox prefHeight="71.0" prefWidth="170.0">
+                                             <children>
+                                                <Label text="Problem" textFill="WHITE">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <ComboBox fx:id="problemSelector" onAction="#selectionHandler" prefWidth="170.0" stylesheets="@../../../css/styling.css">
+                                                   <VBox.margin>
+                                                      <Insets bottom="20.0" top="10.0" />
+                                                   </VBox.margin>
+                                                </ComboBox>
+                                             </children>
+                                          </VBox>
+                                          <VBox prefHeight="71.0" prefWidth="170.0">
+                                             <children>
+                                                <Label fx:id="tspProblemLbl" text="TSP Problem" textFill="WHITE">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                   <VBox.margin>
+                                                      <Insets left="20.0" />
+                                                   </VBox.margin>
+                                                </Label>
+                                                <ComboBox fx:id="TSPSelector" onAction="#selectionHandler" prefWidth="170.0" stylesheets="@../../../css/styling.css">
+                                                   <VBox.margin>
+                                                      <Insets bottom="20.0" left="20.0" top="10.0" />
+                                                   </VBox.margin>
+                                                </ComboBox>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
                                     <Label text="Algorithm" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="12.0" />

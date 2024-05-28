@@ -179,7 +179,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     @FXML
     void createBlueprintHandler(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/createBlueprintPage.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/createSchedulePage.fxml")));
         Scene scene = new Scene(root);
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 

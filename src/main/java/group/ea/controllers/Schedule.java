@@ -12,7 +12,7 @@ import group.ea.structure.searchspace.SearchSpace;
 import java.util.ArrayList;
 
 public class Schedule {
-    private String searchSpaceString, problemString, algorithmString;
+    private String searchSpaceString, problemString, algorithmString, tspProblem;
     private int id, dimension, fitnessBound = 0, iterationBound = 0;
     private Algorithm algorithm; // Hold an instance of the Algorithm
     private SearchSpace searchSpace; // To keep the search space instance
@@ -125,6 +125,7 @@ public class Schedule {
     public boolean getTSP() {
         return tspBool;
     }
+    public void setTSPProblem(String problem){this.tspProblem = problem;}
 
     public void setUpAlgorithm() {
         criterias = "";
@@ -134,7 +135,7 @@ public class Schedule {
                 this.searchSpace = new BitString(this.dimension);
                 break;
             case "Permutations":
-                this.searchSpace = new TSPParser("src/main/java/group/ea/controllers/berlin52.txt");
+                this.searchSpace = new TSPParser("src/main/java/group/ea/controllers/" + tspProblem + ".txt");
                 break;
         }
 
@@ -167,7 +168,7 @@ public class Schedule {
             case "UY (1+1 EA":
                 this.algorithm = new uPlusyEA(this.searchSpace, this.problem);
                 break;
-            case "1+1 EA TSP":
+            case "(1+1) EA TSP":
                 this.algorithm = new PermutationOnePlusOneEA(this.searchSpace, this.problem);
                 break;
             case "u+y EA TSP":
