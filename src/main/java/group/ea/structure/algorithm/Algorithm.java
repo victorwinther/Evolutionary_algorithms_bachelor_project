@@ -67,17 +67,19 @@ public abstract class Algorithm {
     public abstract void initialize();
 
     public void runAlgorithm() {
-        while (!checkStoppingCriteria() && !(Solution.getGeneration() > 100000000) && (bestFitness != 7544)) {
-            generation++;
+        while (!checkStoppingCriteria()  && (bestFitness != 7544)) {
+       // while(bestFitness != 7544) {
+
             performSingleUpdate(generation);
-            if (generation % 500000 == 0) {
-                // Assuming you have a method to get the best fitness
+            generation++;
+            if (generation % 1000000 == 0) {
+                //System.out.println("1m + fitness = " + bestFitness);
 
             }
 
 
         }
-        //System.out.println("Generation " + generation + ": Best Fitness = " + bestFitness + "total generation sl" + Solution.getGeneration());
+        System.out.println("Generation " + generation + ": Best Fitness = " + bestFitness + "total generation sl" + Solution.getGeneration());
         Solution.setGeneration(0);
         stoppingMet = true;
         //finalList.get(finalList.size()-1).setYesNo(true);
@@ -105,8 +107,9 @@ public abstract class Algorithm {
         return _sl;
     }
 
-    public void sendListener(mainController mainController) {
-        this.listener = mainController;
+    public void sendListener(mainController controller) {
+        this.listener = controller;
+        //System.out.println("Listener set" + listener + " Controller sent= "+ controller);
     }
     public void setValues(double a, double b, double r){
 

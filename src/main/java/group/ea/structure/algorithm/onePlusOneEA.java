@@ -17,25 +17,30 @@ public class onePlusOneEA extends Algorithm {
         int n = bitString.length();
         generation = 0;
         while (!checkStoppingCriteria()) {
-            String y = bitString;
+            StringBuilder y = new StringBuilder(bitString);
             Data data = new Data(bitString, generation, bestFitness, false, Optional.empty());
             for (int i = 0; i < n; i++) {
                 if (Math.random() <= 1.0 / n) {
-                    y = y.substring(0, i) + (y.charAt(i) == '0' ? '1' : '0') + y.substring(i + 1);
+                    y.setCharAt(i, y.charAt(i) == '0' ? '1' : '0');
                 }
             }
-            if (problem.computeFitness(y) >= problem.computeFitness(bitString)) {
-                if (problem.computeFitness(y) > problem.computeFitness(bitString)) {
+            String yString = y.toString();
+            double yFitness = problem.computeFitness(yString);
+            //double currentFitness = problem.computeFitness(bitString);
+
+            if (yFitness >= bestFitness) {
+                if (yFitness > bestFitness) {
                     data.setYesNo(true);
                 }
-                bitString = y;
-                bestFitness = (int) problem.computeFitness(bitString);
+                bitString = yString;
+                bestFitness = (int) yFitness;
                 data.setBitString(bitString);
                 data.setFitness(bestFitness);
 
             }
             generation++;
             finalList.add(data);
+
         }
         stoppingMet = true;
     }

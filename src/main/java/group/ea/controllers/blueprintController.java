@@ -26,13 +26,13 @@ public class blueprintController implements Initializable {
     @FXML
     private Label explainingLabel;
     @FXML
-    private Label iterationLabel, dimensionLabel, specialLbl1, specialLbl2, specialLbl3, specialLbl4, specialLbl5, runsLabel;
+    private Label iterationLabel, dimensionLabel, specialLbl1, specialLbl2, specialLbl3, specialLbl4, specialLbl5, runsLabel, tspProblemLbl;
     @FXML
     private TextField iterationTxtField, dimensionTxtField, fitnessTxtField, specialTxtField1, specialTxtField2, specialTxtField3, specialTxtField4, specialTxtField5, runsTxtField;
     //@FXML
     //private TableView<BatchRow> batchTable;
     @FXML
-    private ComboBox<String> searchspaceSelector;
+    private ComboBox<String> searchspaceSelector, TSPSelector;
     @FXML
     private ComboBox<String> problemSelector;
     @FXML
@@ -60,20 +60,20 @@ public class blueprintController implements Initializable {
 
     private final String[] searchspaces = {"Bit strings", "Permutations"};
     private final String[] problems = {"OneMax", "LeadingOnes", "BinVal", "Trap", "Jump_k"};
-    private final String[] algorithms = {"(1+1) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System"};
+    private final String[] algorithms = {"(1+1) EA", "RLS", "1+1 EA Permutations", "Simulated Annealing", "Ant System"};
+    private final String[] TSPproblems = {"berlin52", "bier127", "a280"};
 
     private String[] optionalValues;
 
 
     private Stage stage;
     public HashMap<String,String> blueprintChoices = new HashMap<>();
-    //make a hashmap of string
-
-
 
 
     public void initialize(URL arg0, ResourceBundle arg1){
         //initialize components
+        TSPSelector.setVisible(false);
+        tspProblemLbl.setVisible(false);
         Schedule.getSchedules().clear();
         allComboBoxes = Arrays.asList(searchspaceSelector, problemSelector, algorithmSelector);
         allTextFields = Arrays.asList(iterationTxtField, dimensionTxtField, fitnessTxtField, specialTxtField1, specialTxtField2, specialTxtField3, specialTxtField4, specialTxtField5, runsTxtField);
@@ -82,13 +82,15 @@ public class blueprintController implements Initializable {
         initializeBatchParameters();
         searchspaceSelector.getItems().addAll(searchspaces);
         problemSelector.getItems().addAll(problems);
+        TSPSelector.getItems().addAll(TSPproblems);
         algorithmSelector.getItems().addAll(algorithms);
 
-        searchspaceSelector.setValue("Bitstring");
-        problemSelector.setValue("OneMax");
-        algorithmSelector.setValue("(1+1) EA");
+        searchspaceSelector.setValue(searchspaceSelector.getItems().get(0));
+        problemSelector.setValue(problemSelector.getItems().get(0));
+        algorithmSelector.setValue(algorithmSelector.getItems().get(0));
         optimumReached.setSelected(true);
         dimensionTxtField.setText("100");
+        runsTxtField.setText("1");
 
         hideSpecialFields();
 
@@ -130,7 +132,8 @@ public class blueprintController implements Initializable {
     private void addCategoryOptions() {
         categoryOptions.put("searchSpace", Arrays.asList("Bit strings", "Permutations"));
         categoryOptions.put("problem", Arrays.asList("OneMax", "LeadingOnes", "TSP"));
-        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA","(μ+λ) EA", "RLS", "Generic EA", "Simulated Annealing", "Ant System", "TEMP"));
+        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA","(μ+λ) EA", "RLS", "(1+1) EA TSP", "Simulated Annealing", "Ant System", "TEMP"));
+        categoryOptions.put("tsp problems", Arrays.asList("berlin52", "bier127", "a280"));
     }
 
     private void initializeBatchParameters() {
@@ -146,20 +149,19 @@ public class blueprintController implements Initializable {
 
         descriptions.put("OneMax", "The fitness value of an individual is the number of ones in its genotype.");
         descriptions.put("LeadingOnes", "The number of leading ones or the length of the largest coherent block of ones from the first position in the bit string corresponds to the fitness value.");
-        descriptions.put("TSP", "Traveling sales person");
+        descriptions.put("TSP", "A classic combinatorial optimization problem where the goal is to find the shortest possible route that visits a set of cities exactly once and returns to the origin city.");
 
         descriptions.put("(1+1) EA", "The (1+1) EA is a simple evolutionary strategy that involves maintaining a single individual in the population, generating a mutated offspring, and replacing the current individual with the offspring only if it has higher fitness.");
-        descriptions.put("RLS", "description TODO");
-        descriptions.put("Generic EA", "description TODO");
-        descriptions.put("Simulated Annealing", "description TODO");
-        descriptions.put("Ant System", "description TODO");
+        descriptions.put("(μ+λ) EA", "An evolutionary optimization algorithm where a population of μ parents generates λ offspring each generation.");
+        descriptions.put("(1+1) EA TSP", "The (1+1) EA is a simple evolutionary strategy that involves maintaining a single individual in the population, generating a mutated offspring, and replacing the current individual with the offspring only if it has higher fitness.");
+        descriptions.put("RLS", "A simple optimization algorithm that iteratively improves a solution by making small random changes and selecting better solutions.");
+        descriptions.put("Simulated Annealing", "An optimization algorithm inspired by the annealing process in metallurgy. It iteratively explores the solution space by making random changes to the current solution.");
+        descriptions.put("Ant System", "A nature-inspired optimization algorithm based on the foraging behavior of ants. It uses a population of artificial ants to find optimal solutions by simulating the way real ants deposit pheromones to communicate paths to resources.");
 
         descriptions.put("Optimum reached", "Stops a run if the specified fitness bound is reached.");
-        descriptions.put("Fitness bound", "Stops running if a certain fitness is reached.");
-        descriptions.put("Iteration bound", "Stops running if a certain amount of iterations is reached");
+        descriptions.put("Fitness bound", "Stops a run if a certain fitness is reached.");
+        descriptions.put("Iteration bound", "Stops a run if a certain amount of iterations is reached");
 
-        descriptions.put("Table", "Display the fitness in a table.");
-        descriptions.put("Graph", "Display the fitness in a graph.");
     }
 
     private String getComboBoxCategory(ComboBox<?> comboBox) {
@@ -238,13 +240,17 @@ public class blueprintController implements Initializable {
             specialLbl1.setText("Colony size");
             specialLbl2.setText("Alpha");
             specialLbl3.setText("Beta");
+            specialLbl4.setText("Gamma");
             specialLbl1.setVisible(true);
             specialLbl2.setVisible(true);
             specialLbl3.setVisible(true);
+            specialLbl4.setVisible(true);
+
 
             specialTxtField1.setVisible(true);
             specialTxtField2.setVisible(true);
             specialTxtField3.setVisible(true);
+            specialTxtField4.setVisible(true);
 
             optimalSetting.setVisible(true);
         }
@@ -297,6 +303,7 @@ public class blueprintController implements Initializable {
                 specialTxtField1.setText("20");
                 specialTxtField2.setText("0.5");
                 specialTxtField3.setText("1");
+                specialTxtField4.setText("2");
             }
             else if (Objects.equals(algorithmSelector.getValue(), "(μ+λ) EA")){
                 specialTxtField1.setText("1");
@@ -337,6 +344,18 @@ public class blueprintController implements Initializable {
                 dependencies.add("TSP");
             } else if (selector.getValue().equals("Permutations")) {
                 dependencies.remove("TSP");
+            }
+        }
+
+        //TSP problems
+        if (selector == problemSelector){
+            if (selector.getValue().equals("TSP")){
+                TSPSelector.setValue(TSPSelector.getItems().get(0));
+                TSPSelector.setVisible(true);
+                tspProblemLbl.setVisible(true);
+            } else {
+                TSPSelector.setVisible(false);
+                tspProblemLbl.setVisible(false);
             }
         }
 
@@ -400,8 +419,9 @@ public class blueprintController implements Initializable {
         }
         newSchedule.setProblemString(problemSelector.getValue());
         newSchedule.setAlgorithmString(algorithmSelector.getValue());
-        if (optimumReached.isSelected())
+        if (optimumReached.isSelected()) {
             newSchedule.setOptimumReached(true);
+        }
         if (fitnessBound.isSelected()) {
             try {
                 int fitnessBound = Integer.parseInt(fitnessTxtField.getText());
@@ -410,6 +430,9 @@ public class blueprintController implements Initializable {
                 showAlert("Enter only integers for fitness bound");
                 return;
             }
+        }
+        if (TSPSelector.isVisible()){
+            newSchedule.setTSPProblem(TSPSelector.getValue());
         }
 
         if (iterationBound.isSelected()) {
