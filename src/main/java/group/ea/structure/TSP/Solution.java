@@ -84,6 +84,24 @@ public class Solution extends Problem {
         return solutions;
     }
 
+    public void shuffle(int suffleAmount){
+        for(int i = 0; i < suffleAmount; i++){
+            int firstIndex = randomIndex();
+            int secondIndex = randomIndex();
+
+            while (firstIndex == secondIndex) {
+                secondIndex = randomIndex();
+            }
+
+            City temp = solution.get(firstIndex);
+            solution.set(firstIndex, solution.get(secondIndex));
+            solution.set(secondIndex, temp);
+
+
+        }
+    }
+
+
     public void twoOptMutate() {
         prevSolution = new ArrayList<>(solution);
         if (solution.isEmpty()) {
