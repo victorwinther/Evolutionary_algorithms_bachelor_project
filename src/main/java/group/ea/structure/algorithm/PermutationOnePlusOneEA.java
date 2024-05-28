@@ -1,5 +1,6 @@
 package group.ea.structure.algorithm;
 
+import group.ea.structure.TSP.City;
 import group.ea.structure.TSP.Solution;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
@@ -12,6 +13,8 @@ public class PermutationOnePlusOneEA extends Algorithm {
     double chance = 1;
     int noImprovementCounter = 0; // Counter to track iterations without improvement
     final int RESTART_THRESHOLD = 1000000; // Threshold for restarting the algorithm
+
+    Solution _slClone;
 
 
 
@@ -87,7 +90,19 @@ public class PermutationOnePlusOneEA extends Algorithm {
             noImprovementCounter = 0; // Reset counter
         }
 
+    }
+
+    public void copyCreateCopy(Solution from){
+        _slClone = new Solution();
+        for(City c : from.getSolution()){
+            _slClone.getSolution().add(c);
         }
+        _slClone.set_tsp(from.get_tsp());
 
     }
+
+
+
+
+}
 

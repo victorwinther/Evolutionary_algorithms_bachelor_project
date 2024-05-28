@@ -44,8 +44,12 @@ public class Solution extends Problem {
         solution = new ArrayList<>(initialSolution);
     }
 
+
     public Solution(TSPParser tsp) {
         _tsp = tsp;
+        init();
+    }
+    public Solution(){
         init();
     }
 
@@ -67,6 +71,13 @@ public class Solution extends Problem {
 
     public ArrayList<City> getSolution() {
         return solution;
+    }
+
+    public TSPParser get_tsp(){
+        return _tsp;
+    }
+    public void set_tsp(TSPParser tsp){
+        _tsp = tsp;
     }
 
     public ArrayList<ArrayList<City>> getSolutions() {
