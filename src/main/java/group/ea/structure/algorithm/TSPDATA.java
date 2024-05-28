@@ -37,6 +37,17 @@ public class TSPDATA {
         allSolutions.add(this);
     }
 
+    public TSPDATA(Solution solution, ArrayList<City> slSolution, int generation, int fitness, double improvement){
+        this.solution = solution;
+        this.generation = generation;
+        this.fitness = fitness;
+        this.improvement = improvement;
+        this.slSolution = slSolution;
+        allSolutions.add(this);
+    }
+
+
+
 
 
     public Solution getSolution() {

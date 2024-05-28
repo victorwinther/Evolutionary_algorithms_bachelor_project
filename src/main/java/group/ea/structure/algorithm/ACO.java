@@ -3,8 +3,10 @@ package group.ea.structure.algorithm;
 import group.ea.structure.TSP.Solution;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
+import javafx.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Random;
 
 public class ACO extends Algorithm {
@@ -26,6 +28,8 @@ public class ACO extends Algorithm {
     protected ArrayList<Ant> ants;
     protected Solution _sl;
     protected double bestInGeneration;
+    protected boolean improvedInGeneration = false;
+    int gain = 0;
 
     public ACO(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
@@ -43,6 +47,11 @@ public class ACO extends Algorithm {
 
     @Override
     public void performSingleUpdate(int generation) {
+        improvedInGeneration = false;
+        if(generation == 0){
+            listener.firstSolution(_sl);
+        }
+
         if (generation > maxGeneration) {
             if (_localSearch) {
                 localSearch();
@@ -62,6 +71,11 @@ public class ACO extends Algorithm {
         updateEvaporation();
         // Using only the trail of the best ant
         updatePheromone(bestAnt);
+        if(improvedInGeneration){
+            antToSolution(bestAnt);
+            TSPDATA tspdata = new TSPDATA(_sl,_sl.getSolution(),generation,(int) bestAnt.getCost(),gain);
+            listener.receiveUpdate(tspdata);
+        }
     }
 
     public void Ants() {
@@ -76,15 +90,18 @@ public class ACO extends Algorithm {
             step++;
             moveAnts(step);
         }
-
+        double temp = bestInGeneration;
         // find best
         for (Ant a : ants) {
             a.setCost(calculateAntCost(a.getTrailOfAnt()));
             if (a.getCost() < bestInGeneration) {
+
                 bestAnt = a;
                 bestInGeneration = a.getCost();
+                improvedInGeneration = true;
             }
         }
+        gain =(int) (temp - bestInGeneration);
     }
 
     public void updateEvaporation() {
