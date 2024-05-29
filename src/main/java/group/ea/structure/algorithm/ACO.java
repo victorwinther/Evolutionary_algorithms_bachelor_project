@@ -114,7 +114,7 @@ public class ACO extends Algorithm {
         // find best
         for (Ant a : ants) {
             a.setCost(calculateAntCost(a.getTrailOfAnt()));
-            if (a.getCost() < bestInGeneration) {
+            if (a.getCost() < bestInGeneration - 2) {
                 copyFromTo(a, bestAnt);
                 bestInGeneration = a.getCost();
                 improvedInGeneration = true;
@@ -129,7 +129,7 @@ public class ACO extends Algorithm {
 
             }
             gain = (int) (temp - bestInGeneration);
-
+            System.out.println(gain + " " + _generation);
 
 
         }
@@ -297,10 +297,7 @@ public class ACO extends Algorithm {
 
     public void copyFromTo(Ant from, Ant to) {
         System.out.println("Called in " + _generation);
-        if(_count < 52){
-            System.out.println(gain + " " + bestAnt.getCost() + " " + _count + " " + _generation);
-
-        }
+        to.clearData();
         to.setTour(new int[dimension]);
         to.setVisited(new boolean[dimension]);
         to.setCost(0.0);
