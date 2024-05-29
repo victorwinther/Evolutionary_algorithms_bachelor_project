@@ -1,26 +1,19 @@
 package group.ea.structure.algorithm;
 
 import group.ea.controllers.mainController;
+import group.ea.structure.StoppingCriterias.StoppingCriterion;
 import group.ea.structure.TSP.Solution;
+import group.ea.structure.helperClasses.Data;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.scene.chart.XYChart;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.util.Duration;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public abstract class Algorithm {
-    public int mu = 1;
-    public int lambda = 1;
+    public int mu = 0;
+    public int lambda = 0;
     Problem problem;
 
     Solution _sl;

@@ -1,5 +1,6 @@
 package group.ea.controllers;
 
+import group.ea.structure.StoppingCriterias.*;
 import group.ea.structure.TSP.Solution;
 import group.ea.structure.TSP.TSPParser;
 import group.ea.structure.algorithm.*;

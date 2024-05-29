@@ -1,12 +1,9 @@
 package group.ea.structure.algorithm;
 
-import group.ea.controllers.mainController;
+import group.ea.structure.helperClasses.Data;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
-import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Optional;
 
 public class RLS extends Algorithm {
@@ -21,12 +18,16 @@ public class RLS extends Algorithm {
     public void initialize() {
         bitString = searchSpace.init();
         bestFitness = (int) problem.computeFitness(bitString);
-        Data data = new Data(bitString, 0, bestFitness, true, Optional.empty());
+
 
     }
 
     @Override
     public void performSingleUpdate(int generation) {
+        if(generation == 0){
+            Data firstData = new Data(bitString, 0, bestFitness, true, Optional.empty());
+            listener.receiveBitstringUpdate(firstData);
+        }
         String offspring = mutate(bitString);
         int offspringFitness = (int) problem.computeFitness(offspring);
         Data data = new Data(bitString, generation, bestFitness, false, Optional.empty());
@@ -37,6 +38,7 @@ public class RLS extends Algorithm {
             data.setFitness(bestFitness);
             data.setYesNo(true);
         }
+        listener.receiveBitstringUpdate(data);
         finalList.add(data);
     }
 

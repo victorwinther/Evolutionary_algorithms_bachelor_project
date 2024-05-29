@@ -68,8 +68,8 @@ public class main extends Application {
     public static void main(String[] args) {
        // runExperiment();
         //runExperiment3();
-         //launch(args);
-       runSingle();
+         launch(args);
+       //runSingle();
        // runSingle2();
        // runExperimentTSP();
 

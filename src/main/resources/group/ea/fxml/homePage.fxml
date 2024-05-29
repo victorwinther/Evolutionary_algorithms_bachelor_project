@@ -195,7 +195,7 @@
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="335.0" spacing="15.0">
                <children>
                   <Button fx:id="startButton" mnemonicParsing="false" onAction="#startEvolution" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="START" textFill="WHITE" />
-                  <Button fx:id="pauseButton" mnemonicParsing="false" onAction="#pauseGraphics" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="PAUSE" textFill="WHITE" />
+                  <Button fx:id="pauseButton" mnemonicParsing="false" onAction="#pauseVisualization" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="PAUSE" textFill="WHITE" />
                   <Button fx:id="stopButton" mnemonicParsing="false" onAction="#stopEvolution" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="STOP" textFill="WHITE" />
                   <Button fx:id="nextAlgorithm" mnemonicParsing="false" onAction="#nextAlgorithm" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="NEXT" textFill="WHITE" />
                </children>

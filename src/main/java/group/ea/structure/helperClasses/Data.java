@@ -1,4 +1,4 @@
-package group.ea.structure.algorithm;
+package group.ea.structure.helperClasses;
 import java.util.Optional;
 
 public class Data {

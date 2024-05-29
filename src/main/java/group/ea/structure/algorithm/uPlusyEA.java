@@ -1,5 +1,6 @@
 package group.ea.structure.algorithm;
 
+import group.ea.structure.helperClasses.Data;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
 
@@ -9,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.*;
 public class uPlusyEA extends Algorithm{
-    public int mu = 9;
     ArrayList<String> population = new ArrayList<>();
     Random rand = new Random();
     public uPlusyEA(SearchSpace searchSpace, Problem problem) {
@@ -59,6 +59,7 @@ public class uPlusyEA extends Algorithm{
 
     @Override
     public void initialize() {
+
         for(int i = 0; i < mu; i++){
             bitString = searchSpace.init();
             population.add(bitString);

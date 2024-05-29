@@ -2,6 +2,7 @@ package group.ea.structure.algorithm;
 
 import group.ea.structure.TSP.City;
 import group.ea.structure.TSP.Solution;
+import group.ea.structure.helperClasses.Data;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
 import javafx.util.Pair;

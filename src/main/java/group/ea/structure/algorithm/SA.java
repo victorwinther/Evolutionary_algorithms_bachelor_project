@@ -1,12 +1,9 @@
 package group.ea.structure.algorithm;
 
-import group.ea.controllers.mainController;
+import group.ea.structure.helperClasses.Data;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
-import javafx.application.Platform;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Optional;
 
 public class SA extends Algorithm {

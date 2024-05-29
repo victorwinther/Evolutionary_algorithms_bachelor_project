@@ -2,14 +2,10 @@ package group.ea.structure.algorithm;
 
 
 
-import group.ea.controllers.mainController;
 import group.ea.structure.TSP.Solution;
+import group.ea.structure.helperClasses.Data;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
-import javafx.application.Platform;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
