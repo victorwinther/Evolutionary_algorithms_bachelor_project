@@ -39,7 +39,7 @@ public abstract class Algorithm {
     private List<StoppingCriterion> stoppingCriteria = new ArrayList<>();
 
     protected double currentTemp = 10000;
-    protected int maxGeneration = 999;
+    protected int maxGeneration = 998;
 
     protected AlgorithmUpdateListener listener;
     public Algorithm(SearchSpace searchSpace, Problem problem) {

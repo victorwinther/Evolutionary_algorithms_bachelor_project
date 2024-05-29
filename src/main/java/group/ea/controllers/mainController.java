@@ -877,12 +877,45 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             Line line = new Line(xPush+x1 / xScaling, y1 / yScaling, xPush+x2 / xScaling, y2 / yScaling);
             edgeMap.put(new Edge(x1, y1, x2, y2), line);
             tspVisualization.getChildren().add(line);
-            System.out.println("Adding line "+ new Edge(x1, y1, x2, y2));
+            //System.out.println("Adding line "+ new Edge(x1, y1, x2, y2));
             //overlayPane.getChildren().add(line);
         }
-        printEdgeMapDetails();
+        //printEdgeMapDetails();
 
     }
+
+    // Method to delete all existing edges
+    private void deleteAllEdges() {
+        for (Line line : edgeMap.values()) {
+            tspVisualization.getChildren().remove(line);
+        }
+        edgeMap.clear();
+    }
+
+    // Modified deleteAndDraw method
+    public void deleteAndDraw(Solution solution) {
+        // Delete all existing edges
+        deleteAllEdges();
+
+        // Draw the new edges from the solution
+        for (int i = 0; i < solution.getDimension(); i++) {
+            int x1 = solution.getXSolution(i);
+            int y1 = maxY - solution.getYSolution(i);
+            int x2 = solution.getXSolution((i + 1) % solution.getDimension());
+            int y2 = maxY - solution.getYSolution((i + 1) % solution.getDimension());
+            Line line = new Line(xPush + x1 / xScaling, y1 / yScaling, xPush + x2 / xScaling, y2 / yScaling);
+            edgeMap.put(new Edge(x1, y1, x2, y2), line);
+            tspVisualization.getChildren().add(line);
+            //System.out.println("Adding line " + new Edge(x1, y1, x2, y2));
+        }
+    }
+
+
+
+
+
+
+
     private void updateVisualization() {
 
         // Clear previous visualization
@@ -1129,11 +1162,19 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         updateQueue.add(solution);
     }
 
+    boolean ACO = true;
+
     private void processQueue() {
         if (!updateQueue.isEmpty()) {
             TSPDATA nextSolution = updateQueue.poll();
             setSolution(nextSolution);
-            updateVisualization();
+            if(ACO){
+                deleteAndDraw(nextSolution.getSolution());
+            }else{
+                updateVisualization();
+            }
+
+
         }
     }
 

@@ -181,7 +181,6 @@ public class Schedule {
                 this.algorithm = new ACO(this.searchSpace, this.problem);
                 this.algorithm.setValues(Double.parseDouble(optionalValues[0]), Double.parseDouble(optionalValues[1]), Integer.parseInt(optionalValues[2]));
                 System.out.println(optionalValues[0]);
-                algorithm.addStoppingCriterion(new TempStopping());
                 break;
             default:
                 this.algorithm = null;

@@ -13,7 +13,7 @@ public class ACO extends Algorithm {
 
     protected double alpha = 1.0;
     protected double beta = 2.0;
-    protected double evaporation = 0.6;
+    protected double evaporation = 0.5;
     protected double Q = 5.2;
     protected Random RNG = new Random();
     protected int dimension;
@@ -26,10 +26,13 @@ public class ACO extends Algorithm {
     protected Ant bestAnt;
     protected double fuzzyRandom = 0.001;
     protected ArrayList<Ant> ants;
+    int _generation;
     protected Solution _sl;
+    int _count;
     protected double bestInGeneration;
     protected boolean improvedInGeneration = false;
     int gain = 0;
+    int improved = 0;
 
     public ACO(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
@@ -43,39 +46,56 @@ public class ACO extends Algorithm {
 
     @Override
     public void initialize() {
+
     }
 
     @Override
     public void performSingleUpdate(int generation) {
+        _generation = generation;
         improvedInGeneration = false;
         if(generation == 0){
             listener.firstSolution(_sl);
+            System.out.println("HERE" + generation);
+            System.out.println(alpha + " " + beta + " " + numberOfAnts);
         }
 
+
+        if (_localSearch) {
+            localSearch();
+        }
+
+
         if (generation > maxGeneration) {
-            if (_localSearch) {
-                localSearch();
-            }
             System.out.println("done");
             System.out.println("Best " + bestAnt.getCost());
-            for (int i = 0; i < dimension; i++) {
-                System.out.print(bestAnt.getTrailOfAnt()[i] + " ");
-            }
             antToSolution(bestAnt);
+            System.out.println(countDistinct(bestAnt.getTrailOfAnt(), dimension));
+            System.out.println("Fitness in solution " + _sl.computeFitness());
+            System.out.println("ANT ARRAY");
+            for(int i : bestAnt.getTrailOfAnt()){
+                System.out.println("Index " + i + " " + _sl.getSolution().get(i).getX() + " " + _sl.getSolution().get(i).getY());
+            }
+            System.out.println();System.out.println();
+            System.out.println("Solution");
             _sl.printSolution();
-            stoppingMet = true;
-            return;
+
+
+            TSPDATA tspdata = new TSPDATA(_sl,_sl.getSolution(),generation,(int) bestAnt.getCost(),gain);
+            listener.receiveUpdate(tspdata);
         }
+
 
         Ants();
         updateEvaporation();
         // Using only the trail of the best ant
         updatePheromone(bestAnt);
-        if(improvedInGeneration){
+        /*if(improvedInGeneration){
             antToSolution(bestAnt);
-            TSPDATA tspdata = new TSPDATA(_sl,_sl.getSolution(),generation,(int) bestAnt.getCost(),gain);
-            listener.receiveUpdate(tspdata);
-        }
+            System.out.println("improved times: " + improved++);
+            //TSPDATA tspdata = new TSPDATA(_sl,_sl.getSolution(),generation,(int) bestAnt.getCost(),gain);
+            //listener.receiveUpdate(tspdata);
+            improvedInGeneration = false;
+        }*/
     }
 
     public void Ants() {
@@ -95,14 +115,53 @@ public class ACO extends Algorithm {
         for (Ant a : ants) {
             a.setCost(calculateAntCost(a.getTrailOfAnt()));
             if (a.getCost() < bestInGeneration) {
-
-                bestAnt = a;
+                copyFromTo(a, bestAnt);
                 bestInGeneration = a.getCost();
                 improvedInGeneration = true;
             }
         }
-        gain =(int) (temp - bestInGeneration);
+
+
+        if (improvedInGeneration) {
+            _count = countDistinct(bestAnt.getTrailOfAnt(), dimension);
+            if(_count < 52){
+                System.out.println(gain + " " + bestAnt.getCost() + " " + _count + " " + _generation);
+
+            }
+            gain = (int) (temp - bestInGeneration);
+
+
+
+        }
+
     }
+
+    int countDistinct(int arr[], int n)
+    {
+        int res = 1;
+
+        // Pick all elements one by one
+        for (int i = 1; i < n; i++) {
+            int j = 0;
+            for (j = 0; j < i; j++)
+                if (arr[i] == arr[j]){
+                    System.out.println(j + " is not here");
+                    break;
+                }
+
+
+            // If not printed earlier,
+            // then print it
+            if (i == j){
+
+                res++;
+            }
+        }
+        return res;
+    }
+
+
+
 
     public void updateEvaporation() {
         for (int i = 0; i < dimension; i++) {
@@ -185,6 +244,7 @@ public class ACO extends Algorithm {
         pheromone = new double[dimension][dimension];
         heuristic = new double[dimension][dimension];
         probabilities = new double[dimension];
+        improved = 0;
 
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
@@ -208,6 +268,7 @@ public class ACO extends Algorithm {
         placeAnts();
 
         bestAnt = new Ant(dimension);
+        bestAnt.setCost(Double.MAX_VALUE);
     }
 
     public void placeAnts() {
@@ -232,12 +293,14 @@ public class ACO extends Algorithm {
 
     }
 
-    // The placeAnt method should place the ant at the starting city (index 0 for simplicity)
-    private void placeAnt(Ant ant, int phase) {
-        ant.visitCity(0);
-    }
+
 
     public void copyFromTo(Ant from, Ant to) {
+        System.out.println("Called in " + _generation);
+        if(_count < 52){
+            System.out.println(gain + " " + bestAnt.getCost() + " " + _count + " " + _generation);
+
+        }
         to.setTour(new int[dimension]);
         to.setVisited(new boolean[dimension]);
         to.setCost(0.0);
@@ -247,6 +310,7 @@ public class ACO extends Algorithm {
                 to.getVisited()[i] = true;
             }
         }
+
         to.setCost(from.getCost());
     }
 
@@ -272,13 +336,24 @@ public class ACO extends Algorithm {
     private void antToSolution(Ant a){
         int[] list = a.getTrailOfAnt();
         System.out.println("Ant to solution");
-        _sl.setSolution(_sl.computeNewList(list));
+        _sl.computeNewList(list);
     }
 
-    @Override
-    public Solution get_sl(){
-        antToSolution(bestAnt);
-        return _sl;
+    public void pirntArray(int[][] arr){
+        for (int i = 0; i<dimension; i++) {
+            for (int j = 0; j<dimension; j++) {
+                System.out.print(arr[i][j]);
+            }
+            System.out.println();
+        }
+    }
+    public void pirntArray(double[][] arr){
+        for (int i = 0; i<dimension; i++) {
+            for (int j = 0; j<dimension; j++) {
+                System.out.print(arr[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
 
 }
