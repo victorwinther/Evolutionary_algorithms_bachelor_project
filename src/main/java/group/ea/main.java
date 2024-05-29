@@ -66,10 +66,10 @@ public class main extends Application {
     }
 
     public static void main(String[] args) {
-        //runExperiment();
+       // runExperiment();
         //runExperiment3();
-         launch(args);
-       //runSingle();
+         //launch(args);
+       runSingle();
        // runSingle2();
        // runExperimentTSP();
 
@@ -89,7 +89,7 @@ public class main extends Application {
                 newSchedule.setSearchSpaceString("Permutations");
                 newSchedule.setProblemString("TSP");
                 newSchedule.setAlgorithmString("u+y EA TSP");
-                newSchedule.setIterationBound(10000000);
+                newSchedule.setIterationBound(100000);
                 newSchedule.setUpAlgorithm();
                 //newSchedule.getAlgorithm().sendListener(controller);
                 newSchedule.getAlgorithm().runAlgorithm();

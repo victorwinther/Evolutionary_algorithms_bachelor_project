@@ -11,8 +11,8 @@ import java.util.*;
 
 public class PermutationuPlusyEA extends Algorithm {
     double chance = 0.5;
-    int lambda = 5;
-    int mu = 8;
+    int lambda = 10;
+    int mu = 15;
     Random rand = new Random();
     Solution bestSolution;
 

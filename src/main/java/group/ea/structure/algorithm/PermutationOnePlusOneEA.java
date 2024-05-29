@@ -16,9 +16,7 @@ public class PermutationOnePlusOneEA extends Algorithm {
 
 
     Solution _slClone;
-
-
-
+    
     public PermutationOnePlusOneEA(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
         _sl = (Solution) problem;
@@ -50,7 +48,6 @@ public class PermutationOnePlusOneEA extends Algorithm {
             //_sl.twoOptMutate2();
             //_sl.ls3Opt();
             _sl.twoOptMutate();
-            threeOpt = false;
 
         } else {
             //_sl.ls3Opt();
@@ -64,19 +61,9 @@ public class PermutationOnePlusOneEA extends Algorithm {
             TSPDATA tspdata = new TSPDATA(_sl,_sl.getSolution(),generation,offspringFitness,_sl.getImprovement,_sl.A1,_sl.A2,_sl.A3,_sl.A4,Optional.ofNullable(_sl.A5),Optional.ofNullable(_sl.A6),Optional.ofNullable(_sl.optCase), threeOpt);
             listener.receiveUpdate(tspdata);
 
-
-
             Data data = new Data("bitString", generation, bestFitness, false, Optional.empty());
             finalList.add(data);
-            // Adaptively adjust mutation probability
-            /*
-            if (Math.random() < chance) {
-                chance = Math.min(chance + 0.1, 1.0); // Increase chance of 2-opt
-            } else {
-                chance = Math.max(chance - 0.1, 0.0); // Decrease chance of 2-opt
-            }
 
-             */
         } else {
             //noImprovementCounter++;
             _sl.revert();

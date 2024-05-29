@@ -12,7 +12,7 @@ import group.ea.structure.searchspace.SearchSpace;
 import java.util.ArrayList;
 
 public class Schedule {
-    private String searchSpaceString, problemString, algorithmString, tspProblem;
+    private String searchSpaceString, problemString, algorithmString, tspProblem = "berlin52";
     private int id, dimension, fitnessBound = 0, iterationBound = 0;
     private Algorithm algorithm; // Hold an instance of the Algorithm
     private SearchSpace searchSpace; // To keep the search space instance
