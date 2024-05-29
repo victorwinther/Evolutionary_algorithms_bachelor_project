@@ -24,7 +24,7 @@ public class ACO extends Algorithm {
     protected double[][] heuristic;
     protected double[][] graph;
     protected Ant bestAnt;
-    protected double fuzzyRandom = 0.001;
+    protected double fuzzyRandom = 0.00000;
     protected ArrayList<Ant> ants;
     int _generation;
     protected Solution _sl;
@@ -41,7 +41,7 @@ public class ACO extends Algorithm {
         setupAnts();
         setupStructure();
         bestInGeneration = Double.MAX_VALUE;
-        _localSearch = false;
+        _localSearch = true;
     }
 
     @Override
@@ -53,6 +53,8 @@ public class ACO extends Algorithm {
     public void performSingleUpdate(int generation) {
         _generation = generation;
         improvedInGeneration = false;
+
+
         if(generation == 0){
             listener.firstSolution(_sl);
             System.out.println("HERE" + generation);
@@ -60,24 +62,19 @@ public class ACO extends Algorithm {
         }
 
 
-        if (_localSearch) {
-            localSearch();
-        }
-
 
         if (generation > maxGeneration) {
+
             System.out.println("done");
             System.out.println("Best " + bestAnt.getCost());
+
             antToSolution(bestAnt);
-            System.out.println(countDistinct(bestAnt.getTrailOfAnt(), dimension));
-            System.out.println("Fitness in solution " + _sl.computeFitness());
-            System.out.println("ANT ARRAY");
-            for(int i : bestAnt.getTrailOfAnt()){
-                System.out.println("Index " + i + " " + _sl.getSolution().get(i).getX() + " " + _sl.getSolution().get(i).getY());
+            System.out.println("Fitness in solution before" + _sl.computeFitness());
+            if (_localSearch) {
+                localSearch();
             }
-            System.out.println();System.out.println();
-            System.out.println("Solution");
-            _sl.printSolution();
+            System.out.println("Fitness in solution after" + _sl.computeFitness());
+
 
 
             TSPDATA tspdata = new TSPDATA(_sl,_sl.getSolution(),generation,(int) bestAnt.getCost(),gain);
@@ -123,15 +120,17 @@ public class ACO extends Algorithm {
 
 
         if (improvedInGeneration) {
+            gain = (int) (temp - bestInGeneration);
+            for(Ant a : ants){
+                _count = countDistinct(a.getTrailOfAnt(), dimension);
+                if(_count < 52){
+                    System.out.println("IMPROVED Index of ant is " + ants.indexOf(a));
+                }
+            }
             _count = countDistinct(bestAnt.getTrailOfAnt(), dimension);
             if(_count < 52){
-                System.out.println(gain + " " + bestAnt.getCost() + " " + _count + " " + _generation);
-
+                System.out.println("IMPROVED Index of ant is bestAnt");
             }
-            gain = (int) (temp - bestInGeneration);
-            System.out.println(gain + " " + _generation);
-
-
         }
 
     }
@@ -145,7 +144,8 @@ public class ACO extends Algorithm {
             int j = 0;
             for (j = 0; j < i; j++)
                 if (arr[i] == arr[j]){
-                    System.out.println(j + " is not here");
+                    improved = j;
+                    System.out.println(j + " is not here, in generation: " + _generation);
                     break;
                 }
 
@@ -290,13 +290,14 @@ public class ACO extends Algorithm {
     }
 
     public void localSearch() {
-
+        for(int i = 0; i < 10; i++){
+            _sl.ls3Opt();
+        }
     }
 
 
 
     public void copyFromTo(Ant from, Ant to) {
-        System.out.println("Called in " + _generation);
         to.clearData();
         to.setTour(new int[dimension]);
         to.setVisited(new boolean[dimension]);
