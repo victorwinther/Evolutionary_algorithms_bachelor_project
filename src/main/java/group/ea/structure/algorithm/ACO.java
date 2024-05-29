@@ -28,6 +28,7 @@ public class ACO extends Algorithm {
     protected ArrayList<Ant> ants;
     int _generation;
     protected Solution _sl;
+    private Solution _cloneSl;
     int _count;
     protected double bestInGeneration;
     protected boolean improvedInGeneration = false;
@@ -69,15 +70,15 @@ public class ACO extends Algorithm {
             System.out.println("Best " + bestAnt.getCost());
 
             antToSolution(bestAnt);
-            System.out.println("Fitness in solution before" + _sl.computeFitness());
+            System.out.println("Fitness in solution before" + _cloneSl.computeFitness());
             if (_localSearch) {
                 localSearch();
             }
-            System.out.println("Fitness in solution after" + _sl.computeFitness());
+            System.out.println("Fitness in solution after" + _cloneSl.computeFitness());
 
 
 
-            TSPDATA tspdata = new TSPDATA(_sl,_sl.getSolution(),generation,(int) bestAnt.getCost(),gain);
+            TSPDATA tspdata = new TSPDATA(_cloneSl,_cloneSl.getSolution(),generation,(int) bestAnt.getCost(),gain);
             listener.receiveUpdate(tspdata);
         }
 
@@ -86,13 +87,7 @@ public class ACO extends Algorithm {
         updateEvaporation();
         // Using only the trail of the best ant
         updatePheromone(bestAnt);
-        /*if(improvedInGeneration){
-            antToSolution(bestAnt);
-            System.out.println("improved times: " + improved++);
-            //TSPDATA tspdata = new TSPDATA(_sl,_sl.getSolution(),generation,(int) bestAnt.getCost(),gain);
-            //listener.receiveUpdate(tspdata);
-            improvedInGeneration = false;
-        }*/
+
     }
 
     public void Ants() {
@@ -121,16 +116,12 @@ public class ACO extends Algorithm {
 
         if (improvedInGeneration) {
             gain = (int) (temp - bestInGeneration);
-            for(Ant a : ants){
-                _count = countDistinct(a.getTrailOfAnt(), dimension);
-                if(_count < 52){
-                    System.out.println("IMPROVED Index of ant is " + ants.indexOf(a));
-                }
-            }
-            _count = countDistinct(bestAnt.getTrailOfAnt(), dimension);
-            if(_count < 52){
-                System.out.println("IMPROVED Index of ant is bestAnt");
-            }
+            System.out.println("Here");
+            antToSolution(bestAnt);
+            System.out.println("improved times: " + improved++);
+            TSPDATA tspdata = new TSPDATA(_cloneSl,_cloneSl.getSolution(),generation,(int) bestAnt.getCost(),gain);
+            listener.receiveUpdate(tspdata);
+            improvedInGeneration = false;
         }
 
     }
@@ -291,7 +282,7 @@ public class ACO extends Algorithm {
 
     public void localSearch() {
         for(int i = 0; i < 10; i++){
-            _sl.ls3Opt();
+            _cloneSl.ls3Opt();
         }
     }
 
@@ -333,8 +324,9 @@ public class ACO extends Algorithm {
 
     private void antToSolution(Ant a){
         int[] list = a.getTrailOfAnt();
+        _cloneSl = new Solution(_sl.get_tsp());
         System.out.println("Ant to solution");
-        _sl.computeNewList(list);
+        _cloneSl.computeNewList(list);
     }
 
     public void pirntArray(int[][] arr){
