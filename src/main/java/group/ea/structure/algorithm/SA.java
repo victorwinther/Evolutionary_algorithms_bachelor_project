@@ -28,9 +28,13 @@ public class SA extends Algorithm {
 
     @Override
     public void performSingleUpdate(int generation) {
+        if(generation == 0 ){
+            Data firstData = new Data(bitString, generation, bestFitness, true, Optional.empty(),false);
+            listener.receiveBitstringUpdate(firstData);
+        }
         String offspring = mutate(bitString);
         int offspringFitness = (int) problem.computeFitness(offspring);
-        Data data = new Data(bitString, generation, bestFitness, false, Optional.empty());
+        Data data = new Data(bitString, generation, bestFitness, false, Optional.empty(),false);
 
         if (offspringFitness > bestFitness) {
             bitString = offspring;
@@ -48,8 +52,10 @@ public class SA extends Algorithm {
                 data.setTemp(Optional.of(currentTemp));
             }
         }
-        finalList.add(data);
-        currentTemp *= tempReduction;
+        if(checkStoppingCriteria()){
+            data.setStop(true);
+        }
+        listener.receiveBitstringUpdate(data);
     }
 
     private String mutate(String parent) {

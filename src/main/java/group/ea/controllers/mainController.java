@@ -87,8 +87,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private CheckBox hypercubeCheck;
 
     @FXML
-    public CheckBox showTSPgraph;
-    @FXML
     private Label searchspaceLabel,problemLabel, algorithmLabel,criteriasLabel,timeLabel,mutationLabel, selectionLabel,crossoverLabel;
 
     TSPParser tp;
@@ -130,8 +128,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private Button startButton;
     @FXML
      */
-    @FXML
-    private Slider speedSlider;
+
     @FXML
     private Button pauseButton;
     @FXML
@@ -157,6 +154,9 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     @FXML
     void createBlueprintHandler(ActionEvent event) throws IOException {
+        if(timeline != null) {
+            timeline.stop();
+        }
         Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/createSchedulePage.fxml")));
         Scene scene = new Scene(root);
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -205,50 +205,19 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     }
     @FXML
     private void startAllEvolutions(Schedule schedule) {
+        prepareUIBeforeAlgorithmRuns(schedule);
         if (currentSchedule.getProblemString() == "TSP") {
-            sliderSpeed.setVisible(true);
-            speedSlider.setVisible(false);
             resetVisualization();
             startVisualization();
 
         } else {
             startVisualizationBitString();
-            sliderSpeed.setVisible(true);
-            speedSlider.setVisible(false);
         }
-/*
-            if (!isAnimationPaused) {
-                isRunning = true;
-                solutionArea.clear();
-                container.getChildren().clear();
-                hypercubenPane.getChildren().clear();
-                tspVisualization.getChildren().clear();
-                i = 0;
+        timesRun++;
+        updateStatistics(currentSchedule);
+        updateUIPostAlgorithm(currentSchedule);
 
-                timesRun++;
-                //currentSchedule.setUpAlgorithm();
-                prepareUIBeforeAlgorithmRuns(schedule);
-                schedule.getAlgorithm().sendListener(this);
 
-                Task<Void> runAlgorithmTask = new Task<>() {
-                    @Override
-                    protected Void call() {
-                        schedule.run();  // This is where the algorithm runs on a background thread
-                        return null;
-                    }
-                };
-                Algorithm algorithm = currentSchedule.getAlgorithm();
-
-                runAlgorithmTask.setOnSucceeded(event -> Platform.runLater(() -> updateStatistics(currentSchedule)));
-                runAlgorithmTask.setOnSucceeded(event -> Platform.runLater(() -> updateUIPostAlgorithm(currentSchedule)));
-                runAlgorithmTask.setOnFailed(event -> Platform.runLater(() -> showError(runAlgorithmTask.getException())));
-
-                new Thread(runAlgorithmTask).start();  // Start the task on a new thread
-
-            } else {
-                isAnimationPaused = false;
-            }
-        */
     }
     private void updateStatistics(Schedule schedule){
         schedule.setFinishedIterations(schedule.getAlgorithm().getGeneration());
@@ -256,13 +225,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     }
 
     public void prepareUIBeforeAlgorithmRuns(Schedule s) {
-        // Apply UI changes that need to occur before the algorithm runs
 
-        if(s.getTSP()){
-            showTSPgraph.setVisible(true);
-        } else {
-            showTSPgraph.setVisible(false);
-        }
 
         searchspaceLabel.setText(s.getSearchSpaceString());
         searchspaceLabel.setStyle("-fx-font-size: 10px;");
@@ -296,27 +259,25 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             booleanHypercubeVisualization = new BooleanHypercubeVisualization(s.getSearchSpace(), s.getProblem(), this, hypercubenPane);
         }
 
-        if (showTSPgraph.isSelected()) {
-            if (!flowPane.getChildren().contains(tspVisualization)) {
-                tspVisualization.setPrefSize(600, 400);
-                tspVisualization.setMinSize(600, 400);
-                tspVisualization.setMaxSize(600, 400);
-                tspVisualization.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
-                flowPane.getChildren().add(tspVisualization);
-            }
-            }
+
     }
     int runNr;
     @FXML
     public void nextAlgorithm() {
-        runNr++;
                 System.out.println("Current schedule changed");
                 if(runNr < queueSchedule.size()) {
-
                     currentSchedule = queueSchedule.get(runNr);
                     System.out.println(currentSchedule);
                     System.out.println(queueSchedule.toString());
+                    if(currentSchedule.getTSP()){
+                        graphSelector.setDisable(true);
+                        textSelector.setDisable(true);
+                        hypercubeCheck.setDisable(true);
+
+                    }
                     startAllEvolutions(currentSchedule);
+                    runNr++;
+                    startButton.setDisable(true);
                 } else {
                     nextAlgorithm.setDisable(true);
                     runNr = 0;
@@ -326,21 +287,26 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     @FXML
     private void startEvolution() {
-        startAllEvolutions(currentSchedule);
+        if (isPaused) {
+            timeline.play();
+            isPaused = false;
+            pauseButton.setDisable(false);
+            startButton.setDisable(true);
+            return;
+        }
+        System.out.println("Starting evolution, queue size: " + queueSchedule.size());
         if(queueSchedule.size() > 1) {
             nextAlgorithm.setDisable(false);
         }
+        nextAlgorithm();
+
 
        // executeSchedules(queueSchedule);
     }
 
     private void updateUIPostAlgorithm(Schedule schedule) {
-        if(!graphicsToggle.isSelected()) {
-            startAlgorithm();
-            System.out.println("running");
-        } else {
             updateUIStats();
-        }
+
 
     }
 
@@ -466,11 +432,15 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         currentSchedule = schedules.get(0);
         Schedule s = currentSchedule;
         queueSchedule.clear();
-        if(s.getTSP()){
-            showTSPgraph.setVisible(true);
-        } else {
-            showTSPgraph.setVisible(false);
+        if(!s.getTSP()){
+            graphSelector.setDisable(false);
+            textSelector.setDisable(false);
+            hypercubeCheck.setDisable(false);
+
         }
+        startButton.setDisable(false);
+        sliderSpeed.setDisable(false);
+
 
         searchspaceLabel.setText(s.getSearchSpaceString());
         searchspaceLabel.setStyle("-fx-font-size: 10px;");
@@ -483,6 +453,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         for (int j = 0; j < schedules.size(); j++) {
             Schedule newSchedule = schedules.get(j);
             for (int k = 0; k < newSchedule.getRuns(); k++) {
+                System.out.println("added runs from runscount");
             queueSchedule.add(newSchedule);
            // newSchedule.getAlgorithm().sendListener(this);
             }
@@ -570,7 +541,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         queueSchedule.add(schedule3);
         currentSchedule = schedule;
         nextAlgorithm.setDisable(true);
-        showTSPgraph.setVisible(false);
+
         //recieveArray(queueSchedule);
         //prepareUIBeforeAlgorithmRuns(new BitString(5000), new OneMax(new BitString(5000)));
 
@@ -611,7 +582,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 timeline.stop(); // Stop the timeline to reset the key frame duration
                 double speed = newValue.doubleValue();
                 KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
-                    System.out.println("Keyframe 1 running");
+                   // System.out.println("Keyframe 1 running");
                     processQueue();
                 });
                 timeline.getKeyFrames().setAll(keyFrame); // Set the new key frame with the updated speed
@@ -635,27 +606,15 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     }
     @FXML
     private void startVisualization() {
-        if (isPaused) {
-            timeline.play();
-            isPaused = false;
-            pauseButton.setDisable(false);
-            startButton.setDisable(true);
-            return;
-        }
+
 
         sliderSpeed.setBlockIncrement(1.0);
         sliderSpeed.setMax(10.0);
         sliderSpeed.setMin(0.1);
         sliderSpeed.setValue(1.0);
         sliderSpeed.setMajorTickUnit(2.0);
-
-        if (isPaused) {
-            timeline.play();
-            isPaused = false;
-            pauseButton.setDisable(false);
-            startButton.setDisable(true);
-            return;
-        }
+        Solution solution = new Solution((TSPParser) currentSchedule.getSearchSpace());
+        firstSolution(solution);
 
         //resetVisualization();
         tspIntialize();
@@ -667,20 +626,28 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
             processQueue();
-            System.out.println("Keyframe 2 running");
+           //System.out.println("Keyframe 2 running");
 
         });
 
         timeline.getKeyFrames().add(keyFrame);
         timeline.play();
         currentSchedule.getAlgorithm().sendListener(this);
+
+        // Run the algorithm in a background thread
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
+                System.out.println("Starting algorithm run...");
                 currentSchedule.run();
+                System.out.println("Algorithm run completed.");
                 return null;
             }
         };
+        task.setOnFailed(e -> {
+            Throwable ex = task.getException();
+            ex.printStackTrace();
+        });
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
@@ -706,7 +673,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         if (timeline != null) {
             timeline.stop();
         }
+        edgesAdded = 0;
+        edgesDeleted = 0;
 
+        edgeMap.clear();
+        tspVisualization.getChildren().clear();
+        stackPane.getChildren().clear();
         flowPane.getChildren().clear();
         currentStep = 0;
 
@@ -802,7 +774,10 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     }
     private void updateVisualization() {
-        Platform.runLater(() -> {
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected
+            Void call() throws Exception {
 
         // Clear previous visualization
         speed = sliderSpeed.getValue();
@@ -828,27 +803,26 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         Line line4 = edgeMap.get(edge4);
 
         if (line1 != null) {
-            tspVisualization.getChildren().remove(line1);
+            Platform.runLater(() -> tspVisualization.getChildren().remove(line1));
 
             edgeMap.remove(edge1);
             edgesDeleted++;
         }
 
         if (line2 != null) {
-            tspVisualization.getChildren().remove(line2);
+            Platform.runLater(() -> tspVisualization.getChildren().remove(line2));
 
             edgeMap.remove(edge2);
             edgesDeleted++;
         }
         if (line3 != null) {
-            tspVisualization.getChildren().remove(line3);
+            Platform.runLater(() -> tspVisualization.getChildren().remove(line3));
 
             edgeMap.remove(edge3);
             edgesDeleted++;
         }
         if (line4 != null) {
-            tspVisualization.getChildren().remove(line4);
-
+            Platform.runLater(() -> tspVisualization.getChildren().remove(line4));
             edgeMap.remove(edge4);
             edgesDeleted++;
         }
@@ -887,14 +861,14 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             Line line6 = edgeMap.get(edge6);
 
             if (line5 != null) {
-                tspVisualization.getChildren().remove(line5);
+                Platform.runLater(() -> tspVisualization.getChildren().remove(line5));
 
 
                 edgeMap.remove(new Edge(x5, y5, x6, y6));
                 edgesDeleted++;
             }
             if (line6 != null) {
-                tspVisualization.getChildren().remove(line6);
+                Platform.runLater(() -> tspVisualization.getChildren().remove(line6));
 
                 edgeMap.remove(new Edge(x6, y6, x5, y5));
                 edgesDeleted++;
@@ -1018,11 +992,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
             newLine1.setStroke(Color.GREEN);
             newLine2.setStroke(Color.GREEN);
-            tspVisualization.getChildren().add(newLine1);
-            tspVisualization.getChildren().add(newLine2);
+            Platform.runLater(() -> { tspVisualization.getChildren().add(newLine1);} );
+            Platform.runLater(() -> { tspVisualization.getChildren().add(newLine2);} );
             edgeMap.put(new Edge(x1, y1, x3, y3), newLine1);
             edgeMap.put(new Edge(x2, y2, x4, y4), newLine2);
         }
+                Platform.runLater(() -> {
         for (Edge edge : newEdges) {
             Line newLine = new Line(xPush + edge.x1 / xScaling, edge.y1 / yScaling, xPush +edge.x2 / xScaling, edge.y2 / yScaling);
             newLine.setStroke(Color.GREEN);
@@ -1032,9 +1007,19 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         }
         updateLabels();
 
-        });
 
-    }
+
+            });
+
+            return null;
+        }
+    };
+
+    // Run the task in a background thread
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
+}
     private void printEdgeMapDetails() {
         System.out.println("Current edges in edgeMap:");
         for (Map.Entry<Edge, Line> entry : edgeMap.entrySet()) {
@@ -1058,14 +1043,17 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     @Override
     public void receiveUpdate(TSPDATA solution){
+        System.out.println("Added solution");
         updateQueue.add(solution);
     }
 
     private void processQueue() {
         if (!updateQueue.isEmpty()) {
             TSPDATA nextSolution = updateQueue.poll();
-            setSolution(nextSolution);
-            updateVisualization();
+            Platform.runLater(() -> {
+                setSolution(nextSolution);
+                updateVisualization();
+            });
         }
     }
     @FXML
@@ -1078,15 +1066,13 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             return;
         }
 
-        speedSlider.setVisible(false);
-        sliderSpeed.setVisible(true);
-        prepareUIBeforeAlgorithmRuns(currentSchedule);
 
-        sliderSpeed.setBlockIncrement(1.0);
+
+        sliderSpeed.setBlockIncrement(50.0);
         sliderSpeed.setMax(1000.0);
         sliderSpeed.setMin(0.1);
-        sliderSpeed.setValue(10.0);
-        sliderSpeed.setMajorTickUnit(2.0);
+        sliderSpeed.setValue(500.0);
+        sliderSpeed.setMajorTickUnit(100.0);
 
 
 
@@ -1096,7 +1082,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
         KeyFrame keyFrame1 = new KeyFrame(Duration.seconds(1 / speed), event -> {
             processBitStringQueue();
-            System.out.println("Keyframe 2 running");
+           // System.out.println("Keyframe 2 running");
 
         });
 
@@ -1105,7 +1091,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             timeline.getKeyFrames().clear();
             KeyFrame newKeyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
                 processBitStringQueue();
-                System.out.println("Keyframe running");
+               // System.out.println("Keyframe running");
             });
             timeline.getKeyFrames().add(newKeyFrame);
             if (!isPaused) {
@@ -1148,6 +1134,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         if (!updateBitStringQueue.isEmpty()) {
             Data nextData = updateBitStringQueue.poll();
             System.out.println("Next data: " + nextData.getGeneration());
+            if(nextData.isStop()) {
+                timeline.stop();
+                pauseButton.setDisable(true);
+                stopButton.setDisable(true);
+                System.out.println("Stopped succesfully");
+            }
             if(nextData.getImproved()) {
                 runGraphics2(nextData);
             }
@@ -1155,8 +1147,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     }
     public void runGraphics2(Data data) {
 
-        speed = speedSlider.getValue();
-        System.out.println("Speed: " + speed);
         int generation = data.getGeneration();
         String bitString = data.getBitString();
         boolean done = false;

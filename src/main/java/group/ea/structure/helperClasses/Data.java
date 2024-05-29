@@ -8,12 +8,15 @@ public class Data {
     private boolean yesNo;
     private Optional<Double> temp;
 
-    public Data(String bitString, int generation, int fitness, boolean yesNo, Optional<Double> temp) {
+    private boolean stop;
+
+    public Data(String bitString, int generation, int fitness, boolean yesNo, Optional<Double> temp,boolean stop) {
         this.bitString = bitString;
         this.generation = generation;
         this.fitness = fitness;
         this.yesNo = yesNo;
         this.temp = temp;
+        this.stop = stop;
     }
 
     public void setYesNo(boolean b) {
@@ -60,6 +63,14 @@ public class Data {
 
     public Optional<Double> getTemp() {
         return temp;
+    }
+
+    public boolean isStop() {
+        return stop;
+    }
+
+    public void setStop(boolean stop) {
+        this.stop = stop;
     }
 
     // getters and setters for each field

@@ -417,6 +417,14 @@ public class blueprintController implements Initializable {
             return;
 
         }
+        try {
+            int dimension = Integer.parseInt(runsTxtField.getText());
+            newSchedule.setRuns(dimension);
+        } catch (Exception e) {
+            showAlert("Enter only integers for runs");
+            return;
+
+        }
         newSchedule.setProblemString(problemSelector.getValue());
         newSchedule.setAlgorithmString(algorithmSelector.getValue());
         if (optimumReached.isSelected()) {
