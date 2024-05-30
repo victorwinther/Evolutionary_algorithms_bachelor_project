@@ -11,14 +11,15 @@ import java.util.Random;
 
 public class ACO extends Algorithm {
 
-    protected double alpha = 1.0;
-    protected double beta = 2.0;
+    protected double alpha;
+    protected double beta;
     protected double evaporation = 0.5;
-    protected double Q = 5.2;
+    protected double Q = 1.0;
     protected Random RNG = new Random();
     protected int dimension;
     protected boolean _localSearch;
-    protected int numberOfAnts = 100;
+    protected boolean _IBFlag;
+    protected int numberOfAnts;
     protected double probabilities[];
     protected double[][] pheromone;
     protected double[][] heuristic;
@@ -28,21 +29,19 @@ public class ACO extends Algorithm {
     protected ArrayList<Ant> ants;
     int _generation;
     protected Solution _sl;
-    private Solution _cloneSl;
-    int _count;
+    protected Solution _cloneSl;
     protected double bestInGeneration;
     protected boolean improvedInGeneration = false;
     int gain = 0;
-    int improved = 0;
 
     public ACO(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
         _sl = (Solution) problem;
         dimension = _sl.getDimension();
-        setupAnts();
-        setupStructure();
+
         bestInGeneration = Double.MAX_VALUE;
-        _localSearch = true;
+        _localSearch = false;
+        _IBFlag = false;
     }
 
     @Override
@@ -58,8 +57,7 @@ public class ACO extends Algorithm {
 
         if(generation == 0){
             listener.firstSolution(_sl);
-            System.out.println("HERE" + generation);
-            System.out.println(alpha + " " + beta + " " + numberOfAnts);
+            System.out.println("Generation 0 values: " + alpha + " " + beta + " " + numberOfAnts);
         }
 
 
@@ -85,8 +83,7 @@ public class ACO extends Algorithm {
 
         Ants();
         updateEvaporation();
-        // Using only the trail of the best ant
-        updatePheromone(bestAnt);
+        updatePheromone();
 
     }
 
@@ -115,43 +112,15 @@ public class ACO extends Algorithm {
 
 
         if (improvedInGeneration) {
+
             gain = (int) (temp - bestInGeneration);
-            System.out.println("Here");
             antToSolution(bestAnt);
-            System.out.println("improved times: " + improved++);
             TSPDATA tspdata = new TSPDATA(_cloneSl,_cloneSl.getSolution(),generation,(int) bestAnt.getCost(),gain);
             listener.receiveUpdate(tspdata);
             improvedInGeneration = false;
         }
 
     }
-
-    int countDistinct(int arr[], int n)
-    {
-        int res = 1;
-
-        // Pick all elements one by one
-        for (int i = 1; i < n; i++) {
-            int j = 0;
-            for (j = 0; j < i; j++)
-                if (arr[i] == arr[j]){
-                    improved = j;
-                    System.out.println(j + " is not here, in generation: " + _generation);
-                    break;
-                }
-
-
-            // If not printed earlier,
-            // then print it
-            if (i == j){
-
-                res++;
-            }
-        }
-        return res;
-    }
-
-
 
 
     public void updateEvaporation() {
@@ -162,7 +131,7 @@ public class ACO extends Algorithm {
         }
     }
 
-    public void updatePheromone(Ant a) {
+    public void updatePheromoneBEST(Ant a) {
         double dTau = Q / a.getCost();
         for (int i = 0; i < dimension; i++) {
             int j = a.getTrailOfAnt()[i];
@@ -171,6 +140,25 @@ public class ACO extends Algorithm {
             pheromone[k][j] = pheromone[j][k]; // Ensure symmetry
         }
     }
+
+    public void updatePheromoneALL(){
+        for(Ant a :  ants){
+            updatePheromoneBEST(a);
+        }
+    }
+
+    public void updatePheromone(){
+        if(_IBFlag){
+            // Using only the trail of the best ant, IB rule
+            updatePheromoneBEST(bestAnt);
+        }
+        else {
+            // Using the trail of all ants, standard rule
+            updatePheromoneALL();
+        }
+    }
+
+
 
     public void moveAnts(int step) {
         for (Ant a : ants) {
@@ -235,7 +223,6 @@ public class ACO extends Algorithm {
         pheromone = new double[dimension][dimension];
         heuristic = new double[dimension][dimension];
         probabilities = new double[dimension];
-        improved = 0;
 
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
@@ -315,35 +302,24 @@ public class ACO extends Algorithm {
         this.numberOfAnts = s;
     }
 
-    public void setValues(double a, double b, int r) {
-        System.out.println("Called " + a + b + r);
-        setAlpha(a);
-        setBeta(b);
-        setAnts(r);
+    public void setIBFlag(boolean flag){
+        _IBFlag = flag;
+    }
+
+    public void setValues(int colonySize, double alpha, double beta) {
+        System.out.println("Called " + colonySize +" " + alpha +" " + beta);
+        setAlpha(alpha);
+        setBeta(beta);
+        setAnts(colonySize);
+        setupAnts();
+        setupStructure();
     }
 
     private void antToSolution(Ant a){
         int[] list = a.getTrailOfAnt();
         _cloneSl = new Solution(_sl.get_tsp());
-        System.out.println("Ant to solution");
         _cloneSl.computeNewList(list);
     }
 
-    public void pirntArray(int[][] arr){
-        for (int i = 0; i<dimension; i++) {
-            for (int j = 0; j<dimension; j++) {
-                System.out.print(arr[i][j]);
-            }
-            System.out.println();
-        }
-    }
-    public void pirntArray(double[][] arr){
-        for (int i = 0; i<dimension; i++) {
-            for (int j = 0; j<dimension; j++) {
-                System.out.print(arr[i][j] + " ");
-            }
-            System.out.println();
-        }
-    }
 
 }

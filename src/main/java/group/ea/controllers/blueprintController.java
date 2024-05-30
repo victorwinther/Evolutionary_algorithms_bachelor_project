@@ -300,9 +300,9 @@ public class blueprintController implements Initializable {
     void optimalSettingsHandler(ActionEvent event){
         if (optimalSetting.isSelected()){
             if (Objects.equals(algorithmSelector.getValue(), "Ant System")) {
-                specialTxtField1.setText("20");
-                specialTxtField2.setText("0.5");
-                specialTxtField3.setText("1");
+                specialTxtField1.setText("100");
+                specialTxtField2.setText("1");
+                specialTxtField3.setText("2");
                 specialTxtField4.setText("2");
             }
             else if (Objects.equals(algorithmSelector.getValue(), "(μ+λ) EA")){

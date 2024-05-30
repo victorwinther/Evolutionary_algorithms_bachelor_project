@@ -1,6 +1,7 @@
 package group.ea.structure.algorithm;
 
 import group.ea.controllers.mainController;
+import group.ea.structure.TSP.Solution;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
 
@@ -11,34 +12,39 @@ public class MMAS extends ACO {
 
     public MMAS(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
-
         maxPheremone = 1.0 / ((evaporation * getValue()));
         minPheremone = maxPheremone / (2.0 * dimension);
         Q = maxPheremone;
+        System.out.println("Max and min values " + maxPheremone + " " + minPheremone);
+        _localSearch = false;
+        _IBFlag = false;
 
     }
 
     public double getValue(){
-        Ants();
-        return bestAnt.getCost();
+        _cloneSl = new Solution(_sl.get_tsp());
+
+        localSearch();
+        return _cloneSl.computeFitness();
+
     }
 
-
     @Override
-    public void updatePheromone(Ant ant) {
-        double dTau = Q / ant.getCost();
-        for (int i = 0; i < dimension; i++) {
-            int j = ant.getTrailOfAnt()[i];
-            int k = (i + 1 < dimension) ? ant.getTrailOfAnt()[i + 1] : ant.getTrailOfAnt()[0];
-            pheromone[j][k] += dTau;
-            pheromone[k][j] = pheromone[j][k]; // Ensure symmetry
+    public void updatePheromone() {
+        super.updatePheromone();
+        limitPheromones();
+    }
 
-            if (pheromone[j][k] > maxPheremone) {
-                pheromone[j][k] = maxPheremone;
-                pheromone[k][j] = maxPheremone;
-            } else if (pheromone[j][k] < minPheremone) {
-                pheromone[j][k] = minPheremone;
-                pheromone[k][j] = minPheremone;
+    private void limitPheromones(){
+        for (int i = 0; i  < (dimension / 2); i++){
+            for (int j = 0; j < (dimension / 2); j++){
+                if (pheromone[i][j] > maxPheremone) {
+                    pheromone[i][j] = maxPheremone;
+                    pheromone[j][i] = maxPheremone;
+                } else if (pheromone[i][j] < minPheremone) {
+                    pheromone[i][j] = minPheremone;
+                    pheromone[j][i] = minPheremone;
+                }
             }
         }
     }

@@ -908,6 +908,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             tspVisualization.getChildren().add(line);
             //System.out.println("Adding line " + new Edge(x1, y1, x2, y2));
         }
+        updateLabels();
     }
 
 
