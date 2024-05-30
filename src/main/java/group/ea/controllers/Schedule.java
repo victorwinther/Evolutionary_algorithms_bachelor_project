@@ -28,6 +28,8 @@ public class Schedule {
     private int numberOfRuns = 1;
     boolean tspBool = false;
     private ArrayList<StoppingCriterion> stoppingCriteria;
+    private int mu;
+    private int lambda;
 
     public Schedule() {
     }
@@ -39,6 +41,9 @@ public class Schedule {
     public int getRuns() {
         return numberOfRuns;
     }
+
+    public void setMu(int mu) {this.mu = mu;}
+    public void setLambda(int lambda) {this.lambda = lambda;}
 
     public void addSchedule(Schedule schedule) {
         schedules.add(schedule);
@@ -76,9 +81,7 @@ public class Schedule {
         return algorithmString;
     }
 
-    public void setAlgorithmString(String algorithmString) {
-        this.algorithmString = algorithmString;
-    }
+    public void setAlgorithmString(String algorithmString) {this.algorithmString = algorithmString;}
 
     public String getSearchSpaceString() {
         return searchSpaceString;
@@ -165,14 +168,20 @@ public class Schedule {
             case "(1+1) EA":
                 this.algorithm = new onePlusOneEA(this.searchSpace, this.problem);
                 break;
-            case "UY (1+1 EA":
-                this.algorithm = new uPlusyEA(this.searchSpace, this.problem);
+            case "(u+y) EA":
+                uPlusyEA uyEA = new uPlusyEA(this.searchSpace, this.problem);
+                uyEA.setMu(this.mu);
+                uyEA.setLambda(this.lambda);
+                this.algorithm = uyEA;
                 break;
             case "(1+1) EA TSP":
                 this.algorithm = new PermutationOnePlusOneEA(this.searchSpace, this.problem);
                 break;
-            case "u+y EA TSP":
-                this.algorithm = new PermutationuPlusyEA(this.searchSpace, this.problem);
+            case "(u+y) EA TSP":
+                PermutationuPlusyEA permEA = new PermutationuPlusyEA(this.searchSpace, this.problem);
+                permEA.setMu(this.mu);
+                permEA.setLambda(this.lambda);
+                this.algorithm = permEA;
                 break;
             case "TEMP":
                 System.out.println("temp");

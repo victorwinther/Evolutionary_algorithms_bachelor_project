@@ -11,8 +11,8 @@ import java.util.*;
 
 public class PermutationuPlusyEA extends Algorithm {
     double chance = 0.5;
-    int lambda = 10;
-    int mu = 15;
+    int lambda;
+    int mu;
     Random rand = new Random();
     Solution bestSolution;
 
@@ -23,9 +23,10 @@ public class PermutationuPlusyEA extends Algorithm {
         _sl = (Solution) problem;
         bestFitness = _sl.computeFitness();
         initialize();
-
-
     }
+
+    public void setMu(int mu) {this.mu = mu;}
+    public void setLambda(int lambda) {this.lambda = lambda;}
 
     @Override
     public void initialize() {
