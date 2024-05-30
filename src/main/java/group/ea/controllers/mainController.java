@@ -691,7 +691,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
 
         fitnessLabel = new Label("Fitness: ");
-        numberOfEdgesLabel = new Label("Number of Edges: ");
+        numberOfEdgesLabel = new Label("Time elapsed: 0ms");
         gainLabel = new Label("Gain: ");
         edgesDeletedLabel = new Label("Edges Deleted: 0");
         edgesAddedLabel = new Label("Edges Added: 0");
@@ -1147,7 +1147,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     }
     private void updateLabels() {
         fitnessLabel.setText("Fitness: " + currentSolution.fitness);
-        numberOfEdgesLabel.setText("Number of Edges: " + edgeMap.size());
+        numberOfEdgesLabel.setText("Time elapsed: " + currentSolution.getTimeElapsed() + "ms");
         gainLabel.setText("Gain: " + currentSolution.improvement);
         edgesDeletedLabel.setText("Edges Deleted: " + edgesDeleted);
         edgesAddedLabel.setText("Edges Added: " + edgesAdded);

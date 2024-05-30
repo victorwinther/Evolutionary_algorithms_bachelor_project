@@ -116,6 +116,7 @@ public class ACO extends Algorithm {
             gain = (int) (temp - bestInGeneration);
             antToSolution(bestAnt);
             TSPDATA tspdata = new TSPDATA(_cloneSl,_cloneSl.getSolution(),generation,(int) bestAnt.getCost(),gain);
+            tspdata.setTimeElapsed(timer.getCurrentTimer());
             listener.receiveUpdate(tspdata);
             improvedInGeneration = false;
         }

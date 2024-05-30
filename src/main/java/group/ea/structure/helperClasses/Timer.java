@@ -1,5 +1,7 @@
 package group.ea.structure.helperClasses;
 
+import java.util.concurrent.TimeUnit;
+
 public class Timer {
 
     long timer;
@@ -11,12 +13,16 @@ public class Timer {
 
 
     public void startTimer(String thingToTime){
-        timer = System.nanoTime();
+        timer = System.currentTimeMillis();
         _timee = thingToTime;
     }
 
     public void endTimer(){
-        long output = timer - System.nanoTime() / 1000000;
-        System.out.println(_timee + " takes " + output + "ms");
+        timer = (System.currentTimeMillis() - timer);
+        System.out.println(_timee + " takes " + timer + "ms");
+    }
+
+    public long getCurrentTimer(){
+        return System.currentTimeMillis() - timer;
     }
 }
