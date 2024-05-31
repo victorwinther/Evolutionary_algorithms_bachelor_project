@@ -2,11 +2,13 @@ package group.ea.controllers;
 
 
 import group.ea.main;
+import group.ea.structure.StoppingCriterias.StoppingCriterion;
 import group.ea.structure.TSP.Solution;
 import group.ea.structure.TSP.TSPParser;
 import group.ea.structure.algorithm.*;
 import group.ea.structure.algorithm.BooleanHypercubeVisualization;
 import group.ea.structure.algorithm.Algorithm;
+import group.ea.structure.helperClasses.Data;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -1204,14 +1206,14 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             TSPDATA nextSolution = updateQueue.poll();
             Platform.runLater(() -> {
                 setSolution(nextSolution);
-                updateVisualization();
+                //updateVisualization();
             });
             setSolution(nextSolution);
-            if(ACO){
+            if(nextSolution.getName() == "ACO" || nextSolution.getName() == "(u+y)EA"){
                 Platform.runLater(() -> {
                 deleteAndDraw(nextSolution.getSolution());
                 });
-            }else{
+            }else if (nextSolution.getName() == "1+1EA"){
                 updateVisualization();
             }
 

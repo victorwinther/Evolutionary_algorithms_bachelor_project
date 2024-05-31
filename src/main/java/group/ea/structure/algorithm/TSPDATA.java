@@ -19,9 +19,11 @@ public class TSPDATA {
 
     public boolean opt3;
 
+    public String name;
+
    // private static List<TspResultController> listeners = new ArrayList<>();
     static ArrayList<TSPDATA> allSolutions = new ArrayList<>();
-    public TSPDATA (Solution solution, ArrayList<City> slSolution, int generation, int fitness, double improvement, City X1, City X2, City X3, City X4, Optional<City> A5, Optional<City> A6, Optional<Integer> optCase, boolean b) {
+    public TSPDATA (Solution solution, ArrayList<City> slSolution, int generation, int fitness, double improvement, City X1, City X2, City X3, City X4, Optional<City> A5, Optional<City> A6, Optional<Integer> optCase, boolean b, String name) {
         this.solution = solution;
         this.generation = generation;
         this.fitness = fitness;
@@ -36,15 +38,23 @@ public class TSPDATA {
         this.opt3 = b;
         this.slSolution = slSolution;
         allSolutions.add(this);
+        this.name = name;
     }
 
-    public TSPDATA(Solution solution, ArrayList<City> slSolution, int generation, int fitness, double improvement){
+    public TSPDATA(Solution solution, ArrayList<City> slSolution, int generation, int fitness, double improvement, String name){
         this.solution = solution;
         this.generation = generation;
         this.fitness = fitness;
         this.improvement = improvement;
         this.slSolution = slSolution;
+        this.name = name;
         allSolutions.add(this);
+
+
+    }
+
+    public String getName() {
+        return name;
     }
 
 
