@@ -277,9 +277,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
                 newSchedule.setUpAlgorithm();
 
-                ArrayList<Schedule> scheduleList = new ArrayList<>();
-                scheduleList.add(newSchedule);
-                recieveArray(scheduleList);
+                recieveArray(Schedule.getSchedules());
 
             } catch (IOException e) {
                 e.printStackTrace();
