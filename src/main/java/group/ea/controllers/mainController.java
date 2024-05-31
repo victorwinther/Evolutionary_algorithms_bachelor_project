@@ -178,21 +178,56 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     void loadScheduleHandler(ActionEvent event) {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
-        Schedule newSchedule = new Schedule();
+        Map<String, String> scheduleParameters = new HashMap<>();
+        addParametersToMap(scheduleParameters);
+
         File selectedFile = fileChooser.showOpenDialog(stage);
         if (selectedFile != null) {
             try (BufferedReader br = new BufferedReader(new FileReader(selectedFile))) {
                 String line;
                 Map<String, String[]> dataMap = new HashMap<>();
+                Map<String, Map<String, String>> batchMap = new HashMap<>();
+                boolean isBatch = false;
 
                 while ((line = br.readLine()) != null) {
                     // Split the line by commas, and remove any extra whitespace
                     String[] parts = line.split(",\\s*");
-                    if (parts.length > 1) {
-                        String key = parts[0].trim();
-                        String[] values = new String[parts.length - 1];
-                        System.arraycopy(parts, 1, values, 0, parts.length - 1);
-                        dataMap.put(key, values);
+
+                    if (line.trim().equalsIgnoreCase("batch")) {
+                        isBatch = true;
+                        continue;
+                    }
+
+                    if (isBatch) {
+                        // Read batch lines into batchMap
+                        String[] keyValuePairs = line.split(";\\s*");
+                        Map<String, String> attributes = new HashMap<>();
+                        String id = null;
+
+                        for (String kv : keyValuePairs) {
+                            String[] kvParts = kv.split(",\\s*");
+                            if (kvParts.length > 1) {
+                                String key = kvParts[0].trim();
+                                String value = kvParts[1].trim();
+                                if (key.equals("id")) {
+                                    id = value;
+                                } else {
+                                    attributes.put(key, value);
+                                }
+                            }
+                        }
+
+                        if (id != null) {
+                            batchMap.put(id, attributes);
+                        }
+                    } else {
+                        // Read regular lines into dataMap
+                        if (parts.length > 1) {
+                            String key = parts[0].trim();
+                            String[] values = new String[parts.length - 1];
+                            System.arraycopy(parts, 1, values, 0, parts.length - 1);
+                            dataMap.put(key, values);
+                        }
                     }
                 }
 
@@ -201,15 +236,27 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     sb.append(entry.getKey()).append("=").append(Arrays.toString(entry.getValue())).append(", ");
                 }
                 System.out.println( sb.toString());
+                System.out.println("Batch entries:");
+                for (Map.Entry<String, Map<String, String>> entry : batchMap.entrySet()) {
+                    System.out.println("ID: " + entry.getKey());
+                    for (Map.Entry<String, String> attribute : entry.getValue().entrySet()) {
+                        System.out.println("  " + attribute.getKey() + ": " + attribute.getValue());
+                    }
+                }
 
-                newSchedule.setSearchSpaceString(dataMap.get("Searchspace")[0]);
-                newSchedule.setProblemString(dataMap.get("Problem")[0]);
-                newSchedule.setAlgorithmString(dataMap.get("Algorithm")[0]);
 
+                //newSchedule.setSearchSpaceString(mainConfigMap.get("Searchspace")[0]);
+                //newSchedule.setProblemString(mainConfigMap.get("Problem")[0]);
+                //newSchedule.setAlgorithmString(mainConfigMap.get("Algorithm")[0]);
+
+                scheduleParameters.put("searchspace", dataMap.get("Searchspace")[0]);
+                scheduleParameters.put("problem", dataMap.get("Problem")[0]);
+                scheduleParameters.put("algorithm", dataMap.get("Algorithm")[0]);
 
 
                 if (dataMap.containsKey("Dimension")){
-                    newSchedule.setDimension(Integer.parseInt(dataMap.get("Dimension")[0]));
+                    //newSchedule.setDimension(Integer.parseInt(dataMap.get("Dimension")[0]));
+                    scheduleParameters.put("dimension", dataMap.get("Dimension")[0]);
                 }
 
                 if (dataMap.containsKey("Stopping criterias")) {
@@ -222,13 +269,16 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                         }
 
                         if (readCrit.equals("Iteration bound")){
-                            newSchedule.setIterationBound(Integer.parseInt(readVal));
+                            //newSchedule.setIterationBound(Integer.parseInt(readVal));
+                            scheduleParameters.put("iterationbound", dataMap.get("Iteration bound")[0]);
                         }
                         else if (readCrit.equals("Fitness bound")){
-                            newSchedule.setFitnessBound(Integer.parseInt(readVal));
+                            //newSchedule.setFitnessBound(Integer.parseInt(readVal));
+                            scheduleParameters.put("fitnessbound", dataMap.get("Fitness bound")[0]);
                         }
                         else if (readCrit.equals("Optimum reached")){
-                            newSchedule.setOptimumReached(true);
+                            //newSchedule.setOptimumReached(true);
+                            scheduleParameters.put("optimalbound", "true");
                         }
                         dataMap.put("Stopping criterias", removeElementFromArray(dataMap.get("Stopping criterias"), readCrit));
                         dataMap.put("Stopping criterias", removeElementFromArray(dataMap.get("Stopping criterias"), readVal));
@@ -243,25 +293,107 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                         String alpha = special_parameters[1];
                         String beta = special_parameters[2];
                         String[] optionalValues = new String[]{colonySize, alpha, beta};
+                        scheduleParameters.put("colonysize", colonySize);
+                        scheduleParameters.put("alpha", alpha);
+                        scheduleParameters.put("beta", beta);
 
-                        newSchedule.setOptional(optionalValues);
+                        //newSchedule.setOptional(optionalValues);
                     }
                     else if (dataMap.get("Algorithm")[0].equals("(u+y) EA")){
                         String mu = special_parameters[0];
                         String lambda = special_parameters[1];
                         String[] optionalValues = new String[]{mu, lambda};
+                        scheduleParameters.put("mu", mu);
+                        scheduleParameters.put("lambda", lambda);
 
                         //newSchedule.setOptional(optionalValues);
-                        newSchedule.setMu(Integer.parseInt(mu));
-                        newSchedule.setLambda(Integer.parseInt(lambda));
+                        //newSchedule.setMu(Integer.parseInt(mu));
+                        //newSchedule.setLambda(Integer.parseInt(lambda));
                     }
                 }
 
                 if (dataMap.get("Problem")[0].equals("TSP")){
-                    newSchedule.setTSPProblem(dataMap.get("TSP problem")[0]);
+                    //newSchedule.setTSPProblem(dataMap.get("TSP problem")[0]);
+                    String tspProblem = dataMap.get("TSP problem")[0];
+                    scheduleParameters.put("tspproblem", tspProblem);
                 }
 
-                newSchedule.setUpAlgorithm();
+                if (isBatch){
+                    for (String scheduleid : batchMap.keySet()){
+                        Schedule batchSchedule = new Schedule();
+                        batchSchedule.setSearchSpaceString(scheduleParameters.get("searchspace"));
+                        batchSchedule.setProblemString(scheduleParameters.get("problem"));
+                        batchSchedule.setAlgorithmString(scheduleParameters.get("algorithm"));
+
+                        if (batchMap.get(scheduleid).containsKey("Dimension")){
+                            batchSchedule.setDimension(Integer.parseInt(batchMap.get(scheduleid).get("Dimension")));
+                        }
+                        if (batchMap.get(scheduleid).containsKey("I. Iterations")){
+                            batchSchedule.setIterationBound(Integer.parseInt(batchMap.get(scheduleid).get("I. Iterations")));
+                        }
+                        if (batchMap.get(scheduleid).containsKey("F. Iterations")){
+                            batchSchedule.setFitnessBound(Integer.parseInt(batchMap.get(scheduleid).get("F. Iterations")));
+                        }
+                        if (batchMap.get(scheduleid).containsKey("Optimal")){
+                            batchSchedule.setOptimumReached(true);
+                        }
+                        if (batchMap.get(scheduleid).containsKey("TSP problem")){
+                            batchSchedule.setTSPProblem(batchMap.get(scheduleid).get("TSP problem"));
+                        }
+
+                        if (scheduleParameters.get("algorithm").equals("Ant System")){
+                            String colonySize = batchMap.get(scheduleid).get("colonysize");
+                            String alpha = batchMap.get(scheduleid).get("alpha");
+                            String beta = batchMap.get(scheduleid).get("beta");
+                            String[] optionalValues = new String[]{colonySize, alpha, beta};
+
+                            batchSchedule.setOptional(optionalValues);
+                        }
+                        if (scheduleParameters.get("algorithm").equals("(u+y) EA")){
+                            batchSchedule.setMu(Integer.parseInt(batchMap.get(scheduleid).get("u")));
+                            batchSchedule.setLambda(Integer.parseInt(batchMap.get(scheduleid).get("y")));
+                        }
+
+                        batchSchedule.setUpAlgorithm();
+                    }
+
+
+                } else {
+                    Schedule newSchedule = new Schedule();
+                    newSchedule.setSearchSpaceString(scheduleParameters.get("searchspace"));
+                    newSchedule.setProblemString(scheduleParameters.get("problem"));
+                    newSchedule.setAlgorithmString(scheduleParameters.get("algorithm"));
+
+                    if (!scheduleParameters.get("dimension").isEmpty()){
+                        newSchedule.setDimension(Integer.parseInt(scheduleParameters.get("dimension")));
+                    }
+                    if (!scheduleParameters.get("iterationbound").isEmpty()){
+                        newSchedule.setIterationBound(Integer.parseInt(scheduleParameters.get("iterationbound")));
+                    }
+                    if (!scheduleParameters.get("fitnessbound").isEmpty()){
+                        newSchedule.setFitnessBound(Integer.parseInt(scheduleParameters.get("fitnessbound")));
+                    }
+                    if (!scheduleParameters.get("optimalbound").isEmpty()){
+                        newSchedule.setOptimumReached(true);
+                    }
+                    if (!scheduleParameters.get("tspproblem").isEmpty()){
+                        newSchedule.setTSPProblem(scheduleParameters.get("tspproblem"));
+                    }
+                    if (scheduleParameters.get("algorithm").equals("Ant System")){
+                        String colonySize = scheduleParameters.get("colonysize");
+                        String alpha = scheduleParameters.get("alpha");
+                        String beta = scheduleParameters.get("beta");
+                        String[] optionalValues = new String[]{colonySize, alpha, beta};
+
+                        newSchedule.setOptional(optionalValues);
+                    }
+                    if (scheduleParameters.get("algorithm").equals("(u+y) EA")){
+                        newSchedule.setMu(Integer.parseInt(scheduleParameters.get("mu")));
+                        newSchedule.setLambda(Integer.parseInt(scheduleParameters.get("lambda")));
+                    }
+
+                    newSchedule.setUpAlgorithm();
+                }
 
                 recieveArray(Schedule.getSchedules());
 
@@ -272,6 +404,22 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
 
 
+    }
+
+    private void addParametersToMap(Map<String, String> map){
+        map.put("searchspace", "");
+        map.put("problem", "");
+        map.put("algorithm", "");
+        map.put("dimension", "");
+        map.put("iterationbound", "");
+        map.put("fitnessbound", "");
+        map.put("optimalbound", "");
+        map.put("colonysize", "");
+        map.put("tspproblem", "");
+        map.put("alpha", "");
+        map.put("beta", "");
+        map.put("mu", "");
+        map.put("lambda", "");
     }
 
     private static String[] removeElementFromArray(String[] array, String element) {
