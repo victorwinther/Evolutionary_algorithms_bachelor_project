@@ -1,8 +1,10 @@
 package group.ea.structure.algorithm;
 
 import group.ea.controllers.mainController;
+import group.ea.structure.StoppingCriterias.StoppingCriterion;
 import group.ea.structure.TSP.Solution;
 import group.ea.structure.helperClasses.Timer;
+import group.ea.structure.helperClasses.Data;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
 import javafx.animation.KeyFrame;

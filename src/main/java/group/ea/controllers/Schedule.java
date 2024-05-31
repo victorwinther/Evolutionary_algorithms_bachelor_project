@@ -1,5 +1,6 @@
 package group.ea.controllers;
 
+import group.ea.structure.StoppingCriterias.*;
 import group.ea.structure.TSP.Solution;
 import group.ea.structure.TSP.TSPParser;
 import group.ea.structure.algorithm.*;
@@ -9,9 +10,10 @@ import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.BitString;
 import group.ea.structure.searchspace.SearchSpace;
 
+import java.io.Closeable;
 import java.util.ArrayList;
 
-public class Schedule {
+public class Schedule implements Cloneable {
     private String searchSpaceString, problemString, algorithmString, tspProblem = "berlin52";
     private int id, dimension, fitnessBound = 0, iterationBound = 0;
     private Algorithm algorithm; // Hold an instance of the Algorithm
@@ -33,6 +35,7 @@ public class Schedule {
 
     public Schedule() {
     }
+
 
     public void setRuns(int runs) {
         numberOfRuns = runs;

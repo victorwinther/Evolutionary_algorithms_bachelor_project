@@ -1,6 +1,7 @@
 package group.ea.structure.algorithm;
 
 import group.ea.structure.TSP.Solution;
+import group.ea.structure.helperClasses.Data;
 
 import java.util.ArrayList;
 
@@ -15,4 +16,6 @@ public interface AlgorithmUpdateListener {
     void firstSolution(Solution solution);
 
     void receiveUpdate(TSPDATA tspdata);
+
+    void receiveBitstringUpdate(Data data);
 }
