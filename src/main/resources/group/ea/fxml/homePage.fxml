@@ -7,6 +7,8 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -292,7 +294,15 @@
             </ScrollPane>
          </center>
          <bottom>
-            <Slider fx:id="generationSlider" blockIncrement="50.0" max="200.0" minorTickCount="5" onDragDetected="#pauseGraphics" onDragDone="#continueSlider" prefHeight="17.0" prefWidth="816.0" showTickLabels="true" showTickMarks="true" BorderPane.alignment="CENTER" />
+            <TableView fx:id="extractKeyFeaturesTable" prefHeight="53.0" prefWidth="816.0" BorderPane.alignment="CENTER">
+              <columns>
+                <TableColumn fx:id="tableIterations" prefWidth="120.0" text="Iterations" />
+                <TableColumn fx:id="tableFuncEval" prefWidth="120.0" text="Func. Evaluations" />
+                  <TableColumn fx:id="tableFitness" prefWidth="120.0" text="Fitness" />
+                  <TableColumn fx:id="tableOptimalFitness" minWidth="8.0" prefWidth="120.0" text="Optimal Fitness" />
+                  <TableColumn fx:id="tableRuntime" prefWidth="120.0" text="Run time (s)" />
+              </columns>
+            </TableView>
          </bottom>
       </BorderPane>
    </center>

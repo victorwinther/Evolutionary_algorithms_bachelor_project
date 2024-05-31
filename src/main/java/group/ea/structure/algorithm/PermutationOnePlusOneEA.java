@@ -61,6 +61,7 @@ public class PermutationOnePlusOneEA extends Algorithm {
             //noImprovementCounter++;
             _sl.revert();
         }
+        _sl.clearData();
 
 
 

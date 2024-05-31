@@ -12,6 +12,10 @@ public class MaxFitnessCriterion implements StoppingCriterion {
 
     @Override
     public boolean isMet(Algorithm algorithm) {
-        return algorithm.getFitness() >= maxFitness;
+        if(algorithm.getProblem().name.equals("TSP")){
+            return algorithm.getFitness() <= maxFitness;
+        }
+        return
+                algorithm.getFitness() >= maxFitness;
     }
 }
