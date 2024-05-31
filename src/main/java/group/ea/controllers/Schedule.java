@@ -191,9 +191,8 @@ public class Schedule {
             case "Ant System":
                 System.out.println("ANT");
                 this.algorithm = new ACO(this.searchSpace, this.problem);
-                this.algorithm.setValues(Double.parseDouble(optionalValues[0]), Double.parseDouble(optionalValues[1]), Integer.parseInt(optionalValues[2]));
+                this.algorithm.setValues(Integer.parseInt(optionalValues[0]), Double.parseDouble(optionalValues[1]), Double.parseDouble(optionalValues[2]));
                 System.out.println(optionalValues[0]);
-                algorithm.addStoppingCriterion(new TempStopping());
                 break;
             default:
                 this.algorithm = null;

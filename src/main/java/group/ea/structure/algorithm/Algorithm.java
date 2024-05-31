@@ -2,6 +2,7 @@ package group.ea.structure.algorithm;
 
 import group.ea.controllers.mainController;
 import group.ea.structure.TSP.Solution;
+import group.ea.structure.helperClasses.Timer;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
 import javafx.animation.KeyFrame;
@@ -34,6 +35,7 @@ public abstract class Algorithm {
 
     protected int bestFitness;
     protected String bitString;
+    protected Timer timer;
 
     int bitLength;
     protected int generation;
@@ -41,7 +43,7 @@ public abstract class Algorithm {
     private List<StoppingCriterion> stoppingCriteria = new ArrayList<>();
 
     protected double currentTemp = 10000;
-    protected int maxGeneration = 999;
+    protected int maxGeneration = 998;
 
     protected AlgorithmUpdateListener listener;
     public Algorithm(SearchSpace searchSpace, Problem problem) {
@@ -50,6 +52,7 @@ public abstract class Algorithm {
         //sl = (Solution) problem;
         this.problem = problem;
         this.initialize();
+        timer = new Timer();
     }
     public void addStoppingCriterion(StoppingCriterion criterion) {
         stoppingCriteria.add(criterion);
@@ -69,10 +72,14 @@ public abstract class Algorithm {
     public abstract void initialize();
 
     public void runAlgorithm() {
+        timer.startTimer("Time elapsed");
         while (!checkStoppingCriteria()  && (bestFitness != 7544)) {
        // while(bestFitness != 7544) {
 
+
             performSingleUpdate(generation);
+
+
             generation++;
             if (generation % 1000000 == 0) {
                 //System.out.println("1m + fitness = " + bestFitness);
@@ -113,7 +120,7 @@ public abstract class Algorithm {
         this.listener = controller;
         //System.out.println("Listener set" + listener + " Controller sent= "+ controller);
     }
-    public void setValues(double a, double b, double r){
+    public  void setValues(int a, double b, double r){
 
     }
 }

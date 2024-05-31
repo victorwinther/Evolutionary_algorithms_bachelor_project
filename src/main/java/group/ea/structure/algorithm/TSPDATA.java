@@ -14,6 +14,7 @@ public class TSPDATA {
     public int fitness;
     public ArrayList<City> slSolution;
     public double improvement;
+    private long timeElapsed = 0;
     public City X1,X2,X3,X4,X5,X6;
 
     public boolean opt3;
@@ -54,7 +55,13 @@ public class TSPDATA {
         return solution;
     }
 
+    public void setTimeElapsed(long timeElapsed) {
+        this.timeElapsed = timeElapsed;
+    }
 
+    public long getTimeElapsed() {
+        return timeElapsed;
+    }
 
     public void setSolution(Solution solution) {
         this.solution = solution;
