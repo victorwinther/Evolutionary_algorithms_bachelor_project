@@ -121,6 +121,7 @@ public abstract class Algorithm {
         //System.out.println("Listener set" + listener + " Controller sent= "+ controller);
     }
     public  void setValues(int a, double b, double r){
-
     }
+    public void setMu(int a){}
+    public void setLambda(int a){}
 }

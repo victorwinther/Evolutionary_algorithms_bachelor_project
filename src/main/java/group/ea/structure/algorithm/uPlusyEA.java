@@ -14,9 +14,7 @@ public class uPlusyEA extends Algorithm{
     ArrayList<String> population = new ArrayList<>();
     Random rand = new Random();
     public uPlusyEA(SearchSpace searchSpace, Problem problem) {
-
         super(searchSpace, problem);
-        this.initialize();
     }
 
     public void setMu(int mu) {this.mu = mu;}

@@ -29,9 +29,9 @@ public class blueprintController implements Initializable {
     @FXML
     private Label explainingLabel;
     @FXML
-    private Label iterationLabel, dimensionLabel, specialLbl1, specialLbl2, specialLbl3, specialLbl4, specialLbl5, runsLabel, tspProblemLbl;
+    private Label iterationLabel, dimensionLabel, specialLbl1, specialLbl2, specialLbl3, specialLbl4, specialLbl5, tspProblemLbl;
     @FXML
-    private TextField iterationTxtField, dimensionTxtField, fitnessTxtField, specialTxtField1, specialTxtField2, specialTxtField3, specialTxtField4, specialTxtField5, runsTxtField, timeBoundTxtField;
+    private TextField iterationTxtField, dimensionTxtField, fitnessTxtField, specialTxtField1, specialTxtField2, specialTxtField3, specialTxtField4, specialTxtField5, timeBoundTxtField;
     @FXML
     private ComboBox<String> searchspaceSelector, TSPSelector;
     @FXML
@@ -82,7 +82,7 @@ public class blueprintController implements Initializable {
         timeBoundTxtField.setVisible(false);
         Schedule.getSchedules().clear();
         allComboBoxes = Arrays.asList(searchspaceSelector, problemSelector, algorithmSelector);
-        allTextFields = Arrays.asList(iterationTxtField, fitnessTxtField, timeBoundTxtField, dimensionTxtField, specialTxtField1, specialTxtField2, specialTxtField3, specialTxtField4, specialTxtField5, runsTxtField);
+        allTextFields = Arrays.asList(iterationTxtField, fitnessTxtField, timeBoundTxtField, dimensionTxtField, specialTxtField1, specialTxtField2, specialTxtField3, specialTxtField4, specialTxtField5);
         allCheckboxes = Arrays.asList(optimumReached, iterationBound, fitnessBound, timeboundCheckbox);
         allSpecialTxtFields = Arrays.asList(specialTxtField1, specialTxtField2, specialTxtField3, specialTxtField4, specialTxtField5);
         allSpecialLbls = Arrays.asList(specialLbl1, specialLbl2, specialLbl3, specialLbl4, specialLbl5);
@@ -102,7 +102,6 @@ public class blueprintController implements Initializable {
         */
         optimumReached.setSelected(true);
         dimensionTxtField.setText("100");
-        runsTxtField.setText("1");
 
         hideSpecialFields();
 
@@ -289,6 +288,7 @@ public class blueprintController implements Initializable {
     }
 
     private void checkSpecialParameters(String selectedAlgo){
+        hideSpecialFields();
         if (selectedAlgo.equals("Ant System")){
             specialLbl1.setText("Colony size");
             specialLbl2.setText("Alpha");
@@ -318,9 +318,7 @@ public class blueprintController implements Initializable {
 
             optimalSetting.setVisible(true);
         }
-        else {
-            hideSpecialFields();
-        }
+
     }
 
     private void clearTxtFields(){
@@ -391,8 +389,6 @@ public class blueprintController implements Initializable {
         if (selector == searchspaceSelector) {
                 dimensionLabel.setDisable(false);
                 dimensionTxtField.setDisable(false);
-                runsLabel.setDisable(false);
-                runsTxtField.setDisable(false);
         }
 
         //category dependencies logic
@@ -444,7 +440,7 @@ public class blueprintController implements Initializable {
             // Increment the id counter
             idCount = idCount + 1;
 
-            ArrayList<String> scheduleParameters = new ArrayList<>(List.of("id", "No. runs", "Dimension"));
+            ArrayList<String> scheduleParameters = new ArrayList<>(List.of("id"));
 
             List<String> currentSelection = getParameterSelection();
             for (String selection : currentSelection) {
@@ -529,7 +525,7 @@ public class blueprintController implements Initializable {
             String alpha = specialTxtField2.getText();
             String beta = specialTxtField3.getText();
             optionalValues = new String[]{colonySize, alpha, beta};
-            System.out.println(optionalValues[0]);
+
             newSchedule.setOptional(optionalValues);
 
         }
@@ -551,7 +547,6 @@ public class blueprintController implements Initializable {
     private boolean checkParametersFilled(){
         return (!iterationTxtField.isDisabled() && iterationTxtField.getText().isEmpty()) ||
                 (!dimensionTxtField.isDisabled() && dimensionTxtField.getText().isEmpty()) ||
-                (!runsTxtField.isDisabled() && runsTxtField.getText().isEmpty()) ||
                 (!fitnessTxtField.isDisabled() && fitnessTxtField.getText().isEmpty()) ||
                 (specialTxtField1.isVisible() && specialTxtField1.getText().isEmpty()) ||
                 (specialTxtField2.isVisible() && specialTxtField2.getText().isEmpty()) ||
@@ -566,9 +561,6 @@ public class blueprintController implements Initializable {
 
         if (category.equals("id")){
             res = id;
-        }
-        else if (category.equals("No. runs")){
-            res = runsTxtField.getText();
         }
         else if (category.equals("Dimension") && !dimensionTxtField.isDisable()){
             res = dimensionTxtField.getText();

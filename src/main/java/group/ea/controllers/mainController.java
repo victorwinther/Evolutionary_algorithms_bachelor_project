@@ -267,7 +267,9 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                         String lambda = special_parameters[1];
                         String[] optionalValues = new String[]{mu, lambda};
 
-                        newSchedule.setOptional(optionalValues);
+                        //newSchedule.setOptional(optionalValues);
+                        newSchedule.setMu(Integer.parseInt(mu));
+                        newSchedule.setLambda(Integer.parseInt(lambda));
                     }
                 }
 

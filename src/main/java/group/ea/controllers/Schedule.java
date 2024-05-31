@@ -172,6 +172,7 @@ public class Schedule {
                 uPlusyEA uyEA = new uPlusyEA(this.searchSpace, this.problem);
                 uyEA.setMu(this.mu);
                 uyEA.setLambda(this.lambda);
+                uyEA.initialize();
                 this.algorithm = uyEA;
                 break;
             case "(1+1) EA TSP":
@@ -181,6 +182,7 @@ public class Schedule {
                 PermutationuPlusyEA permEA = new PermutationuPlusyEA(this.searchSpace, this.problem);
                 permEA.setMu(this.mu);
                 permEA.setLambda(this.lambda);
+                permEA.initialize();
                 this.algorithm = permEA;
                 break;
             case "TEMP":

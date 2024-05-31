@@ -22,7 +22,6 @@ public class PermutationuPlusyEA extends Algorithm {
         super(searchSpace, problem);
         _sl = (Solution) problem;
         bestFitness = _sl.computeFitness();
-        initialize();
     }
 
     public void setMu(int mu) {this.mu = mu;}
