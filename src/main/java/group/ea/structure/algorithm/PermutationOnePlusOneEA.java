@@ -54,13 +54,14 @@ public class PermutationOnePlusOneEA extends Algorithm {
 
         if (offspringFitness < bestFitness) {
             bestFitness = offspringFitness;
-            TSPDATA tspdata = new TSPDATA(_sl,_sl.getSolution(),generation,offspringFitness,_sl.getImprovement,_sl.A1,_sl.A2,_sl.A3,_sl.A4,Optional.ofNullable(_sl.A5),Optional.ofNullable(_sl.A6),Optional.ofNullable(_sl.optCase), threeOpt,"1+1EA");
+            TSPDATA tspdata = new TSPDATA(_sl,new ArrayList<>(_sl.getSolution()),generation,offspringFitness,_sl.getImprovement,_sl.A1,_sl.A2,_sl.A3,_sl.A4,Optional.ofNullable(_sl.A5),Optional.ofNullable(_sl.A6),Optional.ofNullable(_sl.optCase), threeOpt,"1+1EA");
             listener.receiveUpdate(tspdata);
 
         } else {
             //noImprovementCounter++;
             _sl.revert();
         }
+        _sl.clearData();
 
 
 

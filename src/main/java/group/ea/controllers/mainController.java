@@ -13,6 +13,8 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,7 +45,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class mainController implements Initializable, AlgorithmUpdateListener {
     private static AnimationTimer animationTimer;
@@ -122,6 +123,11 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     ArrayList<TSPDATA> allSolutions;
     double speed;
     int maxY;
+
+    @FXML
+    private TableView<String> extractKeyFeaturesTable;
+    @FXML
+    private TableColumn<String,String> tableIterations, tableFuncEval,tableFitness,tableOptimalFitness,tableRuntime;
     /*@FXML
     private Pane tspVisualization;
 
@@ -1209,13 +1215,13 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 //updateVisualization();
             });
             setSolution(nextSolution);
-            if(nextSolution.getName() == "ACO" || nextSolution.getName() == "(u+y)EA"){
+            if(nextSolution.getName() == "ACO" || nextSolution.getName() == "(u+y)EA" || nextSolution.getName() == "1+1EA"){
                 Platform.runLater(() -> {
                 deleteAndDraw(nextSolution.getSolution());
                 });
-            }else if (nextSolution.getName() == "1+1EA"){
-                updateVisualization();
-            }
+            }//else if (nextSolution.getName() == "1+1EA"){
+              //  updateVisualization();
+            //}
 
 
         }
@@ -1298,6 +1304,20 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         if (!updateBitStringQueue.isEmpty()) {
             Data nextData = updateBitStringQueue.poll();
             System.out.println("Next data: " + nextData.getGeneration());
+            // add a value to tablefitness
+            String fitness1 = Integer.toString(nextData.getFitness());
+            //ArrayList<String> data = new ArrayList<>();
+
+
+            ObservableList<String> data = FXCollections.observableArrayList();
+            data.add(fitness1);
+            data.add(Integer.toString(nextData.getGeneration()));
+            data.add(nextData.getBitString());
+            extractKeyFeaturesTable.setItems(data);
+            extractKeyFeaturesTable.refresh();
+
+
+
             if(nextData.isStop()) {
                 timeline.stop();
                 pauseButton.setDisable(true);
@@ -1318,10 +1338,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         System.out.println("Generation: " + generation);
         int fitness = data.getFitness();
         Optional<Double> temp = data.getTemp();
+        /*
         generationSlider.setBlockIncrement(10);
         generationSlider.setMajorTickUnit(50);
         generationSlider.setSnapToTicks(true);
         generationSlider.adjustValue(i);
+        */
             // Create a Task for the background processing
         Task<Void> task = new Task<Void>() {
             @Override

@@ -27,6 +27,13 @@ public abstract class Algorithm {
     Problem problem;
 
     Solution _sl;
+
+    public SearchSpace getSearchSpace() {
+        return searchSpace;
+    }
+    public Problem getProblem(){
+        return problem;
+    }
     SearchSpace searchSpace;
     protected boolean stoppingMet = false;
     protected ArrayList<String> solutionList;

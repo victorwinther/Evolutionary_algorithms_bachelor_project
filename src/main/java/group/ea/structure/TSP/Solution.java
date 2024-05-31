@@ -43,9 +43,13 @@ public class Solution extends Problem implements Cloneable {
     public void restart(){
         solution = new ArrayList<>(initialSolution);
     }
+    public String getName() {
+        return name;
+    }
 
 
     public Solution(TSPParser tsp) {
+        name = "TSP";
         _tsp = tsp;
         init();
     }
