@@ -56,7 +56,7 @@ public class ACO extends Algorithm {
 
 
         if(generation == 0){
-            listener.firstSolution(_sl);
+            //listener.firstSolution(_sl);
             System.out.println("Generation 0 values: " + alpha + " " + beta + " " + numberOfAnts);
         }
 
