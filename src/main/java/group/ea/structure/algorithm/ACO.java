@@ -28,8 +28,6 @@ public class ACO extends Algorithm {
     protected double fuzzyRandom = 0.00000;
     protected ArrayList<Ant> ants;
     int _generation;
-    protected Solution _sl;
-    protected Solution _cloneSl;
     protected double bestInGeneration;
     protected boolean improvedInGeneration = false;
     int gain = 0;

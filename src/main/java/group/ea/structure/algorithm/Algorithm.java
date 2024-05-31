@@ -26,7 +26,8 @@ public abstract class Algorithm {
     public int lambda = 1;
     Problem problem;
 
-    Solution _sl;
+    protected Solution _sl;
+    protected Solution _cloneSl;
 
     public SearchSpace getSearchSpace() {
         return searchSpace;

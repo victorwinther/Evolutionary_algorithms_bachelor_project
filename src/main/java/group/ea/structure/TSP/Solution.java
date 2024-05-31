@@ -157,6 +157,22 @@ public class Solution extends Problem implements Cloneable {
 
 
     }
+
+
+    public void deepCopy(Solution s){
+        this.setSolution(s.getSolution());
+        this.A1 = s.A1;
+        this.A2 = s.A2;
+        this.A3 = s.A3;
+        this.A4 = s.A4;
+        this.A5 = s.A5;
+        this.A6 = s.A6;
+        this.optCase = s.optCase;
+        this.getImprovement = s.getImprovement;
+
+    }
+
+
     public void random3Opt(){
         prevSolution = new ArrayList<>(solution);
         int N = solution.size();
