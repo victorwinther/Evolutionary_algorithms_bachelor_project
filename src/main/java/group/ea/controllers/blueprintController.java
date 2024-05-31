@@ -545,8 +545,8 @@ public class blueprintController implements Initializable {
                 return;
             }
         }
-        System.out.println(newSchedule.getAlgorithmString());
-            newSchedule.setUpAlgorithm();
+
+        newSchedule.setUpAlgorithm();
     }
 
     private boolean checkParametersFilled(){
