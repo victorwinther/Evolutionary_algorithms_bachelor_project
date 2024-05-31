@@ -46,6 +46,8 @@ public class Solution extends Problem implements Cloneable {
     public String getName() {
         return name;
     }
+
+
     public Solution(TSPParser tsp) {
         name = "TSP";
         _tsp = tsp;
@@ -318,9 +320,10 @@ public class Solution extends Problem implements Cloneable {
     }
 
     public void printSolution() {
-        for(int i = 0; i < solution.size(); i ++){
-            System.out.print(solution.get(i).getId() + " ");
+        for(City c : solution){
+            System.out.println("Index " + c.getId() + " coords : " + c.getX() + " " + c.getY());
         }
+
     }
 
     public double distanceBetweenIndex(int start, int end){
@@ -521,27 +524,22 @@ public class Solution extends Problem implements Cloneable {
 
     }
 
-    public ArrayList<City> computeNewList(int[] list) {
-        ArrayList<City> temp = new ArrayList<>(solution.size());
+    public void computeNewList(int[] list) {
+        ArrayList<City> temp = new ArrayList<>();
         for (int i = 0; i < list.length; i++) {
             int cityId = list[i];
-            for (City city : solution) {
-                if (city.getId() == cityId) {
-                    temp.add(city);
-                    break;
-                }
-            }
+            int index = solution.indexOf(solution.get(cityId));
+            temp.add(solution.get(index));
         }
-        return temp;
+
+        solution = temp;
+
     }
 
 
     public void setSolution(ArrayList<City> s) {
         this.solution = s;
     }
-
-
-
 
 
     enum Reconnection3OptCase {

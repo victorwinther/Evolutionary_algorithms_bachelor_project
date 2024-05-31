@@ -1,9 +1,11 @@
 package group.ea.controllers;
 
 import group.ea.main;
+import group.ea.structure.algorithm.Algorithm;
 import group.ea.structure.helperClasses.BatchRow;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -26,11 +29,9 @@ public class blueprintController implements Initializable {
     @FXML
     private Label explainingLabel;
     @FXML
-    private Label iterationLabel, dimensionLabel, specialLbl1, specialLbl2, specialLbl3, specialLbl4, specialLbl5, runsLabel, tspProblemLbl;
+    private Label iterationLabel, dimensionLabel, specialLbl1, specialLbl2, specialLbl3, specialLbl4, specialLbl5, tspProblemLbl;
     @FXML
-    private TextField iterationTxtField, dimensionTxtField, fitnessTxtField, specialTxtField1, specialTxtField2, specialTxtField3, specialTxtField4, specialTxtField5, runsTxtField;
-    //@FXML
-    //private TableView<BatchRow> batchTable;
+    private TextField iterationTxtField, dimensionTxtField, fitnessTxtField, specialTxtField1, specialTxtField2, specialTxtField3, specialTxtField4, specialTxtField5, timeBoundTxtField;
     @FXML
     private ComboBox<String> searchspaceSelector, TSPSelector;
     @FXML
@@ -38,7 +39,7 @@ public class blueprintController implements Initializable {
     @FXML
     private ComboBox<String> algorithmSelector;
     @FXML
-    private CheckBox optimumReached, fitnessBound, iterationBound, optimalSetting;
+    private CheckBox optimumReached, fitnessBound, iterationBound, optimalSetting, timeboundCheckbox;
     @FXML
     Button saveButton;
     @FXML
@@ -51,6 +52,9 @@ public class blueprintController implements Initializable {
     private ArrayList<String> parameters = new ArrayList<>();
     private List<ComboBox<String>> allComboBoxes;
     private List<TextField> allTextFields;
+    private List<CheckBox> allCheckboxes;
+    private List<TextField> allSpecialTxtFields;
+    private List<Label> allSpecialLbls;
     private final String[] categories = {"searchSpace", "problem", "algorithm"};
     private ArrayList<String> dependencies = new ArrayList<>();
     private ArrayList<String> batchColumns = new ArrayList<>();
@@ -74,9 +78,14 @@ public class blueprintController implements Initializable {
         //initialize components
         TSPSelector.setVisible(false);
         tspProblemLbl.setVisible(false);
+        timeboundCheckbox.setVisible(false);
+        timeBoundTxtField.setVisible(false);
         Schedule.getSchedules().clear();
         allComboBoxes = Arrays.asList(searchspaceSelector, problemSelector, algorithmSelector);
-        allTextFields = Arrays.asList(iterationTxtField, dimensionTxtField, fitnessTxtField, specialTxtField1, specialTxtField2, specialTxtField3, specialTxtField4, specialTxtField5, runsTxtField);
+        allTextFields = Arrays.asList(iterationTxtField, fitnessTxtField, timeBoundTxtField, dimensionTxtField, specialTxtField1, specialTxtField2, specialTxtField3, specialTxtField4, specialTxtField5);
+        allCheckboxes = Arrays.asList(optimumReached, iterationBound, fitnessBound, timeboundCheckbox);
+        allSpecialTxtFields = Arrays.asList(specialTxtField1, specialTxtField2, specialTxtField3, specialTxtField4, specialTxtField5);
+        allSpecialLbls = Arrays.asList(specialLbl1, specialLbl2, specialLbl3, specialLbl4, specialLbl5);
         addCategoryOptions();
         addDescriptions();
         initializeBatchParameters();
@@ -84,13 +93,15 @@ public class blueprintController implements Initializable {
         problemSelector.getItems().addAll(problems);
         TSPSelector.getItems().addAll(TSPproblems);
         algorithmSelector.getItems().addAll(algorithms);
+        sortComboBoxItems(allComboBoxes);
 
+        /*
         searchspaceSelector.setValue(searchspaceSelector.getItems().get(0));
         problemSelector.setValue(problemSelector.getItems().get(0));
         algorithmSelector.setValue(algorithmSelector.getItems().get(0));
+        */
         optimumReached.setSelected(true);
         dimensionTxtField.setText("100");
-        runsTxtField.setText("1");
 
         hideSpecialFields();
 
@@ -110,35 +121,39 @@ public class blueprintController implements Initializable {
     }
 
     private void updateCategories() {
-        if (dependencies.size() == 0){
-            for (ComboBox<String> comboBox : allComboBoxes){
-                String category = getComboBoxCategory(comboBox);
+        for (ComboBox<String> comboBox : allComboBoxes){
+            String category = getComboBoxCategory(comboBox);
 
-                for (String item : categoryOptions.get(category)){
-                    if (!dependencies.contains(item) && !comboBox.getItems().contains(item)) {
-                        comboBox.getItems().add(item);
-                    }
+            comboBox.getItems().removeAll(dependencies);
+
+            for (String item : categoryOptions.get(category)){
+                if (!dependencies.contains(item) && !comboBox.getItems().contains(item)) {
+                    comboBox.getItems().add(item);
                 }
             }
-
         }
-        else {
-            for (ComboBox<String> comboBox : allComboBoxes) {
-                comboBox.getItems().removeAll(dependencies);
-            }
+        sortComboBoxItems(allComboBoxes);
+    }
+
+    private void sortComboBoxItems(List<ComboBox<String>> comboBoxes) {
+        for (ComboBox<String> comboBox : comboBoxes) {
+            ObservableList<String> items = comboBox.getItems();
+            List<String> itemList = FXCollections.observableArrayList(items);
+            Collections.sort(itemList);
+            comboBox.setItems(FXCollections.observableArrayList(itemList));
         }
     }
 
     private void addCategoryOptions() {
         categoryOptions.put("searchSpace", Arrays.asList("Bit strings", "Permutations"));
         categoryOptions.put("problem", Arrays.asList("OneMax", "LeadingOnes", "TSP"));
-        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA","(μ+λ) EA", "RLS", "(1+1) EA TSP", "Simulated Annealing", "Ant System", "TEMP"));
+        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA","(u+y) EA", "RLS", "(1+1) EA TSP", "Simulated Annealing", "Ant System", "TEMP"));
         categoryOptions.put("tsp problems", Arrays.asList("berlin52", "bier127", "a280"));
     }
 
     private void initializeBatchParameters() {
         batchParameters.put("Ant System", List.of("Colony size", "Alpha", "Beta"));
-        batchParameters.put("(μ+λ) EA", List.of("μ","λ"));
+        batchParameters.put("(u+y) EA", List.of("u","y"));
         batchParameters.put("Fitness bound", List.of("F. Iterations"));
         batchParameters.put("Iteration bound", List.of("I. Iterations"));
     }
@@ -152,7 +167,7 @@ public class blueprintController implements Initializable {
         descriptions.put("TSP", "A classic combinatorial optimization problem where the goal is to find the shortest possible route that visits a set of cities exactly once and returns to the origin city.");
 
         descriptions.put("(1+1) EA", "The (1+1) EA is a simple evolutionary strategy that involves maintaining a single individual in the population, generating a mutated offspring, and replacing the current individual with the offspring only if it has higher fitness.");
-        descriptions.put("(μ+λ) EA", "An evolutionary optimization algorithm where a population of μ parents generates λ offspring each generation.");
+        descriptions.put("(u+y) EA", "An evolutionary optimization algorithm where a population of u parents generates y offspring each generation.");
         descriptions.put("(1+1) EA TSP", "The (1+1) EA is a simple evolutionary strategy that involves maintaining a single individual in the population, generating a mutated offspring, and replacing the current individual with the offspring only if it has higher fitness.");
         descriptions.put("RLS", "A simple optimization algorithm that iteratively improves a solution by making small random changes and selecting better solutions.");
         descriptions.put("Simulated Annealing", "An optimization algorithm inspired by the annealing process in metallurgy. It iteratively explores the solution space by making random changes to the current solution.");
@@ -161,6 +176,7 @@ public class blueprintController implements Initializable {
         descriptions.put("Optimum reached", "Stops a run if the specified fitness bound is reached.");
         descriptions.put("Fitness bound", "Stops a run if a certain fitness is reached.");
         descriptions.put("Iteration bound", "Stops a run if a certain amount of iterations is reached");
+        descriptions.put("Time elapsed", "Stops a run after a certain amount of time has passed");
 
     }
 
@@ -181,18 +197,54 @@ public class blueprintController implements Initializable {
         try (FileWriter writer = new FileWriter(file)) {
             // Write data values
             writer.write("Searchspace, ");
-            writer.write(searchspaceSelector.getValue() + "; ");
+            writer.write(searchspaceSelector.getValue() + "\n");
             writer.write("Problem, ");
-            writer.write(problemSelector.getValue() + "; ");
+            writer.write(problemSelector.getValue() + "\n");
             writer.write("Algorithm, ");
-            writer.write(algorithmSelector.getValue() + ";");
-            writer.write("\n");
+            writer.write(algorithmSelector.getValue() + "\n");
 
-            // Write batch table data to the file
-            writer.write("batch\n");
-            for (String schedule : batchData) {
-                writer.write(schedule + "; \n");
+            if (searchspaceSelector.getValue().equals("Bit strings")){
+                writer.write("Dimension, ");
+                writer.write(dimensionTxtField.getText() + "\n");
             }
+
+            if (batchData.isEmpty()){
+                writer.write("Stopping criterias, ");
+                for (int i = 0; i < allCheckboxes.size(); i++){
+                    CheckBox cb = allCheckboxes.get(i);
+                    if (cb.isSelected()){
+                        if (cb.getText().equals("Optimum reached")){
+                            writer.write(cb.getText() + ", ");
+                        } else {
+                            writer.write(cb.getText() + ", ");
+                            writer.write(allTextFields.get(i-1).getText() + ", ");
+                        }
+
+                    }
+                }
+                writer.write( "\n");
+                if (specialTxtField1.isVisible()){
+                    writer.write("Special parameters, ");
+                    for (TextField txtField : allSpecialTxtFields) {
+                        if (txtField.isVisible()) {
+                            writer.write(txtField.getText() + ", ");
+                        }
+                    }
+                    writer.write( "\n");
+                }
+                if (problemSelector.getValue().equals("TSP")){
+                    writer.write("TSP problem, ");
+                    writer.write(TSPSelector.getValue() + "\n");
+                }
+            }
+            else {
+                // Write batch table data to the file
+                writer.write("batch\n");
+                for (String schedule : batchData) {
+                    writer.write(schedule + "\n");
+                }
+            }
+
             System.out.println("Data saved to file: " + file.getAbsolutePath());
         } catch (IOException e) {
             System.err.println("Error saving data to file: " + e.getMessage());
@@ -236,6 +288,7 @@ public class blueprintController implements Initializable {
     }
 
     private void checkSpecialParameters(String selectedAlgo){
+        hideSpecialFields();
         if (selectedAlgo.equals("Ant System")){
             specialLbl1.setText("Colony size");
             specialLbl2.setText("Alpha");
@@ -254,9 +307,9 @@ public class blueprintController implements Initializable {
 
             optimalSetting.setVisible(true);
         }
-        else if (selectedAlgo.equals("(μ+λ) EA")){
-            specialLbl1.setText(("μ"));
-            specialLbl2.setText("λ");
+        else if (selectedAlgo.equals("(u+y) EA")){
+            specialLbl1.setText(("u"));
+            specialLbl2.setText("y");
             specialLbl1.setVisible(true);
             specialLbl2.setVisible(true);
 
@@ -265,9 +318,7 @@ public class blueprintController implements Initializable {
 
             optimalSetting.setVisible(true);
         }
-        else {
-            hideSpecialFields();
-        }
+
     }
 
     private void clearTxtFields(){
@@ -289,9 +340,11 @@ public class blueprintController implements Initializable {
             fitnessTxtField.setDisable(!checkbox.isSelected());
         } else if (checkbox.getText().equals("Iteration bound")) {
             iterationTxtField.setDisable(!checkbox.isSelected());
+        } else if (checkbox.getText().equals("Time elapsed")) {
+            timeBoundTxtField.setDisable(!checkbox.isSelected());
         }
 
-        boolean anyCheckboxChecked = fitnessBound.isSelected() || iterationBound.isSelected();
+        boolean anyCheckboxChecked = fitnessBound.isSelected() || iterationBound.isSelected() || timeboundCheckbox.isSelected();
         iterationLabel.setDisable(!anyCheckboxChecked);
         //updateBatchTable();
     }
@@ -300,14 +353,14 @@ public class blueprintController implements Initializable {
     void optimalSettingsHandler(ActionEvent event){
         if (optimalSetting.isSelected()){
             if (Objects.equals(algorithmSelector.getValue(), "Ant System")) {
-                specialTxtField1.setText("20");
-                specialTxtField2.setText("0.5");
-                specialTxtField3.setText("1");
+                specialTxtField1.setText("100");
+                specialTxtField2.setText("1");
+                specialTxtField3.setText("2");
                 specialTxtField4.setText("2");
             }
-            else if (Objects.equals(algorithmSelector.getValue(), "(μ+λ) EA")){
-                specialTxtField1.setText("1");
-                specialTxtField2.setText("2");
+            else if (Objects.equals(algorithmSelector.getValue(), "(u+y) EA")){
+                specialTxtField1.setText("15");
+                specialTxtField2.setText("10");
             }
         }
         else {
@@ -323,48 +376,59 @@ public class blueprintController implements Initializable {
     @FXML
     void selectionHandler(ActionEvent event){
         ComboBox<?> selector = (ComboBox<?>) event.getSource();
-        String selectorValue = selector.getSelectionModel().getSelectedItem().toString();
+        try {
+            String selectorValue = selector.getSelectionModel().getSelectedItem().toString();
 
-        //show description
-        if (descriptions.containsKey(selectorValue)) {
-            explainingLabel.setText(descriptions.get(selectorValue));
-        }
+            // Show description
+            if (descriptions.containsKey(selectorValue)) {
+                explainingLabel.setText(descriptions.get(selectorValue));
+            }
+
 
         //check if iteration is needed
         if (selector == searchspaceSelector) {
                 dimensionLabel.setDisable(false);
                 dimensionTxtField.setDisable(false);
-                runsLabel.setDisable(false);
-                runsTxtField.setDisable(false);
         }
 
         //category dependencies logic
         if (selector == searchspaceSelector) {
             if (selector.getValue().equals("Bit strings")) {
-                dependencies.add("TSP");
+                dependencies.addAll(Arrays.asList("TSP", "(1+1) EA TSP"));
+                dependencies.removeAll(Arrays.asList("OneMax", "LeadingOnes", "(1+1) EA", "RLS", "TEMP"));
             } else if (selector.getValue().equals("Permutations")) {
-                dependencies.remove("TSP");
+                dependencies.removeAll(Arrays.asList("TSP", "(1+1) EA TSP"));
+                dependencies.addAll(Arrays.asList("OneMax", "LeadingOnes", "(1+1) EA", "RLS", "TEMP"));
+                dimensionLabel.setDisable(true);
+                dimensionTxtField.setDisable(true);
             }
+            updateCategories();
         }
 
-        //TSP problems
-        if (selector == problemSelector){
-            if (selector.getValue().equals("TSP")){
-                TSPSelector.setValue(TSPSelector.getItems().get(0));
-                TSPSelector.setVisible(true);
-                tspProblemLbl.setVisible(true);
-            } else {
-                TSPSelector.setVisible(false);
-                tspProblemLbl.setVisible(false);
-            }
+        if (problemSelector.getValue().equals("TSP")){
+            TSPSelector.setValue(TSPSelector.getItems().get(0));
+            TSPSelector.setVisible(true);
+            tspProblemLbl.setVisible(true);
+            timeboundCheckbox.setVisible(true);
+            timeBoundTxtField.setVisible(true);
+        } else {
+            TSPSelector.setVisible(false);
+            tspProblemLbl.setVisible(false);
+            timeboundCheckbox.setVisible(false);
+            timeBoundTxtField.setVisible(false);
         }
 
         //update depending on combobox selection
         if (selector == algorithmSelector){
             checkSpecialParameters(selectorValue);
         }
-        updateCategories();
-        //updateBatchTable();
+        } catch (NullPointerException ignored) {
+            TSPSelector.setVisible(false);
+            tspProblemLbl.setVisible(false);
+            timeboundCheckbox.setVisible(false);
+            timeBoundTxtField.setVisible(false);
+        }
+
     }
 
     @FXML
@@ -376,7 +440,7 @@ public class blueprintController implements Initializable {
             // Increment the id counter
             idCount = idCount + 1;
 
-            ArrayList<String> scheduleParameters = new ArrayList<>(List.of("id", "No. runs", "Dimension"));
+            ArrayList<String> scheduleParameters = new ArrayList<>(List.of("id"));
 
             List<String> currentSelection = getParameterSelection();
             for (String selection : currentSelection) {
@@ -417,16 +481,20 @@ public class blueprintController implements Initializable {
             return;
 
         }
-        try {
-            int dimension = Integer.parseInt(runsTxtField.getText());
-            newSchedule.setRuns(dimension);
-        } catch (Exception e) {
-            showAlert("Enter only integers for runs");
-            return;
 
+
+        if (algorithmSelector.getValue().equals("(u+y) EA")){
+            if (problemSelector.getValue().equals("TSP")){
+                newSchedule.setAlgorithmString("(u+y) EA TSP");
+            }
+            else {
+                newSchedule.setAlgorithmString("(u+y) EA");
+            }
+        }
+        else {
+            newSchedule.setAlgorithmString(algorithmSelector.getValue());
         }
         newSchedule.setProblemString(problemSelector.getValue());
-        newSchedule.setAlgorithmString(algorithmSelector.getValue());
         if (optimumReached.isSelected()) {
             newSchedule.setOptimumReached(true);
         }
@@ -458,24 +526,28 @@ public class blueprintController implements Initializable {
             String alpha = specialTxtField2.getText();
             String beta = specialTxtField3.getText();
             optionalValues = new String[]{colonySize, alpha, beta};
-            System.out.println(optionalValues[0]);
+
             newSchedule.setOptional(optionalValues);
 
         }
-        if (algorithmSelector.getValue().equals("(μ+λ) EA")){
-            //TODO
-            String mu = specialTxtField1.getText();
-            String lambda = specialTxtField2.getText();
-            System.out.println("TODO pass mu og lambda");
-            optionalValues = new String[2];
+        if (algorithmSelector.getValue().equals("(u+y) EA")) {
+            try {
+                int mu = Integer.parseInt(specialTxtField1.getText());
+                int lambda = Integer.parseInt(specialTxtField2.getText());
+                newSchedule.setMu(mu);
+                newSchedule.setLambda(lambda);
+            } catch (Exception e) {
+                showAlert("Enter only integers for mu and lambda");
+                return;
+            }
         }
+        System.out.println(newSchedule.getAlgorithmString());
             newSchedule.setUpAlgorithm();
     }
 
     private boolean checkParametersFilled(){
         return (!iterationTxtField.isDisabled() && iterationTxtField.getText().isEmpty()) ||
                 (!dimensionTxtField.isDisabled() && dimensionTxtField.getText().isEmpty()) ||
-                (!runsTxtField.isDisabled() && runsTxtField.getText().isEmpty()) ||
                 (!fitnessTxtField.isDisabled() && fitnessTxtField.getText().isEmpty()) ||
                 (specialTxtField1.isVisible() && specialTxtField1.getText().isEmpty()) ||
                 (specialTxtField2.isVisible() && specialTxtField2.getText().isEmpty()) ||
@@ -490,9 +562,6 @@ public class blueprintController implements Initializable {
 
         if (category.equals("id")){
             res = id;
-        }
-        else if (category.equals("No. runs")){
-            res = runsTxtField.getText();
         }
         else if (category.equals("Dimension") && !dimensionTxtField.isDisable()){
             res = dimensionTxtField.getText();
@@ -512,10 +581,10 @@ public class blueprintController implements Initializable {
         else if(category.equals("Beta")){
             res = specialTxtField3.getText();
         }
-        else if(category.equals("μ")){
+        else if(category.equals("u")){
             res = specialTxtField1.getText();
         }
-        else if(category.equals("λ")){
+        else if(category.equals("y")){
             res = specialTxtField2.getText();
         }
 
@@ -571,7 +640,6 @@ public class blueprintController implements Initializable {
             // Here you would get the controller if you need to call methods on it
             mainController controller = loader.getController();
             controller.recieveArray(Schedule.getSchedules()); // Call methods on the controller if needed
-            System.out.println(Schedule.getSchedules().toString());
 
             // Set the scene to the home page
             Scene scene = new Scene(root);

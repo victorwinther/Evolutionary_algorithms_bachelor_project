@@ -11,8 +11,8 @@ import java.util.*;
 
 public class PermutationuPlusyEA extends Algorithm {
     double chance = 0.5;
-    int lambda = 10;
-    int mu = 15;
+    int lambda;
+    int mu;
     Random rand = new Random();
     Solution bestSolution;
 
@@ -22,10 +22,10 @@ public class PermutationuPlusyEA extends Algorithm {
         super(searchSpace, problem);
         _sl = (Solution) problem;
         bestFitness = _sl.computeFitness();
-        initialize();
-
-
     }
+
+    public void setMu(int mu) {this.mu = mu;}
+    public void setLambda(int lambda) {this.lambda = lambda;}
 
     @Override
     public void initialize() {
@@ -71,9 +71,9 @@ public class PermutationuPlusyEA extends Algorithm {
 
             bestFitness = bestSolution.computeFitness();
             //System.out.println(bestFitness);
-            //TSPDATA tspdata = new TSPDATA(bestSolution, bestSolution.getSolution(), generation, bestFitness, bestSolution.getImprovement, bestSolution.A1, bestSolution.A2, bestSolution.A3, bestSolution.A4, Optional.ofNullable(bestSolution.A5), Optional.ofNullable(bestSolution.A6), Optional.ofNullable(bestSolution.optCase), threeOpt);
-            //listener.receiveUpdate(tspdata);
-            if (checkStoppingCriteria() || bestFitness == 7544) {
+            TSPDATA tspdata = new TSPDATA(bestSolution, bestSolution.getSolution(), generation, bestFitness, bestSolution.getImprovement,"(u+y)EA");
+            listener.receiveUpdate(tspdata);
+            if (checkStoppingCriteria()) {
                 break;
             }
             generation++;

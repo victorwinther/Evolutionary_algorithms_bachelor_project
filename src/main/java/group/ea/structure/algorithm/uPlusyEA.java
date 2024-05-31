@@ -10,13 +10,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.*;
 public class uPlusyEA extends Algorithm{
+    public int mu;
+    public int lambda;
     ArrayList<String> population = new ArrayList<>();
     Random rand = new Random();
     public uPlusyEA(SearchSpace searchSpace, Problem problem) {
-
         super(searchSpace, problem);
-        this.initialize();
     }
+
+    public void setMu(int mu) {this.mu = mu;}
+    public void setLambda(int lambda) {this.lambda = lambda;}
 
     @Override
     public void performSingleUpdate(int gen) {

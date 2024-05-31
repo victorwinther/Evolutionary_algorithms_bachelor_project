@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="735.0" prefWidth="1071.0" style="-fx-background-color: #353941;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.mainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="735.0" prefWidth="1071.0" style="-fx-background-color: #353941;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.mainController">
    <left>
       <AnchorPane prefHeight="584.0" prefWidth="213.0" style="-fx-background-color: #26282B;" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -33,7 +33,7 @@
                      <children>
                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="63.0" prefWidth="189.0" spacing="10.0">
                            <children>
-                              <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="70.0" style="-fx-background-color: #353941;" stylesheets="@../../../css/styling.css" text="LOAD" textFill="WHITE" />
+                              <Button mnemonicParsing="false" onAction="#loadScheduleHandler" prefHeight="26.0" prefWidth="70.0" style="-fx-background-color: #353941;" stylesheets="@../../../css/styling.css" text="LOAD" textFill="WHITE" />
                               <Button fx:id="createBlueprintBtn" mnemonicParsing="false" onAction="#createBlueprintHandler" style="-fx-background-color: #353941;" stylesheets="@../../../css/styling.css" text="CREATE" textFill="WHITE" />
                            </children>
                            <VBox.margin>

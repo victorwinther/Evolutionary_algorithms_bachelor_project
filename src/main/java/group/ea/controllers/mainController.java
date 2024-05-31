@@ -37,6 +37,9 @@ import javafx.scene.chart.XYChart;
 import javafx.util.Duration;
 
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -173,9 +176,131 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     }
 
     @FXML
-    void loadBlueprintHandler(ActionEvent event) {
-        fileChooser.showOpenDialog(stage);
+    void loadScheduleHandler(ActionEvent event) {
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        Schedule newSchedule = new Schedule();
+        File selectedFile = fileChooser.showOpenDialog(stage);
+        if (selectedFile != null) {
+            try (BufferedReader br = new BufferedReader(new FileReader(selectedFile))) {
+                String line;
+                Map<String, String[]> dataMap = new HashMap<>();
+
+                while ((line = br.readLine()) != null) {
+                    // Split the line by commas, and remove any extra whitespace
+                    String[] parts = line.split(",\\s*");
+                    if (parts.length > 1) {
+                        String key = parts[0].trim();
+                        String[] values = new String[parts.length - 1];
+                        System.arraycopy(parts, 1, values, 0, parts.length - 1);
+                        dataMap.put(key, values);
+                    }
+                }
+
+                StringBuilder sb = new StringBuilder();
+                for (Map.Entry<String, String[]> entry : dataMap.entrySet()) {
+                    sb.append(entry.getKey()).append("=").append(Arrays.toString(entry.getValue())).append(", ");
+                }
+                System.out.println( sb.toString());
+
+                newSchedule.setSearchSpaceString(dataMap.get("Searchspace")[0]);
+                newSchedule.setProblemString(dataMap.get("Problem")[0]);
+                newSchedule.setAlgorithmString(dataMap.get("Algorithm")[0]);
+
+
+
+                if (dataMap.containsKey("Dimension")){
+                    newSchedule.setDimension(Integer.parseInt(dataMap.get("Dimension")[0]));
+                }
+
+                if (dataMap.containsKey("Stopping criterias")) {
+                    while (dataMap.get("Stopping criterias").length > 0){
+                        String[] stoppingCriterias = dataMap.get("Stopping criterias");
+                        String readCrit = stoppingCriterias[0];
+                        String readVal = "";
+                        if (!(dataMap.get("Stopping criterias").length == 1)){
+                            readVal = stoppingCriterias[1];
+                        }
+
+                        if (readCrit.equals("Iteration bound")){
+                            newSchedule.setIterationBound(Integer.parseInt(readVal));
+                        }
+                        else if (readCrit.equals("Fitness bound")){
+                            newSchedule.setFitnessBound(Integer.parseInt(readVal));
+                        }
+                        else if (readCrit.equals("Optimum reached")){
+                            newSchedule.setOptimumReached(true);
+                        }
+                        dataMap.put("Stopping criterias", removeElementFromArray(dataMap.get("Stopping criterias"), readCrit));
+                        dataMap.put("Stopping criterias", removeElementFromArray(dataMap.get("Stopping criterias"), readVal));
+                    }
+
+                }
+
+                if (dataMap.containsKey("Special parameters")){
+                    String[] special_parameters = dataMap.get("Special parameters");
+                    if (dataMap.get("Algorithm")[0].equals("Ant System")){
+                        String colonySize = special_parameters[0];
+                        String alpha = special_parameters[1];
+                        String beta = special_parameters[2];
+                        String[] optionalValues = new String[]{colonySize, alpha, beta};
+
+                        newSchedule.setOptional(optionalValues);
+                    }
+                    else if (dataMap.get("Algorithm")[0].equals("(u+y) EA")){
+                        String mu = special_parameters[0];
+                        String lambda = special_parameters[1];
+                        String[] optionalValues = new String[]{mu, lambda};
+
+                        //newSchedule.setOptional(optionalValues);
+                        newSchedule.setMu(Integer.parseInt(mu));
+                        newSchedule.setLambda(Integer.parseInt(lambda));
+                    }
+                }
+
+                if (dataMap.get("Problem")[0].equals("TSP")){
+                    newSchedule.setTSPProblem(dataMap.get("TSP problem")[0]);
+                }
+
+                newSchedule.setUpAlgorithm();
+
+                recieveArray(Schedule.getSchedules());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
     }
+
+    private static String[] removeElementFromArray(String[] array, String element) {
+        if (array == null || array.length == 0) {
+            return array;
+        }
+
+        int count = 0;
+        for (String item : array) {
+            if (!item.equals(element)) {
+                count++;
+            }
+        }
+
+        if (count == array.length) {
+            return array;  // Element not found, return original array
+        }
+
+        String[] newArray = new String[count];
+        int index = 0;
+        for (String item : array) {
+            if (!item.equals(element)) {
+                newArray[index++] = item;
+            }
+        }
+
+        return newArray;
+    }
+
 
     @FXML
     void menuChangeHandler(ActionEvent event) throws IOException {
@@ -385,7 +510,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         lineChart.setAnimated(true);
         xAxis.setAnimated(true);
         yAxis.setAnimated(true);
-        System.out.println("height + " + lineChart.getHeight() + "width " + lineChart.getWidth());
         series = new XYChart.Series<>();
         series.setName("Run number " + (chartNr + 1));
         lineChart.getData().add(series);
@@ -572,7 +696,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
 
         fitnessLabel = new Label("Fitness: ");
-        numberOfEdgesLabel = new Label("Number of Edges: ");
+        numberOfEdgesLabel = new Label("Time elapsed: 0ms");
         gainLabel = new Label("Gain: ");
         edgesDeletedLabel = new Label("Edges Deleted: 0");
         edgesAddedLabel = new Label("Edges Added: 0");
@@ -774,10 +898,38 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             Line line = new Line(xPush+x1 / xScaling, y1 / yScaling, xPush+x2 / xScaling, y2 / yScaling);
             edgeMap.put(new Edge(x1, y1, x2, y2), line);
             tspVisualization.getChildren().add(line);
+            //System.out.println("Adding line "+ new Edge(x1, y1, x2, y2));
             //overlayPane.getChildren().add(line);
         }
-        printEdgeMapDetails();
+        //printEdgeMapDetails();
 
+    }
+
+    // Method to delete all existing edges
+    private void deleteAllEdges() {
+        for (Line line : edgeMap.values()) {
+            tspVisualization.getChildren().remove(line);
+        }
+        edgeMap.clear();
+    }
+
+    // Modified deleteAndDraw method
+    public void deleteAndDraw(Solution solution) {
+        // Delete all existing edges
+        deleteAllEdges();
+
+        // Draw the new edges from the solution
+        for (int i = 0; i < solution.getDimension(); i++) {
+            int x1 = solution.getXSolution(i);
+            int y1 = maxY - solution.getYSolution(i);
+            int x2 = solution.getXSolution((i + 1) % solution.getDimension());
+            int y2 = maxY - solution.getYSolution((i + 1) % solution.getDimension());
+            Line line = new Line(xPush + x1 / xScaling, y1 / yScaling, xPush + x2 / xScaling, y2 / yScaling);
+            edgeMap.put(new Edge(x1, y1, x2, y2), line);
+            tspVisualization.getChildren().add(line);
+            //System.out.println("Adding line " + new Edge(x1, y1, x2, y2));
+        }
+        updateLabels();
     }
     private void updateVisualization() {
         Task<Void> task = new Task<Void>() {
@@ -1036,7 +1188,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     }
     private void updateLabels() {
         fitnessLabel.setText("Fitness: " + currentSolution.fitness);
-        numberOfEdgesLabel.setText("Number of Edges: " + edgeMap.size());
+        numberOfEdgesLabel.setText("Time elapsed: " + currentSolution.getTimeElapsed() + "ms");
         gainLabel.setText("Gain: " + currentSolution.improvement);
         edgesDeletedLabel.setText("Edges Deleted: " + edgesDeleted);
         edgesAddedLabel.setText("Edges Added: " + edgesAdded);
@@ -1053,13 +1205,25 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         updateQueue.add(solution);
     }
 
+    boolean ACO = true;
+
     private void processQueue() {
         if (!updateQueue.isEmpty()) {
             TSPDATA nextSolution = updateQueue.poll();
             Platform.runLater(() -> {
                 setSolution(nextSolution);
-                updateVisualization();
+                //updateVisualization();
             });
+            setSolution(nextSolution);
+            if(nextSolution.getName() == "ACO" || nextSolution.getName() == "(u+y)EA"){
+                Platform.runLater(() -> {
+                deleteAndDraw(nextSolution.getSolution());
+                });
+            }else if (nextSolution.getName() == "1+1EA"){
+                updateVisualization();
+            }
+
+
         }
     }
     @FXML
