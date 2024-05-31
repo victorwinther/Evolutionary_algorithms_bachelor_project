@@ -1,6 +1,6 @@
 package group.ea.structure.algorithm;
 
-import group.ea.controllers.mainController;
+import group.ea.structure.helperClasses.Data;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
 
@@ -16,9 +16,11 @@ public class onePlusOneEA extends Algorithm {
     public void performSingleUpdate(int gen) {
         int n = bitString.length();
         generation = 0;
+        Data firstData = new Data(bitString, generation, bestFitness, true, Optional.empty(),false);
+        listener.receiveBitstringUpdate(firstData);
         while (!checkStoppingCriteria()) {
             StringBuilder y = new StringBuilder(bitString);
-            Data data = new Data(bitString, generation, bestFitness, false, Optional.empty());
+            Data data = new Data(bitString, generation, bestFitness, false, Optional.empty(),false);
             for (int i = 0; i < n; i++) {
                 if (Math.random() <= 1.0 / n) {
                     y.setCharAt(i, y.charAt(i) == '0' ? '1' : '0');
@@ -31,6 +33,7 @@ public class onePlusOneEA extends Algorithm {
             if (yFitness >= bestFitness) {
                 if (yFitness > bestFitness) {
                     data.setYesNo(true);
+
                 }
                 bitString = yString;
                 bestFitness = (int) yFitness;
@@ -38,8 +41,12 @@ public class onePlusOneEA extends Algorithm {
                 data.setFitness(bestFitness);
 
             }
+            if (checkStoppingCriteria()) {
+                data.setStop(true);
+                System.out.println("Stopping criteria met");
+            }
+            listener.receiveBitstringUpdate(data);
             generation++;
-            finalList.add(data);
 
         }
         stoppingMet = true;
@@ -49,5 +56,6 @@ public class onePlusOneEA extends Algorithm {
     public void initialize() {
         bitString = searchSpace.init();
         bestFitness = (int) problem.computeFitness(bitString);
+
     }
 }

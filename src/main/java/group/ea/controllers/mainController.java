@@ -88,8 +88,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private CheckBox hypercubeCheck;
 
     @FXML
-    public CheckBox showTSPgraph;
-    @FXML
     private Label searchspaceLabel,problemLabel, algorithmLabel,criteriasLabel,timeLabel,mutationLabel, selectionLabel,crossoverLabel;
 
     TSPParser tp;
@@ -131,8 +129,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private Button startButton;
     @FXML
      */
-    @FXML
-    private Slider speedSlider;
+
     @FXML
     private Button pauseButton;
     @FXML
@@ -154,34 +151,13 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     public mainController() {
 
-        animationTimer = new AnimationTimer() {
-            private long lastUpdate = 0;
-            @Override
-            public void handle(long l) {
-                System.out.println("running");
-                if (l - lastUpdate >= duration) { // Update every second
-                   if (!isAnimationPaused) {
-                       System.out.println("running");
-                        sliderController();
-                        lastUpdate = l;
-                        double speed = speedSlider.getValue();
-                       System.out.println("Speed: " + speed);
-                        if(speed < (speedSlider.getMax()*0.5)) {
-                            duration = (TimeUnit.MILLISECONDS.toNanos(1000) * (1 - speed / sliderSpeed.getMax()));
-                            fullspeed = false;
-                        } else{
-                            duration = TimeUnit.MILLISECONDS.toNanos(0);
-                            fullspeed = true;
-                            skipIterations = (int) (speed - 500)/10;
-                       }
-                    }
-                }
-            }
-        };
     }
 
     @FXML
     void createBlueprintHandler(ActionEvent event) throws IOException {
+        if(timeline != null) {
+            timeline.stop();
+        }
         Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/createSchedulePage.fxml")));
         Scene scene = new Scene(root);
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -352,63 +328,27 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     }
     @FXML
     private void startAllEvolutions(Schedule schedule) {
+        prepareUIBeforeAlgorithmRuns(schedule);
         if (currentSchedule.getProblemString() == "TSP") {
-            sliderSpeed.setVisible(true);
-            speedSlider.setVisible(false);
             resetVisualization();
             startVisualization();
 
         } else {
-            sliderSpeed.setVisible(false);
-            speedSlider.setVisible(true);
-
-            if (!isAnimationPaused) {
-                isRunning = true;
-                solutionArea.clear();
-                container.getChildren().clear();
-                hypercubenPane.getChildren().clear();
-                tspVisualization.getChildren().clear();
-                i = 0;
-
-                timesRun++;
-                //currentSchedule.setUpAlgorithm();
-                prepareUIBeforeAlgorithmRuns(schedule);
-                schedule.getAlgorithm().sendListener(this);
-
-                Task<Void> runAlgorithmTask = new Task<>() {
-                    @Override
-                    protected Void call() {
-                        schedule.run();  // This is where the algorithm runs on a background thread
-                        return null;
-                    }
-                };
-                Algorithm algorithm = currentSchedule.getAlgorithm();
-
-                runAlgorithmTask.setOnSucceeded(event -> Platform.runLater(() -> updateStatistics(currentSchedule)));
-                runAlgorithmTask.setOnSucceeded(event -> Platform.runLater(() -> updateUIPostAlgorithm(currentSchedule)));
-                runAlgorithmTask.setOnFailed(event -> Platform.runLater(() -> showError(runAlgorithmTask.getException())));
-
-                new Thread(runAlgorithmTask).start();  // Start the task on a new thread
-
-            } else {
-                isAnimationPaused = false;
-            }
+            startVisualizationBitString();
         }
+        timesRun++;
+        updateStatistics(currentSchedule);
+        updateUIPostAlgorithm(currentSchedule);
+
+
     }
     private void updateStatistics(Schedule schedule){
         schedule.setFinishedIterations(schedule.getAlgorithm().getGeneration());
 
-        // Update statistics here
     }
 
     public void prepareUIBeforeAlgorithmRuns(Schedule s) {
-        // Apply UI changes that need to occur before the algorithm runs
 
-        if(s.getTSP()){
-            showTSPgraph.setVisible(true);
-        } else {
-            showTSPgraph.setVisible(false);
-        }
 
         searchspaceLabel.setText(s.getSearchSpaceString());
         searchspaceLabel.setStyle("-fx-font-size: 10px;");
@@ -442,27 +382,25 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             booleanHypercubeVisualization = new BooleanHypercubeVisualization(s.getSearchSpace(), s.getProblem(), this, hypercubenPane);
         }
 
-        if (showTSPgraph.isSelected()) {
-            if (!flowPane.getChildren().contains(tspVisualization)) {
-                tspVisualization.setPrefSize(600, 400);
-                tspVisualization.setMinSize(600, 400);
-                tspVisualization.setMaxSize(600, 400);
-                tspVisualization.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
-                flowPane.getChildren().add(tspVisualization);
-            }
-            }
+
     }
     int runNr;
     @FXML
     public void nextAlgorithm() {
-        runNr++;
                 System.out.println("Current schedule changed");
                 if(runNr < queueSchedule.size()) {
-
                     currentSchedule = queueSchedule.get(runNr);
                     System.out.println(currentSchedule);
                     System.out.println(queueSchedule.toString());
+                    if(currentSchedule.getTSP()){
+                        graphSelector.setDisable(true);
+                        textSelector.setDisable(true);
+                        hypercubeCheck.setDisable(true);
+
+                    }
                     startAllEvolutions(currentSchedule);
+                    runNr++;
+                    startButton.setDisable(true);
                 } else {
                     nextAlgorithm.setDisable(true);
                     runNr = 0;
@@ -472,24 +410,27 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     @FXML
     private void startEvolution() {
-        startAllEvolutions(currentSchedule);
+        if (isPaused) {
+            timeline.play();
+            isPaused = false;
+            pauseButton.setDisable(false);
+            startButton.setDisable(true);
+            return;
+        }
+        System.out.println("Starting evolution, queue size: " + queueSchedule.size());
         if(queueSchedule.size() > 1) {
             nextAlgorithm.setDisable(false);
         }
+        nextAlgorithm();
+
 
        // executeSchedules(queueSchedule);
     }
 
     private void updateUIPostAlgorithm(Schedule schedule) {
-        if(!graphicsToggle.isSelected()) {
-            startAlgorithm();
-            System.out.println("running");
-        } else {
             updateUIStats();
-        }
 
-        // Handle UI updates after algorithm completion
-        // Possibly displaying results, stopping animations, etc.
+
     }
 
     public void sliderController() {
@@ -504,7 +445,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                         i += skipIterations;
                     }
                 }
-                runGraphics(algorithm,i);
+                //runGraphics(algorithm,i);
                 i++;
             } else {
                 while (!data.getImproved() && i < algorithm.finalList.size()-1) {
@@ -547,70 +488,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     }
     Circle lastCircle = null;
-    public void runGraphics(Algorithm a, int i) {
-        int generation = 0;
-        String bitString = null;
-        Data data = a.finalList.get(i);
-
-        bitString = data.getBitString();
-        generation = data.getGeneration();
-        System.out.println("Generation: " + generation + "i er "+i);
-        int fitness = data.getFitness();
-        Optional<Double> temp = data.getTemp();
-        double max = a.finalList.size()-1;
-        generationSlider.setMax(max);
-        generationSlider.setBlockIncrement(10);
-        generationSlider.setMajorTickUnit(50);
-        generationSlider.setSnapToTicks(true);
-        generationSlider.adjustValue(i);
-
-            if (isHypercubeSelected()) {
-                Circle circle = booleanHypercubeVisualization.getDisplayCoordinates(bitString, false);
-                if (circle != null) {
-                    if (lastCircle != null) {
-                        booleanHypercubeVisualization.hypercubePane.getChildren().remove(lastCircle);
-                    }
-                    if (i + 1 == a.finalList.size()) {
-                        Circle perfectCircle = booleanHypercubeVisualization.getDisplayCoordinates(bitString, true);
-                        booleanHypercubeVisualization.hypercubePane.getChildren().add(perfectCircle);
-                    } else {
-                        lastCircle = circle;
-                        booleanHypercubeVisualization.hypercubePane.getChildren().add(circle);
-                    }
-                }
-            }
-
-            if (isTextSelected()) {
-                if (i == 0) {
-                    String initialText;
-                    if (temp.isPresent()) {
-                        initialText = ("Initial Solution: " + bitString + " with fitness: " + fitness + " temperature is " + temp + "\n");
-                    } else {
-                        initialText = ("Initial Solution: " + bitString + " with fitness: " + fitness + "\n");
-                    }
-                    solutionArea.appendText(initialText);
-                } else {
-
-
-                    String solutionText;
-                    if (temp.isPresent()) {
-                        solutionText = "Generation " + generation + ": New SA found: " + bitString + " with fitness: " + fitness + " temperature is " + temp + "\n";
-                    } else {
-                        solutionText = "Generation " + generation + ": New solution found: " + bitString + " with fitness: " + fitness + "\n";
-                    }
-                    solutionArea.appendText(solutionText);
-                }
-            }
-            if (isGraphSelected()) {
-                series.getData().add(new XYChart.Data<>(generation, fitness));
-            }
-
-            if (i == a.finalList.size() - 1) {
-                String finalText = "Perfect solution found in generation " + generation + "\n";
-                solutionArea.appendText(finalText);
-            }
-        }
-
 
 
     private void showError(Throwable th) {
@@ -677,11 +554,15 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         currentSchedule = schedules.get(0);
         Schedule s = currentSchedule;
         queueSchedule.clear();
-        if(s.getTSP()){
-            showTSPgraph.setVisible(true);
-        } else {
-            showTSPgraph.setVisible(false);
+        if(!s.getTSP()){
+            graphSelector.setDisable(false);
+            textSelector.setDisable(false);
+            hypercubeCheck.setDisable(false);
+
         }
+        startButton.setDisable(false);
+        sliderSpeed.setDisable(false);
+
 
         searchspaceLabel.setText(s.getSearchSpaceString());
         searchspaceLabel.setStyle("-fx-font-size: 10px;");
@@ -694,6 +575,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         for (int j = 0; j < schedules.size(); j++) {
             Schedule newSchedule = schedules.get(j);
             for (int k = 0; k < newSchedule.getRuns(); k++) {
+                System.out.println("added runs from runscount");
             queueSchedule.add(newSchedule);
            // newSchedule.getAlgorithm().sendListener(this);
             }
@@ -703,14 +585,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     public void stopEvolution() {
         stopGraphics();
-    }
-
-    public void updateCanvas() {
-        //algorithm.updateGraphics();
-    }
-
-    private void updateUIComponents() {
-        // Logic to update other UI components like labels or tables
     }
 
     public void startAlgorithm() {
@@ -736,7 +610,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         //wait 5 sec
         resetVisualization();
 
-        animationTimer.stop(); // Stop the animation
         isRunning = false; // Set running state to false to stop the algorithm
     }
 
@@ -790,7 +663,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         queueSchedule.add(schedule3);
         currentSchedule = schedule;
         nextAlgorithm.setDisable(true);
-        showTSPgraph.setVisible(false);
+
         //recieveArray(queueSchedule);
         //prepareUIBeforeAlgorithmRuns(new BitString(5000), new OneMax(new BitString(5000)));
 
@@ -831,7 +704,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 timeline.stop(); // Stop the timeline to reset the key frame duration
                 double speed = newValue.doubleValue();
                 KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
-                    System.out.println("Keyframe 1 running");
+                   // System.out.println("Keyframe 1 running");
                     processQueue();
                 });
                 timeline.getKeyFrames().setAll(keyFrame); // Set the new key frame with the updated speed
@@ -856,20 +729,14 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private void startVisualization() {
 
+
         sliderSpeed.setBlockIncrement(1.0);
         sliderSpeed.setMax(10.0);
         sliderSpeed.setMin(0.1);
         sliderSpeed.setValue(1.0);
         sliderSpeed.setMajorTickUnit(2.0);
-        currentSchedule.getAlgorithm().sendListener(this);
-        currentSchedule.run();
-        if (isPaused) {
-            timeline.play();
-            isPaused = false;
-            pauseButton.setDisable(false);
-            startButton.setDisable(true);
-            return;
-        }
+        Solution solution = new Solution((TSPParser) currentSchedule.getSearchSpace());
+        firstSolution(solution);
 
         //resetVisualization();
         tspIntialize();
@@ -881,12 +748,32 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
             processQueue();
-            System.out.println("Keyframe 2 running");
+           //System.out.println("Keyframe 2 running");
 
         });
 
         timeline.getKeyFrames().add(keyFrame);
         timeline.play();
+        currentSchedule.getAlgorithm().sendListener(this);
+
+        // Run the algorithm in a background thread
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                System.out.println("Starting algorithm run...");
+                currentSchedule.run();
+                System.out.println("Algorithm run completed.");
+                return null;
+            }
+        };
+        task.setOnFailed(e -> {
+            Throwable ex = task.getException();
+            ex.printStackTrace();
+        });
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+
 
         startButton.setDisable(true);
         pauseButton.setDisable(false);
@@ -897,7 +784,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private void pauseVisualization() {
         if (timeline != null) {
             timeline.pause();
-           // isPaused = true;
+                isPaused = true;
             startButton.setDisable(false);
             pauseButton.setDisable(true);
         }
@@ -908,15 +795,19 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         if (timeline != null) {
             timeline.stop();
         }
+        edgesAdded = 0;
+        edgesDeleted = 0;
+
+        edgeMap.clear();
+        tspVisualization.getChildren().clear();
         stackPane.getChildren().clear();
+        flowPane.getChildren().clear();
         currentStep = 0;
 
         startButton.setDisable(false);
         pauseButton.setDisable(true);
         stopButton.setDisable(true);
         isPaused = false;
-
-
     }
 
     double xScaling = 3.4;
@@ -927,8 +818,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @Override
     public void firstSolution(Solution solution) {
 
-
-        System.out.println( "First solution");
         Solution firstSolution = solution;
         int numPoints = firstSolution.getListLength();
         double maxXFirst = 0;
@@ -962,8 +851,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
         double yPush = 40 / (1200 / maxXFirst);
         maxY = (int) ((int) maxYFirst + yPush);
-        System.out.println(maxXFirst + " " + maxYFirst);
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        /*
 
         Circle circle4 = new Circle(40,360, 3, Color.RED);
         tspVisualization.getChildren().add(circle4);
@@ -973,7 +862,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         tspVisualization.getChildren().add(circle2);
         Circle circle3 = new Circle(590,18, 3, Color.RED);
         tspVisualization.getChildren().add(circle3);
-
+*/
         double graphWidth = 590 - 40;
         double graphHeight = 360 - 18;
         double extraScaleX = 1800 / maxXFirst;
@@ -990,7 +879,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             tspVisualization.getChildren().add(circle);
             //series.getData().add(new XYChart.Data<>(x, y));
         }
-        System.out.println(series.toString());
+
         //scatterChart.getData().add(series);
         // Draw the edges
         for (int i = 0; i < numPoints; i++) {
@@ -1034,14 +923,11 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         }
         updateLabels();
     }
-
-
-
-
-
-
-
     private void updateVisualization() {
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected
+            Void call() throws Exception {
 
         // Clear previous visualization
         speed = sliderSpeed.getValue();
@@ -1067,27 +953,26 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         Line line4 = edgeMap.get(edge4);
 
         if (line1 != null) {
-            tspVisualization.getChildren().remove(line1);
+            Platform.runLater(() -> tspVisualization.getChildren().remove(line1));
 
             edgeMap.remove(edge1);
             edgesDeleted++;
         }
 
         if (line2 != null) {
-            tspVisualization.getChildren().remove(line2);
+            Platform.runLater(() -> tspVisualization.getChildren().remove(line2));
 
             edgeMap.remove(edge2);
             edgesDeleted++;
         }
         if (line3 != null) {
-            tspVisualization.getChildren().remove(line3);
+            Platform.runLater(() -> tspVisualization.getChildren().remove(line3));
 
             edgeMap.remove(edge3);
             edgesDeleted++;
         }
         if (line4 != null) {
-            tspVisualization.getChildren().remove(line4);
-
+            Platform.runLater(() -> tspVisualization.getChildren().remove(line4));
             edgeMap.remove(edge4);
             edgesDeleted++;
         }
@@ -1119,23 +1004,21 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             int y5 = maxY - (int) currentSolution.X5.getY();
             int x6 = (int) currentSolution.X6.getX();
             int y6 = maxY - (int) currentSolution.X6.getY();
-            System.out.println("X1 "+ x1 + " Y1 " + y1 + " X2 " + x2 + " Y2 " + y2);
-            System.out.println("X3 "+ x3 + " Y3 " + y3 + " X4 " + x4 + " Y4 " + y4);
-            System.out.println("X5 "+ x5 + " Y5 " + y5 + " X6 " + x6 + " Y6 " + y6);
+
             Edge edge5 = new Edge(x5, y5, x6, y6);
             Edge edge6 = new Edge(x6, y6, x5, y5);
             Line line5 = edgeMap.get(edge5);
             Line line6 = edgeMap.get(edge6);
 
             if (line5 != null) {
-                tspVisualization.getChildren().remove(line5);
+                Platform.runLater(() -> tspVisualization.getChildren().remove(line5));
 
 
                 edgeMap.remove(new Edge(x5, y5, x6, y6));
                 edgesDeleted++;
             }
             if (line6 != null) {
-                tspVisualization.getChildren().remove(line6);
+                Platform.runLater(() -> tspVisualization.getChildren().remove(line6));
 
                 edgeMap.remove(new Edge(x6, y6, x5, y5));
                 edgesDeleted++;
@@ -1158,10 +1041,13 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     newEdges.add(new Edge(x2, y2, x6, y6));
                     newEdges.add(new Edge(x3, y3, x4, y4));
                     //new edges added:
+                    /*
                     System.out.println("Case 1");
                     System.out.println("x1: " + x1 + " y1: " + y1 + " x5: " + x5 + " y5: " + y5);
                     System.out.println("x2: " + x2 + " y2: " + y2 + " x6: " + x6 + " y6: " + y6);
                     System.out.println("x3: " + x3 + " y3: " + y3 + " x4: " + x4 + " y4: " + y4);
+
+                     */
 
                     break;
                 case 2:
@@ -1169,21 +1055,25 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     newEdges.add(new Edge(x3, y3, x5, y5));
                     newEdges.add(new Edge(x4, y4, x6, y6));
                     newEdges.add(new Edge(x1, y1, x2, y2));
+                    /*
                     System.out.println("Case 2");
                     System.out.println("x3: " + x3 + " y3: " + y3 + " x5: " + x5 + " y5: " + y5);
                     System.out.println("x4: " + x4 + " y4: " + y4 + " x6: " + x6 + " y6: " + y6);
                     System.out.println("x1: " + x1 + " y1: " + y1 + " x2: " + x2 + " y2: " + y2);
+
+                     */
                     break;
                 case 3:
                     // i -> j and i + 1 -> j +1 and remain k -> k +1
                     newEdges.add(new Edge(x1, y1, x3, y3));
                     newEdges.add(new Edge(x2, y2, x4, y4));
                     newEdges.add(new Edge(x5, y5, x6, y6));
+                    /*
                     System.out.println("Case 3");
                     System.out.println("x1: " + x1 + " y1: " + y1 + " x3: " + x3 + " y3: " + y3);
                     System.out.println("x2: " + x2 + " y2: " + y2 + " x4: " + x4 + " y4: " + y4);
                     System.out.println("x5: " + x5 + " y5: " + y5 + " x6: " + x6 + " y6: " + y6);
-
+                    */
 
                     break;
                 case 4:
@@ -1192,38 +1082,50 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     newEdges.add(new Edge(x1, y1, x3, y3));
                     newEdges.add(new Edge(x2, y2, x5, y5));
                     newEdges.add(new Edge(x6, y6, x4, y4));
+                    /*
                     System.out.println("Case 4");
                     System.out.println("x1: " + x1 + " y1: " + y1 + " x3: " + x3 + " y3: " + y3);
                     System.out.println("x2: " + x2 + " y2: " + y2 + " x5: " + x5 + " y5: " + y5);
                     System.out.println("x6: " + x6 + " y6: " + y6 + " x4: " + x4 + " y4: " + y4);
+
+                     */
                     break;
                 case 5:
                     newEdges.add(new Edge(x1, y1, x5, y5));
                     newEdges.add(new Edge(x2, y2, x4, y4));
                     newEdges.add(new Edge(x3, y3, x6, y6));
+                    /*
                     System.out.println("Case 5");
                     System.out.println("x1: " + x1 + " y1: " + y1 + " x5: " + x5 + " y5: " + y5);
                     System.out.println("x2: " + x2 + " y2: " + y2 + " x4: " + x4 + " y4: " + y4);
                     System.out.println("x3: " + x3 + " y3: " + y3 + " x6: " + x6 + " y6: " + y6);
+
+                     */
                     break;
                 case 6:
                     newEdges.add(new Edge(x1, y1, x4, y4));
                     newEdges.add(new Edge(x2, y2, x6, y6));
                     newEdges.add(new Edge(x3, y3, x5, y5));
+                    /*
                     System.out.println("Case 6");
                     System.out.println("x1: " + x1 + " y1: " + y1 + " x4: " + x4 + " y4: " + y4);
                     System.out.println("x2: " + x2 + " y2: " + y2 + " x6: " + x6 + " y6: " + y6);
                     System.out.println("x3: " + x3 + " y3: " + y3 + " x5: " + x5 + " y5: " + y5);
+
+                     */
 
                     break;
                 case 7:
                     newEdges.add(new Edge(x1, y1, x4, y4));
                     newEdges.add(new Edge(x2, y2, x5, y5));
                     newEdges.add(new Edge(x3, y3, x6, y6));
+                    /*
                     System.out.println("Case 7");
                     System.out.println("x1: " + x1 + " y1: " + y1 + " x4: " + x4 + " y4: " + y4);
                     System.out.println("x2: " + x2 + " y2: " + y2 + " x5: " + x5 + " y5: " + y5);
                     System.out.println("x3: " + x3 + " y3: " + y3 + " x6: " + x6 + " y6: " + y6);
+
+                     */
                     break;
                 default:
                     break;
@@ -1240,18 +1142,15 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
             newLine1.setStroke(Color.GREEN);
             newLine2.setStroke(Color.GREEN);
-            tspVisualization.getChildren().add(newLine1);
-            tspVisualization.getChildren().add(newLine2);
-            System.out.println("Adding 2 line "+ new Edge(x1, y1, x3, y3));
-            System.out.println("Adding 2 line "+ new Edge(x2, y2, x4, y4));
+            Platform.runLater(() -> { tspVisualization.getChildren().add(newLine1);} );
+            Platform.runLater(() -> { tspVisualization.getChildren().add(newLine2);} );
             edgeMap.put(new Edge(x1, y1, x3, y3), newLine1);
             edgeMap.put(new Edge(x2, y2, x4, y4), newLine2);
         }
+                Platform.runLater(() -> {
         for (Edge edge : newEdges) {
             Line newLine = new Line(xPush + edge.x1 / xScaling, edge.y1 / yScaling, xPush +edge.x2 / xScaling, edge.y2 / yScaling);
             newLine.setStroke(Color.GREEN);
-            System.out.println("Adding 3 lines");
-            System.out.println("Adding 3 lines "+ edge);
             tspVisualization.getChildren().add(newLine);
             edgeMap.put(edge, newLine);
             edgesAdded++;
@@ -1260,7 +1159,17 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
 
 
-    }
+            });
+
+            return null;
+        }
+    };
+
+    // Run the task in a background thread
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
+}
     private void printEdgeMapDetails() {
         System.out.println("Current edges in edgeMap:");
         for (Map.Entry<Edge, Line> entry : edgeMap.entrySet()) {
@@ -1284,6 +1193,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     @Override
     public void receiveUpdate(TSPDATA solution){
+        System.out.println("Added solution");
         updateQueue.add(solution);
     }
 
@@ -1292,15 +1202,188 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private void processQueue() {
         if (!updateQueue.isEmpty()) {
             TSPDATA nextSolution = updateQueue.poll();
+            Platform.runLater(() -> {
+                setSolution(nextSolution);
+                updateVisualization();
+            });
             setSolution(nextSolution);
             if(ACO){
+                Platform.runLater(() -> {
                 deleteAndDraw(nextSolution.getSolution());
+                });
             }else{
                 updateVisualization();
             }
 
 
         }
+    }
+    @FXML
+    private void startVisualizationBitString() {
+        if (isPaused) {
+            timeline.play();
+            isPaused = false;
+            pauseButton.setDisable(false);
+            startButton.setDisable(true);
+            return;
+        }
+
+
+
+        sliderSpeed.setBlockIncrement(50.0);
+        sliderSpeed.setMax(1000.0);
+        sliderSpeed.setMin(0.1);
+        sliderSpeed.setValue(500.0);
+        sliderSpeed.setMajorTickUnit(100.0);
+
+
+
+        timeline = new Timeline();
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        speed = sliderSpeed.getValue();
+
+        KeyFrame keyFrame1 = new KeyFrame(Duration.seconds(1 / speed), event -> {
+            processBitStringQueue();
+           // System.out.println("Keyframe 2 running");
+
+        });
+
+        sliderSpeed.valueProperty().addListener((observable, oldValue, newValue) -> {
+            speed = newValue.doubleValue();
+            timeline.getKeyFrames().clear();
+            KeyFrame newKeyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
+                processBitStringQueue();
+               // System.out.println("Keyframe running");
+            });
+            timeline.getKeyFrames().add(newKeyFrame);
+            if (!isPaused) {
+                timeline.playFromStart();
+            }
+        });
+
+
+        timeline.getKeyFrames().add(keyFrame1);
+        timeline.play();
+        currentSchedule.getAlgorithm().sendListener(this);
+
+        // Run the algorithm in a background thread
+
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                currentSchedule.run();
+                return null;
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+
+
+
+        startButton.setDisable(true);
+        pauseButton.setDisable(false);
+        stopButton.setDisable(false);
+
+    }
+    private final Queue<Data> updateBitStringQueue = new LinkedList<Data>();
+    @Override
+    public void receiveBitstringUpdate(Data data) {
+        updateBitStringQueue.add(data);
+        System.out.println("Added data");
+    }
+    private void processBitStringQueue() {
+        if (!updateBitStringQueue.isEmpty()) {
+            Data nextData = updateBitStringQueue.poll();
+            System.out.println("Next data: " + nextData.getGeneration());
+            if(nextData.isStop()) {
+                timeline.stop();
+                pauseButton.setDisable(true);
+                stopButton.setDisable(true);
+                System.out.println("Stopped succesfully");
+            }
+            if(nextData.getImproved()) {
+                runGraphics2(nextData);
+            }
+        }
+    }
+    public void runGraphics2(Data data) {
+
+        int generation = data.getGeneration();
+        String bitString = data.getBitString();
+        boolean done = false;
+
+        System.out.println("Generation: " + generation);
+        int fitness = data.getFitness();
+        Optional<Double> temp = data.getTemp();
+        generationSlider.setBlockIncrement(10);
+        generationSlider.setMajorTickUnit(50);
+        generationSlider.setSnapToTicks(true);
+        generationSlider.adjustValue(i);
+            // Create a Task for the background processing
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+
+                if (isHypercubeSelected()) {
+                    Circle circle = booleanHypercubeVisualization.getDisplayCoordinates(bitString, false);
+                    Platform.runLater(() -> {
+                        if (circle != null) {
+                            if (lastCircle != null) {
+                                booleanHypercubeVisualization.hypercubePane.getChildren().remove(lastCircle);
+                            }
+                            if (done) {
+                                Circle perfectCircle = booleanHypercubeVisualization.getDisplayCoordinates(bitString, true);
+                                booleanHypercubeVisualization.hypercubePane.getChildren().add(perfectCircle);
+                            } else {
+                                lastCircle = circle;
+                                booleanHypercubeVisualization.hypercubePane.getChildren().add(circle);
+                            }
+                        }
+                    });
+                }
+
+                if (isTextSelected()) {
+                    Platform.runLater(() -> {
+                        if (generation == 0) {
+                            String initialText;
+                            if (temp.isPresent()) {
+                                initialText = ("Initial Solution: " + bitString + " with fitness: " + fitness + " temperature is " + temp + "\n");
+                            } else {
+                                initialText = ("Initial Solution: " + bitString + " with fitness: " + fitness + "\n");
+                            }
+                            solutionArea.appendText(initialText);
+                        } else {
+                            String solutionText;
+                            if (temp.isPresent()) {
+                                solutionText = "Generation " + generation + ": New SA found: " + bitString + " with fitness: " + fitness + " temperature is " + temp + "\n";
+                            } else {
+                                solutionText = "Generation " + generation + ": New solution found: " + bitString + " with fitness: " + fitness + "\n";
+                            }
+                            solutionArea.appendText(solutionText);
+                        }
+                    });
+                }
+
+                if (isGraphSelected()) {
+                    Platform.runLater(() -> {
+                        series.getData().add(new XYChart.Data<>(generation, fitness));
+                    });
+                }
+
+                if (done) {
+                    Platform.runLater(() -> {
+                        String finalText = "Perfect solution found in generation " + generation + "\n";
+                        solutionArea.appendText(finalText);
+                    });
+                }
+                return null;
+            }
+        };
+
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     // Helper class to track edges

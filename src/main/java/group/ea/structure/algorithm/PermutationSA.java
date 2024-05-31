@@ -2,14 +2,10 @@ package group.ea.structure.algorithm;
 
 
 
-import group.ea.controllers.mainController;
 import group.ea.structure.TSP.Solution;
+import group.ea.structure.helperClasses.Data;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
-import javafx.application.Platform;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -37,21 +33,19 @@ public class PermutationSA extends  Algorithm {
 
     @Override
     public void initialize() {
-        System.out.print("initial is ");
-        graphList = new ArrayList<>();
-        graphList.add(new Pair<>(0, bestFitness));
-        System.out.println();
-        solutionList = new ArrayList<>();
-        //_mainController.solutionArea.appendText( ("Initial Solution: with fitness: " + this.bestFitness + " tempature is " + this.initTemp + "\n"));
-        Data data = new Data("bitString", 0, bestFitness, false, Optional.of(currentTemp));
-        finalList.add(data);
+
     }
 
     @Override
     public void performSingleUpdate(int generation) {
-        Data data = new Data("bitString", generation, bestFitness, false, Optional.of(currentTemp));
+        if(generation == 0){
+            Data firstData = new Data("bitString", generation, bestFitness, true, Optional.of(currentTemp),false);
+            listener.receiveBitstringUpdate(firstData);
+        }
+        Data data = new Data("bitString", generation, bestFitness, false, Optional.of(currentTemp),false);
         if (currentTemp < 1) {
             System.out.println("too cool");
+            data.setStop(true);
             stoppingMet = true;
             return;
         }
@@ -80,8 +74,7 @@ public class PermutationSA extends  Algorithm {
 
         }
         currentTemp *= tempReduction;
-        finalList.add(data);
-        graphList.add(new Pair<>(generation + 1, bestFitness));
+        listener.receiveBitstringUpdate(data);
 
     }
 }

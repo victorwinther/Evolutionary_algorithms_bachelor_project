@@ -2,6 +2,7 @@ package group.ea.structure.algorithm;
 
 import group.ea.structure.TSP.City;
 import group.ea.structure.TSP.Solution;
+import group.ea.structure.helperClasses.Data;
 import group.ea.structure.problem.Problem;
 import group.ea.structure.searchspace.SearchSpace;
 import javafx.util.Pair;
@@ -26,17 +27,12 @@ public class PermutationOnePlusOneEA extends Algorithm {
 
     @Override
     public void initialize() {
-        graphList = new ArrayList<>();
-        graphList.add(new Pair<>(0, bestFitness));
-        solutionList = new ArrayList<>();
-        //_mainController.solutionArea.appendText( ("Initial Solution: with fitness: " + this.bestFitness + " tempature is " + this.initTemp + "\n"));
-        Data data = new Data("bitString", 0, bestFitness, false, Optional.of(currentTemp));
-        finalList.add(data);
+
     }
     @Override
     public void performSingleUpdate(int generation) {
         if(generation == 0){
-            listener.firstSolution(_sl);
+           // listener.firstSolution(_sl);
         }
         // Save the current solution
         // randomly at uniform
@@ -60,9 +56,6 @@ public class PermutationOnePlusOneEA extends Algorithm {
             bestFitness = offspringFitness;
             TSPDATA tspdata = new TSPDATA(_sl,_sl.getSolution(),generation,offspringFitness,_sl.getImprovement,_sl.A1,_sl.A2,_sl.A3,_sl.A4,Optional.ofNullable(_sl.A5),Optional.ofNullable(_sl.A6),Optional.ofNullable(_sl.optCase), threeOpt);
             listener.receiveUpdate(tspdata);
-
-            Data data = new Data("bitString", generation, bestFitness, false, Optional.empty());
-            finalList.add(data);
 
         } else {
             //noImprovementCounter++;

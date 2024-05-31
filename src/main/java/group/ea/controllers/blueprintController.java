@@ -482,6 +482,7 @@ public class blueprintController implements Initializable {
 
         }
 
+
         if (algorithmSelector.getValue().equals("(u+y) EA")){
             if (problemSelector.getValue().equals("TSP")){
                 newSchedule.setAlgorithmString("(u+y) EA TSP");

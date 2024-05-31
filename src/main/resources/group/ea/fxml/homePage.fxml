@@ -194,10 +194,10 @@
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="335.0" spacing="15.0">
                <children>
-                  <Button fx:id="startButton" mnemonicParsing="false" onAction="#startEvolution" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="START" textFill="WHITE" />
-                  <Button fx:id="pauseButton" mnemonicParsing="false" onAction="#pauseGraphics" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="PAUSE" textFill="WHITE" />
-                  <Button fx:id="stopButton" mnemonicParsing="false" onAction="#stopEvolution" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="STOP" textFill="WHITE" />
-                  <Button fx:id="nextAlgorithm" mnemonicParsing="false" onAction="#nextAlgorithm" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="NEXT" textFill="WHITE" />
+                  <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startEvolution" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="START" textFill="WHITE" />
+                  <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseVisualization" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="PAUSE" textFill="WHITE" />
+                  <Button fx:id="stopButton" disable="true" mnemonicParsing="false" onAction="#stopEvolution" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="STOP" textFill="WHITE" />
+                  <Button fx:id="nextAlgorithm" disable="true" mnemonicParsing="false" onAction="#nextAlgorithm" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="NEXT" textFill="WHITE" />
                </children>
             </HBox>
             <Separator opacity="0.5" orientation="VERTICAL" prefHeight="80.0" prefWidth="19.0">
@@ -219,10 +219,9 @@
                         <RowConstraints maxHeight="45.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <CheckBox fx:id="graphSelector" mnemonicParsing="false" onAction="#graphListener" prefHeight="18.0" prefWidth="129.0" selected="true" text="Graph" textFill="WHITE" />
-                        <CheckBox fx:id="textSelector" mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" text="Bitstrings" textFill="WHITE" GridPane.rowIndex="1" />
-                        <CheckBox fx:id="hypercubeCheck" mnemonicParsing="false" onAction="#hypercubeListener" prefHeight="18.0" prefWidth="128.0" text="Boolean Hypercube" textFill="WHITE" GridPane.columnIndex="1" />
-                        <CheckBox fx:id="showTSPgraph" mnemonicParsing="false" prefHeight="18.0" prefWidth="145.0" text="Show  TSP graph" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <CheckBox fx:id="graphSelector" disable="true" mnemonicParsing="false" onAction="#graphListener" prefHeight="18.0" prefWidth="129.0" selected="true" text="Graph" textFill="WHITE" />
+                        <CheckBox fx:id="textSelector" disable="true" mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" text="Bitstrings" textFill="WHITE" GridPane.rowIndex="1" />
+                        <CheckBox fx:id="hypercubeCheck" disable="true" mnemonicParsing="false" onAction="#hypercubeListener" prefHeight="18.0" prefWidth="128.0" text="Boolean Hypercube" textFill="WHITE" GridPane.columnIndex="1" />
                      </children>
                   </GridPane>
                </children>
@@ -237,9 +236,8 @@
                   <Label text="Speed" textFill="WHITE" />
                   <StackPane>
                      <children>
-                        <Slider fx:id="speedSlider" blockIncrement="50.0" majorTickUnit="100.0" max="1000.0" prefHeight="26.0" prefWidth="129.0" showTickMarks="true" value="500.0" />
 
-                        <Slider fx:id="sliderSpeed" blockIncrement="1.0" max="10.0" min="0.1" showTickMarks="true" value="1.0" visible="false" />
+                        <Slider fx:id="sliderSpeed" blockIncrement="1.0" disable="true" majorTickUnit="1.0" max="10.0" min="0.1" showTickMarks="true" value="1.0" />
 
                      </children>
                   </StackPane>
