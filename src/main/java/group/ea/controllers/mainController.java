@@ -1215,13 +1215,13 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 //updateVisualization();
             });
             setSolution(nextSolution);
-            if(nextSolution.getName() == "ACO" || nextSolution.getName() == "(u+y)EA"){
+            if(nextSolution.getName() == "ACO" || nextSolution.getName() == "(u+y)EA" || nextSolution.getName() == "1+1EA"){
                 Platform.runLater(() -> {
                 deleteAndDraw(nextSolution.getSolution());
                 });
-            }else if (nextSolution.getName() == "1+1EA"){
-                updateVisualization();
-            }
+            }//else if (nextSolution.getName() == "1+1EA"){
+              //  updateVisualization();
+            //}
 
 
         }

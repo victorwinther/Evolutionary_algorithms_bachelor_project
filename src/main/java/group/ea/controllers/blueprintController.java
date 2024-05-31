@@ -406,7 +406,6 @@ public class blueprintController implements Initializable {
         }
 
         if (problemSelector.getValue().equals("TSP")){
-            TSPSelector.setValue(TSPSelector.getItems().get(0));
             TSPSelector.setVisible(true);
             tspProblemLbl.setVisible(true);
             timeboundCheckbox.setVisible(true);
