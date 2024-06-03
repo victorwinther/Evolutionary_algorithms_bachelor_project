@@ -100,6 +100,7 @@ public class blueprintController implements Initializable {
         problemSelector.setValue(problemSelector.getItems().get(0));
         algorithmSelector.setValue(algorithmSelector.getItems().get(0));
         */
+        TSPSelector.setValue(TSPSelector.getItems().get(0));
         optimumReached.setSelected(true);
         dimensionTxtField.setText("100");
 
@@ -156,6 +157,9 @@ public class blueprintController implements Initializable {
         batchParameters.put("(u+y) EA", List.of("u","y"));
         batchParameters.put("Fitness bound", List.of("F. Iterations"));
         batchParameters.put("Iteration bound", List.of("I. Iterations"));
+        batchParameters.put("Optimum reached", List.of("Optimal"));
+        batchParameters.put("TSP",List.of("TSP problem"));
+        batchParameters.put("Bit strings",List.of("Dimension"));
     }
 
     private void addDescriptions(){
@@ -256,6 +260,7 @@ public class blueprintController implements Initializable {
                 getValueOrDefault(searchspaceSelector),
                 getValueOrDefault(problemSelector),
                 getValueOrDefault(algorithmSelector),
+                getValueOrDefault(TSPSelector),
                 getCheckBoxValue(optimumReached),
                 getCheckBoxValue(fitnessBound),
                 getCheckBoxValue(iterationBound)
@@ -540,8 +545,8 @@ public class blueprintController implements Initializable {
                 return;
             }
         }
-        System.out.println(newSchedule.getAlgorithmString());
-            newSchedule.setUpAlgorithm();
+
+        newSchedule.setUpAlgorithm();
     }
 
     private boolean checkParametersFilled(){
@@ -585,6 +590,12 @@ public class blueprintController implements Initializable {
         }
         else if(category.equals("y")){
             res = specialTxtField2.getText();
+        }
+        else if(category.equals("TSP problem")){
+            res = TSPSelector.getValue();
+        }
+        else if(category.equals("Optimal")){
+            res = "true";
         }
 
         return res;
