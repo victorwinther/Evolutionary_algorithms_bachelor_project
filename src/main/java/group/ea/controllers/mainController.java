@@ -13,6 +13,7 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -27,6 +28,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -125,9 +127,9 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     int maxY;
 
     @FXML
-    private TableView<String> extractKeyFeaturesTable;
+    private TableView<RowData> extractKeyFeaturesTable;
     @FXML
-    private TableColumn<String,String> tableIterations, tableFuncEval,tableFitness,tableOptimalFitness,tableRuntime;
+    private TableColumn<RowData,String> tableIterations, tableFuncEval,tableFitness,tableOptimalFitness,tableRuntime;
     /*@FXML
     private Pane tspVisualization;
 
@@ -1304,15 +1306,28 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         if (!updateBitStringQueue.isEmpty()) {
             Data nextData = updateBitStringQueue.poll();
             System.out.println("Next data: " + nextData.getGeneration());
+            tableIterations.setCellValueFactory(new PropertyValueFactory<>("iteration"));
+            tableFitness.setCellValueFactory(new PropertyValueFactory<>("fitness"));
+            tableFuncEval.setCellValueFactory(new PropertyValueFactory<>("funcEval"));
+            tableOptimalFitness.setCellValueFactory(new PropertyValueFactory<>("optimalFitness"));
+            tableRuntime.setCellValueFactory(new PropertyValueFactory<>("runtime"));
+
+            RowData rowData = new RowData(
+                    Integer.toString(nextData.getGeneration()),
+                    Integer.toString(nextData.getFitness()),
+                    Integer.toString(nextData.getFunctionEvaluations()),
+                    Integer.toString(nextData.getBitString().length()),
+                    Long.toString(nextData.getTimeElapsed())
+            );
+
             // add a value to tablefitness
             String fitness1 = Integer.toString(nextData.getFitness());
             //ArrayList<String> data = new ArrayList<>();
 
 
-            ObservableList<String> data = FXCollections.observableArrayList();
-            data.add(fitness1);
-            data.add(Integer.toString(nextData.getGeneration()));
-            data.add(nextData.getBitString());
+            ObservableList<RowData> data = FXCollections.observableArrayList();
+            data.add(rowData);
+
             extractKeyFeaturesTable.setItems(data);
             extractKeyFeaturesTable.refresh();
 
@@ -1327,6 +1342,41 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             if(nextData.getImproved()) {
                 runGraphics2(nextData);
             }
+        }
+    }
+    public class RowData {
+        private final SimpleStringProperty iteration;
+        private final SimpleStringProperty fitness;
+        private final SimpleStringProperty funcEval;
+        private final SimpleStringProperty optimalFitness;
+        private final SimpleStringProperty runtime;
+
+        public RowData(String iteration, String fitness, String funcEval, String optimalFitness, String runtime) {
+            this.iteration = new SimpleStringProperty(iteration);
+            this.fitness = new SimpleStringProperty(fitness);
+            this.funcEval = new SimpleStringProperty(funcEval);
+            this.optimalFitness = new SimpleStringProperty(optimalFitness);
+            this.runtime = new SimpleStringProperty(runtime);
+        }
+
+        public String getIteration() {
+            return iteration.get();
+        }
+
+        public String getFitness() {
+            return fitness.get();
+        }
+
+        public String getFuncEval() {
+            return funcEval.get();
+        }
+
+        public String getOptimalFitness() {
+            return optimalFitness.get();
+        }
+
+        public String getRuntime() {
+            return runtime.get();
         }
     }
     public void runGraphics2(Data data) {

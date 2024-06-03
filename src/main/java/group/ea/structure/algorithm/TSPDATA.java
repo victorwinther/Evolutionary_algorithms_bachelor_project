@@ -21,6 +21,10 @@ public class TSPDATA {
 
     public String name;
 
+
+
+    private int functionEvaluations = 0;
+
    // private static List<TspResultController> listeners = new ArrayList<>();
     static ArrayList<TSPDATA> allSolutions = new ArrayList<>();
     public TSPDATA (Solution solution, ArrayList<City> slSolution, int generation, int fitness, double improvement, City X1, City X2, City X3, City X4, Optional<City> A5, Optional<City> A6, Optional<Integer> optCase, boolean b, String name) {
@@ -102,4 +106,10 @@ public class TSPDATA {
     }
 
 
+    public void setFunctionEvaluations(int functionEvaluations) {
+        this.functionEvaluations = functionEvaluations;
+    }
+    public int getFunctionEvaluations() {
+        return functionEvaluations;
+    }
 }

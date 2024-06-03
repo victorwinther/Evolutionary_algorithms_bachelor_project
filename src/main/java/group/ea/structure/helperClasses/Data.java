@@ -7,8 +7,13 @@ public class Data {
     private int fitness;
     private boolean yesNo;
     private Optional<Double> temp;
+    private long timeElapsed = 0;
 
     private boolean stop;
+
+
+
+    private int functionEvaluations = 0;
 
     public Data(String bitString, int generation, int fitness, boolean yesNo, Optional<Double> temp,boolean stop) {
         this.bitString = bitString;
@@ -71,6 +76,19 @@ public class Data {
 
     public void setStop(boolean stop) {
         this.stop = stop;
+    }
+    public long getTimeElapsed() {
+        return timeElapsed;
+    }
+    public void setTimeElapsed(long timeElapsed) {
+        this.timeElapsed = timeElapsed;
+    }
+    public int getFunctionEvaluations() {
+        return functionEvaluations;
+    }
+
+    public void setFunctionEvaluations(int functionEvaluations) {
+        this.functionEvaluations = functionEvaluations;
     }
 
     // getters and setters for each field

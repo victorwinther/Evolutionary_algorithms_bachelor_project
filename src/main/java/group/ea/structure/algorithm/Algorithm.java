@@ -27,6 +27,7 @@ public abstract class Algorithm {
     Problem problem;
 
     protected Solution _sl;
+    protected int functionEvaluations = 0;
     protected Solution _cloneSl;
 
     public SearchSpace getSearchSpace() {
@@ -83,25 +84,12 @@ public abstract class Algorithm {
 
     public void runAlgorithm() {
         timer.startTimer("Time elapsed");
-        while (!checkStoppingCriteria()  && (bestFitness != 7544)) {
-       // while(bestFitness != 7544) {
-
-
+        while (!checkStoppingCriteria()) {
             performSingleUpdate(generation);
-
-
             generation++;
-            if (generation % 1000000 == 0) {
-                //System.out.println("1m + fitness = " + bestFitness);
-
-            }
-
-
         }
-        //System.out.println("Generation " + generation + ": Best Fitness = " + bestFitness + "total generation sl" + Solution.getGeneration());
         Solution.setGeneration(0);
         stoppingMet = true;
-        //finalList.get(finalList.size()-1).setYesNo(true);
     }
 
     public void clearAndContinue(int i, int newI) {

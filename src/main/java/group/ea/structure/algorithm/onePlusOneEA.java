@@ -33,18 +33,19 @@ public class onePlusOneEA extends Algorithm {
             if (yFitness >= bestFitness) {
                 if (yFitness > bestFitness) {
                     data.setYesNo(true);
-
                 }
                 bitString = yString;
                 bestFitness = (int) yFitness;
                 data.setBitString(bitString);
                 data.setFitness(bestFitness);
-
             }
             if (checkStoppingCriteria()) {
                 data.setStop(true);
-                System.out.println("Stopping criteria met");
+                functionEvaluations--;
             }
+            functionEvaluations++;
+            data.setFunctionEvaluations(functionEvaluations);
+            data.setTimeElapsed(timer.getCurrentTimer());
             listener.receiveBitstringUpdate(data);
             generation++;
 

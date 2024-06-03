@@ -31,13 +31,9 @@ public class PermutationuPlusyEA extends Algorithm {
     public void initialize() {
         for (int i = 0; i < mu; i++) {
             Solution solution = new Solution((TSPParser) searchSpace);
-
             solution.shuffle(500);
             population.add(solution);
-
         }
-
-
     }
 
     @Override
@@ -66,12 +62,15 @@ public class PermutationuPlusyEA extends Algorithm {
                 }
                 population.add(parent);
             }
+            functionEvaluations += mu;
             population = selectFittest(population, mu);
             bestSolution = population.get(0);
 
             bestFitness = bestSolution.computeFitness();
             //System.out.println(bestFitness);
             TSPDATA tspdata = new TSPDATA(bestSolution, bestSolution.getSolution(), generation, bestFitness, bestSolution.getImprovement,"(u+y)EA");
+            tspdata.setFunctionEvaluations(functionEvaluations);
+            tspdata.setTimeElapsed(timer.getCurrentTimer());
             listener.receiveUpdate(tspdata);
             if (checkStoppingCriteria()) {
                 break;

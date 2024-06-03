@@ -54,27 +54,25 @@ public class PermutationSA extends  Algorithm {
 
         System.out.println(offspringFitness + " " + bestFitness);
 
+
         if (offspringFitness < bestFitness) {
-            //listener.tspGraphics(_sl);
-            System.out.println("Better in generation " + generation);
+
             data.setYesNo(true);
             bestFitness = offspringFitness;
             data.setFitness(bestFitness);
-            String solutionText = "Generation " + generation + ": New solution found:  with fitness: " + bestFitness + " tempature is " + currentTemp + "\n";
-            solutionList.add(solutionText);
+
         } else if (Math.exp((offspringFitness - bestFitness) / currentTemp) > Math.random()) {
-            System.out.println("Revert in generation " + generation);
             _sl.revert();
             data.setBitString("Revert");
-            //data.setYesNo(true);
             data.setFitness(bestFitness);
-            String solutionText = "Generation " + generation + ": New SA found:  with fitness: " + bestFitness + " tempature is " + currentTemp + "\n";
-            System.out.println("Test");
-            solutionList.add(solutionText);
 
         }
         currentTemp *= tempReduction;
+        functionEvaluations++;
+        data.setTimeElapsed(timer.getCurrentTimer());
+        data.setFunctionEvaluations(functionEvaluations);
         listener.receiveBitstringUpdate(data);
+
 
     }
 }

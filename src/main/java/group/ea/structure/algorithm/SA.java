@@ -55,6 +55,9 @@ public class SA extends Algorithm {
         if(checkStoppingCriteria()){
             data.setStop(true);
         }
+        functionEvaluations++;
+        data.setTimeElapsed(timer.getCurrentTimer());
+        data.setFunctionEvaluations(functionEvaluations);
         listener.receiveBitstringUpdate(data);
     }
 

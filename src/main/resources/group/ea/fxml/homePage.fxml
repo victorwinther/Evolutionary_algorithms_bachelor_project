@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="735.0" prefWidth="1071.0" style="-fx-background-color: #353941;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.mainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="735.0" prefWidth="1071.0" style="-fx-background-color: #353941;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.mainController">
    <left>
       <AnchorPane prefHeight="584.0" prefWidth="213.0" style="-fx-background-color: #26282B;" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -300,7 +300,7 @@
                 <TableColumn fx:id="tableFuncEval" prefWidth="120.0" text="Func. Evaluations" />
                   <TableColumn fx:id="tableFitness" prefWidth="120.0" text="Fitness" />
                   <TableColumn fx:id="tableOptimalFitness" minWidth="8.0" prefWidth="120.0" text="Optimal Fitness" />
-                  <TableColumn fx:id="tableRuntime" prefWidth="120.0" text="Run time (s)" />
+                  <TableColumn fx:id="tableRuntime" prefWidth="120.0" text="Run time (ms)" />
               </columns>
             </TableView>
          </bottom>
