@@ -27,6 +27,12 @@ public class TSPParser extends SearchSpace {
         openTSPFile();
     }
 
+    public String getLastPartOfFilename() {
+        String[] parts = filename.split("/");
+        String fullName = parts[parts.length - 1];
+        return fullName.contains(".") ? fullName.substring(0, fullName.lastIndexOf('.')) : fullName;
+    }
+
     private void openTSPFile() {
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8))) {

@@ -18,8 +18,6 @@ public class uPlusyEA extends Algorithm{
         super(searchSpace, problem);
     }
 
-    public void setMu(int mu) {this.mu = mu;}
-    public void setLambda(int lambda) {this.lambda = lambda;}
 
     @Override
     public void performSingleUpdate(int gen) {
