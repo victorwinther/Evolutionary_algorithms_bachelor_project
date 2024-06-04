@@ -22,13 +22,15 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class Algorithm {
-    public int mu = 1;
-    public int lambda = 1;
+    protected int mu = 0;
+    protected int lambda = 0;
     Problem problem;
 
     protected Solution _sl;
     protected int functionEvaluations = 0;
     protected Solution _cloneSl;
+
+    protected boolean graphicsOn = false;
 
     public SearchSpace getSearchSpace() {
         return searchSpace;
@@ -65,6 +67,8 @@ public abstract class Algorithm {
         this.initialize();
         timer = new Timer();
     }
+
+
     public void addStoppingCriterion(StoppingCriterion criterion) {
         stoppingCriteria.add(criterion);
     }
@@ -84,7 +88,7 @@ public abstract class Algorithm {
 
     public void runAlgorithm() {
         timer.startTimer("Time elapsed");
-        while (!checkStoppingCriteria()) {
+        while (!checkStoppingCriteria() && !stoppingMet) {
             performSingleUpdate(generation);
             generation++;
         }
@@ -120,6 +124,16 @@ public abstract class Algorithm {
     }
     public  void setValues(int a, double b, double r){
     }
-    public void setMu(int a){}
-    public void setLambda(int a){}
+    public void setMu(int a){
+        this. mu = a;
+    }
+    public void setLambda(int a){
+        this.lambda = a;
+    }
+    public int getMu(){
+        return mu;
+    }
+    public int getLambda(){
+        return lambda;
+    }
 }

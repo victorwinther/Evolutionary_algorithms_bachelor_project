@@ -723,13 +723,13 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
 
         searchspaceLabel.setText(s.getSearchSpaceString());
-        searchspaceLabel.setStyle("-fx-font-size: 10px;");
+        searchspaceLabel.setStyle("-fx-font-size: 14px;");
         problemLabel.setText(s.getProblemString());
-        problemLabel.setStyle("-fx-font-size: 10px;");
+        problemLabel.setStyle("-fx-font-size: 14px;");
         algorithmLabel.setText(s.getAlgorithmString());
-        algorithmLabel.setStyle("-fx-font-size: 10px;");
+        algorithmLabel.setStyle("-fx-font-size: 14px;");
         criteriasLabel.setText(s.getCriterias());
-        criteriasLabel.setStyle("-fx-font-size: 10px;");
+        criteriasLabel.setStyle("-fx-font-size: 14px;");
         for (int j = 0; j < schedules.size(); j++) {
             Schedule newSchedule = schedules.get(j);
             for (int k = 0; k < newSchedule.getRuns(); k++) {
@@ -1360,6 +1360,34 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private void processQueue() {
         if (!updateQueue.isEmpty()) {
             TSPDATA nextSolution = updateQueue.poll();
+
+            System.out.println("Next data: " + nextSolution.getGeneration());
+            tableIterations.setCellValueFactory(new PropertyValueFactory<>("iteration"));
+            tableFitness.setCellValueFactory(new PropertyValueFactory<>("fitness"));
+            tableFuncEval.setCellValueFactory(new PropertyValueFactory<>("funcEval"));
+            tableOptimalFitness.setCellValueFactory(new PropertyValueFactory<>("optimalFitness"));
+            tableRuntime.setCellValueFactory(new PropertyValueFactory<>("runtime"));
+
+            RowData rowData = new RowData(
+                    Integer.toString(nextSolution.getGeneration()),
+                    Integer.toString(nextSolution.getFitness()),
+                    Integer.toString(nextSolution.getFunctionEvaluations()),
+                    Integer.toString(nextSolution.getOptimum()),
+                    Long.toString(nextSolution.getTimeElapsed())
+            );
+
+            // add a value to tablefitness
+            String fitness1 = Integer.toString(nextSolution.getFitness());
+            //ArrayList<String> data = new ArrayList<>();
+
+
+            ObservableList<RowData> data = FXCollections.observableArrayList();
+            data.add(rowData);
+
+            extractKeyFeaturesTable.setItems(data);
+            extractKeyFeaturesTable.refresh();
+
+
             Platform.runLater(() -> {
                 setSolution(nextSolution);
                 //updateVisualization();

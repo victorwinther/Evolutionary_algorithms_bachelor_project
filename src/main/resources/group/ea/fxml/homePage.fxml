@@ -54,42 +54,19 @@
                         </Separator>
                         <GridPane fx:id="gridGeneralSettings" prefHeight="93.0" prefWidth="187.0">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="118.1370620727539" minWidth="10.0" prefWidth="79.5" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="110.0" minWidth="10.0" prefWidth="108.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="118.1370620727539" minWidth="10.0" prefWidth="99.22233581542969" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Searchspace:" textFill="WHITE">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font></Label>
-                              <Label text="Problem:" textFill="#fffdfd" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font></Label>
-                              <Label text="Algorithms:" textFill="WHITE" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font></Label>
-                              <Label text="Criterias:" textFill="#fffdfd" GridPane.rowIndex="3">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font></Label>
-                              <Label text="Mutation operater:" textFill="WHITE" GridPane.rowIndex="4">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font></Label>
-                              <Label fx:id="searchspaceLabel" textFill="WHITE" GridPane.columnIndex="1" />
-                              <Label fx:id="problemLabel" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label fx:id="algorithmLabel" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Label fx:id="mutationLabel" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <Label fx:id="criteriasLabel" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Label fx:id="searchspaceLabel" prefHeight="17.0" prefWidth="97.0" text="Searchspace:" textFill="WHITE" />
+                              <Label fx:id="problemLabel" text="Problem:" textFill="#fffdfd" GridPane.rowIndex="1" />
+                              <Label fx:id="criteriasLabel" prefHeight="17.0" prefWidth="102.0" text="Stopping criteria:" textFill="#fffdfd" GridPane.rowIndex="3" />
+                              <Label fx:id="algorithmLabel" text="Algorithm:" textFill="WHITE" GridPane.rowIndex="2" />
                            </children>
                            <VBox.margin>
                               <Insets left="10.0" />
@@ -107,7 +84,7 @@
                               <Insets bottom="5.0" />
                            </VBox.margin>
                         </Separator>
-                        <GridPane fx:id="batchInfo" prefHeight="50.0" prefWidth="189.0">
+                        <GridPane fx:id="batchInfo" prefHeight="59.0" prefWidth="187.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -120,16 +97,10 @@
                            <children>
                               <Label text="Batch Number:" textFill="WHITE">
                                  <font>
-                                    <Font size="10.0" />
+                                    <Font size="14.0" />
                                  </font></Label>
-                              <Label text="Run number:" textFill="WHITE" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font></Label>
-                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font></Label>
+                              <Label text="Run number:" textFill="WHITE" GridPane.rowIndex="1" />
+                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="2" />
                            </children>
                            <VBox.margin>
                               <Insets left="10.0" />
