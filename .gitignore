@@ -1,9 +1,3 @@
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-!**/target/**/*.fxml
-!target/classes/group/ea/fxml/**/*.fxml
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
