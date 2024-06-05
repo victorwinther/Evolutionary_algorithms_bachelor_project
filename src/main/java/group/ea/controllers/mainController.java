@@ -487,6 +487,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             executor.submit(() -> {
                 schedule.setUpAlgorithm();
                 schedule.run();
+                
             });
         }
     }
