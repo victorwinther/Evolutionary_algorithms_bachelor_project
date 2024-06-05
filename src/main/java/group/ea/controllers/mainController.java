@@ -1109,7 +1109,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         int y4 = maxY - (int) currentSolution.X4.getY();
         List<Edge> newEdges = new ArrayList<>();
 
-       Edge edge1 = new Edge(x1, y1, x2, y2);
+        Edge edge1 = new Edge(x1, y1, x2, y2);
         Edge edge2 = new Edge(x2, y2, x1, y1);
         Edge edge3 = new Edge(x3, y3, x4, y4);
         Edge edge4 = new Edge(x4, y4, x3, y3);

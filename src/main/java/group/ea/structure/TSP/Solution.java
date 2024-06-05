@@ -130,7 +130,7 @@ public class Solution extends Problem implements Cloneable {
                 //solutions.add(solution);
                 // System.out.println("2-opt move optimal and edges saved" + gains);
                 // TSPDATA tspdata = new TSPDATA(this, _sl.getSolution(), generationSolution,computeFitness(),gains,firstCity,solution.get(((firstIndex+1)% solution.size())),solution.get(secondIndex),solution.get(((secondIndex+1) % solution.size())), Optional.empty(),Optional.empty(),Optional.empty(),false);
-              getImprovement = gains;
+                getImprovement = gains;
                 A1 = firstCity;
                 A2 = solution.get(((firstIndex+1)% solution.size()));
                 A3 = solution.get(secondIndex);
