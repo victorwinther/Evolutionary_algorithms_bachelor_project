@@ -1,16 +1,15 @@
 package group.ea.controllers;
 
-import group.ea.structure.StoppingCriterias.*;
-import group.ea.structure.TSP.Solution;
-import group.ea.structure.TSP.TSPParser;
-import group.ea.structure.algorithm.*;
-import group.ea.structure.problem.LeadingOnes;
-import group.ea.structure.problem.OneMax;
-import group.ea.structure.problem.Problem;
-import group.ea.structure.searchspace.BitString;
-import group.ea.structure.searchspace.SearchSpace;
+import group.ea.StoppingCriterias.*;
+import group.ea.problem.TSP.Solution;
+import group.ea.problem.TSP.TSPParser;
+import group.ea.algorithm.*;
+import group.ea.problem.LeadingOnes;
+import group.ea.problem.OneMax;
+import group.ea.problem.Problem;
+import group.ea.searchspace.BitString;
+import group.ea.searchspace.SearchSpace;
 
-import java.io.Closeable;
 import java.util.ArrayList;
 
 public class Schedule implements Cloneable {
@@ -32,6 +31,8 @@ public class Schedule implements Cloneable {
     private ArrayList<StoppingCriterion> stoppingCriteria;
     private int mu;
     private int lambda;
+    private String updateRule;
+    private boolean localSearch;
 
     public Schedule() {
     }
@@ -141,7 +142,7 @@ public class Schedule implements Cloneable {
                 this.searchSpace = new BitString(this.dimension);
                 break;
             case "Permutations":
-                this.searchSpace = new TSPParser("src/main/java/group/ea/controllers/" + tspProblem + ".txt");
+                this.searchSpace = new TSPParser("src/main/java/group/ea/problem/TSP/problems/" + tspProblem + ".txt");
                 break;
         }
 
@@ -193,11 +194,11 @@ public class Schedule implements Cloneable {
                 this.algorithm = new PermutationSA(this.searchSpace, this.problem);
                 algorithm.addStoppingCriterion(new TempStopping());
                 break;
-            case "Ant System":
-                System.out.println("ANT");
+            case "Ant Colony Optimization":
                 this.algorithm = new ACO(this.searchSpace, this.problem);
+                this.algorithm.setUpdateRule(updateRule);
+                this.algorithm.setLocalSearch(localSearch);
                 this.algorithm.setValues(Integer.parseInt(optionalValues[0]), Double.parseDouble(optionalValues[1]), Double.parseDouble(optionalValues[2]));
-                System.out.println(optionalValues[0]);
                 break;
             default:
                 this.algorithm = null;
@@ -245,6 +246,13 @@ public class Schedule implements Cloneable {
 
     public void setOptional(String[] set){
         this.optionalValues = set;
+    }
+
+    public void setUpdateRule(String rule){
+        this.updateRule = rule;
+    }
+    public void setLocalSearch(boolean search){
+        this.localSearch = search;
     }
 
 

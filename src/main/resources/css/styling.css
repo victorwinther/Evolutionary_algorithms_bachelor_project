@@ -14,9 +14,7 @@
     -fx-background-color : #26282B ;
 }
 .button:focused {
-    -fx-background-color: #26282B;
-    -fx-border-color: #CDD1D6;
-    -fx-border-width: 0px 0px 0px 3px;
+    -fx-background-color: #5F85DB;
     -fx-font-weight: 700; /*bold*/
     -fx-background-radius: 0em;
     -fx-font-family: sans-serif;
@@ -140,4 +138,20 @@
 .chart-line-symbol {
     -fx-background-radius: 3px; /* Makes the point round */
     -fx-padding: 3px; /* Adjust padding to make point smaller */
+}
+.check-box .box {
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+    -fx-border-radius: 3;
+}
+.check-box .mark {
+    -fx-shape: "M1.73,12.91 8.1,19.28 22.79,4.59 22.79,1.59 8.1,16.28 1.73,9.91";
+}
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+.check-box:selected .box {
+    -fx-background-color: #90B8F8;
+    -fx-border-color: #90B8F8;
+    -fx-border-radius: 3;
 }

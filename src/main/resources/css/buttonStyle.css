@@ -13,31 +13,4 @@
 .button:pressed{
     -fx-background-color : #5F85DB ;
 }
-.button:focused {
-    -fx-background-color: #5F85DB;
-    -fx-font-weight: 700; /*bold*/
-    -fx-background-radius: 0em;
-    -fx-font-family: sans-serif;
-}
-.toggle-button {
-    -fx-background-color: #26282B;
-    -fx-background-radius: 0em;
-    -fx-font-family: sans-serif;
-}
-.toggle-button:hover {
-    -fx-background-color : #90B8F8;
-    -fx-font-weight: 700; /*bold*/
-    -fx-font-family: sans-serif;
-    -fx-background-radius: 0em;
-}
-.toggle-button:pressed{
-    -fx-background-color : #26282B ;
-}
-.toggle-button:focused {
-    -fx-background-color: #26282B;
-    -fx-border-color: #CDD1D6;
-    -fx-border-width: 0px 0px 0px 3px;
-    -fx-font-weight: 700; /*bold*/
-    -fx-background-radius: 0em;
-    -fx-font-family: sans-serif;
-}
+

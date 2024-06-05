@@ -2,28 +2,18 @@ package group.ea;
 
 import group.ea.controllers.Schedule;
 import group.ea.controllers.mainController;
-import group.ea.structure.algorithm.Algorithm;
-import group.ea.structure.algorithm.RLS;
-import group.ea.structure.algorithm.TSPDATA;
-import group.ea.structure.problem.OneMax;
-import group.ea.structure.problem.Problem;
-import group.ea.structure.searchspace.BitString;
-import group.ea.structure.searchspace.SearchSpace;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-// make a forloop
+
 
 public class main extends Application {
     double x,y = 0;
@@ -37,6 +27,7 @@ public class main extends Application {
         Parent root = loader.load();
         Scene scene = new Scene(root);
         controller = loader.getController();
+        Platform.runLater(root::requestFocus);
 
        // stage.initStyle(StageStyle.UNDECORATED); // no border
         // Load the FXML file

@@ -2,13 +2,13 @@ package group.ea.controllers;
 
 
 import group.ea.main;
-import group.ea.structure.StoppingCriterias.StoppingCriterion;
-import group.ea.structure.TSP.Solution;
-import group.ea.structure.TSP.TSPParser;
-import group.ea.structure.algorithm.*;
-import group.ea.structure.algorithm.BooleanHypercubeVisualization;
-import group.ea.structure.algorithm.Algorithm;
-import group.ea.structure.helperClasses.Data;
+import group.ea.StoppingCriterias.StoppingCriterion;
+import group.ea.problem.TSP.Solution;
+import group.ea.problem.TSP.TSPParser;
+import group.ea.algorithm.*;
+import group.ea.algorithm.BooleanHypercubeVisualization;
+import group.ea.algorithm.Algorithm;
+import group.ea.helperClasses.Data;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -86,11 +86,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private ChoiceBox<Integer> stringLength;
     @FXML
-    private CheckBox graphSelector,graphicsToggle;
-    @FXML
-    private CheckBox textSelector;
-    @FXML
-    private CheckBox hypercubeCheck;
+    private CheckBox graphSelector, textSelector, hypercubeCheck;
 
     @FXML
     private Label searchspaceLabel,problemLabel, algorithmLabel,criteriasLabel,timeLabel,mutationLabel, selectionLabel,crossoverLabel;
@@ -246,18 +242,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     }
                 }
 
-
-                //newSchedule.setSearchSpaceString(mainConfigMap.get("Searchspace")[0]);
-                //newSchedule.setProblemString(mainConfigMap.get("Problem")[0]);
-                //newSchedule.setAlgorithmString(mainConfigMap.get("Algorithm")[0]);
-
                 scheduleParameters.put("searchspace", dataMap.get("Searchspace")[0]);
                 scheduleParameters.put("problem", dataMap.get("Problem")[0]);
                 scheduleParameters.put("algorithm", dataMap.get("Algorithm")[0]);
 
 
                 if (dataMap.containsKey("Dimension")){
-                    //newSchedule.setDimension(Integer.parseInt(dataMap.get("Dimension")[0]));
                     scheduleParameters.put("dimension", dataMap.get("Dimension")[0]);
                 }
 
@@ -271,15 +261,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                         }
 
                         if (readCrit.equals("Iteration bound")){
-                            //newSchedule.setIterationBound(Integer.parseInt(readVal));
-                            scheduleParameters.put("iterationbound", dataMap.get("Iteration bound")[0]);
+                            scheduleParameters.put("iterationbound", readVal);
                         }
                         else if (readCrit.equals("Fitness bound")){
-                            //newSchedule.setFitnessBound(Integer.parseInt(readVal));
-                            scheduleParameters.put("fitnessbound", dataMap.get("Fitness bound")[0]);
+                            scheduleParameters.put("fitnessbound", readVal);
                         }
                         else if (readCrit.equals("Optimum reached")){
-                            //newSchedule.setOptimumReached(true);
                             scheduleParameters.put("optimalbound", "true");
                         }
                         dataMap.put("Stopping criterias", removeElementFromArray(dataMap.get("Stopping criterias"), readCrit));
@@ -290,33 +277,31 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
                 if (dataMap.containsKey("Special parameters")){
                     String[] special_parameters = dataMap.get("Special parameters");
-                    if (dataMap.get("Algorithm")[0].equals("Ant System")){
+                    if (dataMap.get("Algorithm")[0].equals("Ant Colony Optimization")){
                         String colonySize = special_parameters[0];
                         String alpha = special_parameters[1];
                         String beta = special_parameters[2];
-                        String[] optionalValues = new String[]{colonySize, alpha, beta};
+                        String updateRule = dataMap.get("ACO update rule")[0];
+                        String localSearch = dataMap.get("local search")[0];
+
                         scheduleParameters.put("colonysize", colonySize);
                         scheduleParameters.put("alpha", alpha);
                         scheduleParameters.put("beta", beta);
-
-                        //newSchedule.setOptional(optionalValues);
+                        scheduleParameters.put("updaterule", updateRule);
+                        scheduleParameters.put("localsearch", localSearch);
                     }
                     else if (dataMap.get("Algorithm")[0].equals("(u+y) EA")){
                         String mu = special_parameters[0];
                         String lambda = special_parameters[1];
-                        String[] optionalValues = new String[]{mu, lambda};
+
                         scheduleParameters.put("mu", mu);
                         scheduleParameters.put("lambda", lambda);
-
-                        //newSchedule.setOptional(optionalValues);
-                        //newSchedule.setMu(Integer.parseInt(mu));
-                        //newSchedule.setLambda(Integer.parseInt(lambda));
                     }
                 }
 
                 if (dataMap.get("Problem")[0].equals("TSP")){
-                    //newSchedule.setTSPProblem(dataMap.get("TSP problem")[0]);
                     String tspProblem = dataMap.get("TSP problem")[0];
+
                     scheduleParameters.put("tspproblem", tspProblem);
                 }
 
@@ -343,12 +328,16 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                             batchSchedule.setTSPProblem(batchMap.get(scheduleid).get("TSP problem"));
                         }
 
-                        if (scheduleParameters.get("algorithm").equals("Ant System")){
-                            String colonySize = batchMap.get(scheduleid).get("colonysize");
-                            String alpha = batchMap.get(scheduleid).get("alpha");
-                            String beta = batchMap.get(scheduleid).get("beta");
+                        if (scheduleParameters.get("algorithm").equals("Ant Colony Optimization")){
+                            String colonySize = scheduleParameters.get("colonysize");
+                            String alpha = scheduleParameters.get("alpha");
+                            String beta = scheduleParameters.get("beta");
+                            String updateRule = scheduleParameters.get("updaterule");
+                            String localSearch = scheduleParameters.get("localsearch");
                             String[] optionalValues = new String[]{colonySize, alpha, beta};
 
+                            batchSchedule.setLocalSearch(localSearch.equals("true"));
+                            batchSchedule.setUpdateRule(updateRule);
                             batchSchedule.setOptional(optionalValues);
                         }
                         if (scheduleParameters.get("algorithm").equals("(u+y) EA")){
@@ -381,12 +370,16 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     if (!scheduleParameters.get("tspproblem").isEmpty()){
                         newSchedule.setTSPProblem(scheduleParameters.get("tspproblem"));
                     }
-                    if (scheduleParameters.get("algorithm").equals("Ant System")){
+                    if (scheduleParameters.get("algorithm").equals("Ant Colony Optimization")){
                         String colonySize = scheduleParameters.get("colonysize");
                         String alpha = scheduleParameters.get("alpha");
                         String beta = scheduleParameters.get("beta");
+                        String updateRule = scheduleParameters.get("updaterule");
+                        String localSearch = scheduleParameters.get("localsearch");
                         String[] optionalValues = new String[]{colonySize, alpha, beta};
 
+                        newSchedule.setLocalSearch(localSearch.equals("true"));
+                        newSchedule.setUpdateRule(updateRule);
                         newSchedule.setOptional(optionalValues);
                     }
                     if (scheduleParameters.get("algorithm").equals("(u+y) EA")){
@@ -418,6 +411,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         map.put("optimalbound", "");
         map.put("colonysize", "");
         map.put("tspproblem", "");
+        map.put("updaterule", "");
+        map.put("localsearch", "");
         map.put("alpha", "");
         map.put("beta", "");
         map.put("mu", "");
@@ -568,6 +563,10 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     @FXML
     private void startEvolution() {
+        graphSelector.setDisable(!graphSelector.isSelected());
+        textSelector.setDisable(!textSelector.isSelected());
+        hypercubeCheck.setDisable(!hypercubeCheck.isSelected());
+
         if (isPaused) {
             timeline.play();
             isPaused = false;

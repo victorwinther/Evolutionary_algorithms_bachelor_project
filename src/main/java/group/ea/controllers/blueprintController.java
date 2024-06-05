@@ -1,8 +1,6 @@
 package group.ea.controllers;
 
 import group.ea.main;
-import group.ea.structure.algorithm.Algorithm;
-import group.ea.structure.helperClasses.BatchRow;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,10 +12,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,17 +25,13 @@ public class blueprintController implements Initializable {
     @FXML
     private Label explainingLabel;
     @FXML
-    private Label iterationLabel, dimensionLabel, specialLbl1, specialLbl2, specialLbl3, specialLbl4, specialLbl5, tspProblemLbl;
+    private Label iterationLabel, dimensionLabel, specialLbl1, specialLbl2, specialLbl3, specialLbl4, specialLbl5, tspProblemLbl, updateRuleLbl;
     @FXML
     private TextField iterationTxtField, dimensionTxtField, fitnessTxtField, specialTxtField1, specialTxtField2, specialTxtField3, specialTxtField4, specialTxtField5, timeBoundTxtField;
     @FXML
-    private ComboBox<String> searchspaceSelector, TSPSelector;
+    private ComboBox<String> searchspaceSelector, problemSelector, algorithmSelector, TSPSelector, updateRuleSelector;
     @FXML
-    private ComboBox<String> problemSelector;
-    @FXML
-    private ComboBox<String> algorithmSelector;
-    @FXML
-    private CheckBox optimumReached, fitnessBound, iterationBound, optimalSetting, timeboundCheckbox;
+    private CheckBox optimumReached, fitnessBound, iterationBound, optimalSetting, timeboundCheckbox, localSearchCheckbox;
     @FXML
     Button saveButton;
     @FXML
@@ -63,9 +55,10 @@ public class blueprintController implements Initializable {
 
 
     private final String[] searchspaces = {"Bit strings", "Permutations"};
-    private final String[] problems = {"OneMax", "LeadingOnes", "BinVal", "Trap", "Jump_k"};
-    private final String[] algorithms = {"(1+1) EA", "RLS", "1+1 EA Permutations", "Simulated Annealing", "Ant System"};
+    private final String[] problems = {"OneMax", "LeadingOnes"};
+    private final String[] algorithms = {"(1+1) EA", "RLS", "1+1 EA Permutations", "Simulated Annealing", "Ant Colony Optimization"};
     private final String[] TSPproblems = {"berlin52", "bier127", "a280"};
+    private final String[] ACOupdateRules = {"MMAS", "Elitist"};
 
     private String[] optionalValues;
 
@@ -80,6 +73,9 @@ public class blueprintController implements Initializable {
         tspProblemLbl.setVisible(false);
         timeboundCheckbox.setVisible(false);
         timeBoundTxtField.setVisible(false);
+        updateRuleSelector.setVisible(false);
+        updateRuleLbl.setVisible(false);
+        localSearchCheckbox.setVisible(false);
         Schedule.getSchedules().clear();
         allComboBoxes = Arrays.asList(searchspaceSelector, problemSelector, algorithmSelector);
         allTextFields = Arrays.asList(iterationTxtField, fitnessTxtField, timeBoundTxtField, dimensionTxtField, specialTxtField1, specialTxtField2, specialTxtField3, specialTxtField4, specialTxtField5);
@@ -93,16 +89,11 @@ public class blueprintController implements Initializable {
         problemSelector.getItems().addAll(problems);
         TSPSelector.getItems().addAll(TSPproblems);
         algorithmSelector.getItems().addAll(algorithms);
+        updateRuleSelector.getItems().addAll(ACOupdateRules);
         sortComboBoxItems(allComboBoxes);
 
-        /*
-        searchspaceSelector.setValue(searchspaceSelector.getItems().get(0));
-        problemSelector.setValue(problemSelector.getItems().get(0));
-        algorithmSelector.setValue(algorithmSelector.getItems().get(0));
-        */
         TSPSelector.setValue(TSPSelector.getItems().get(0));
-        optimumReached.setSelected(true);
-        dimensionTxtField.setText("100");
+        updateRuleSelector.setValue(updateRuleSelector.getItems().get(0));
 
         hideSpecialFields();
 
@@ -148,12 +139,13 @@ public class blueprintController implements Initializable {
     private void addCategoryOptions() {
         categoryOptions.put("searchSpace", Arrays.asList("Bit strings", "Permutations"));
         categoryOptions.put("problem", Arrays.asList("OneMax", "LeadingOnes", "TSP"));
-        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA","(u+y) EA", "RLS", "(1+1) EA TSP", "Simulated Annealing", "Ant System", "TEMP"));
+        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA","(u+y) EA", "RLS", "(1+1) EA TSP", "Simulated Annealing", "Ant Colony Optimization"));
         categoryOptions.put("tsp problems", Arrays.asList("berlin52", "bier127", "a280"));
+        categoryOptions.put("updateRule", Arrays.asList("MMAS", "Elitist"));
     }
 
     private void initializeBatchParameters() {
-        batchParameters.put("Ant System", List.of("Colony size", "Alpha", "Beta"));
+        batchParameters.put("Ant Colony Optimization", List.of("Colony size", "Alpha", "Beta", "Update rule", "Local search"));
         batchParameters.put("(u+y) EA", List.of("u","y"));
         batchParameters.put("Fitness bound", List.of("F. Iterations"));
         batchParameters.put("Iteration bound", List.of("I. Iterations"));
@@ -175,7 +167,7 @@ public class blueprintController implements Initializable {
         descriptions.put("(1+1) EA TSP", "The (1+1) EA is a simple evolutionary strategy that involves maintaining a single individual in the population, generating a mutated offspring, and replacing the current individual with the offspring only if it has higher fitness.");
         descriptions.put("RLS", "A simple optimization algorithm that iteratively improves a solution by making small random changes and selecting better solutions.");
         descriptions.put("Simulated Annealing", "An optimization algorithm inspired by the annealing process in metallurgy. It iteratively explores the solution space by making random changes to the current solution.");
-        descriptions.put("Ant System", "A nature-inspired optimization algorithm based on the foraging behavior of ants. It uses a population of artificial ants to find optimal solutions by simulating the way real ants deposit pheromones to communicate paths to resources.");
+        descriptions.put("Ant Colony Optimization", "A nature-inspired optimization algorithm based on the foraging behavior of ants. It uses a population of artificial ants to find optimal solutions by simulating the way real ants deposit pheromones to communicate paths to resources.");
 
         descriptions.put("Optimum reached", "Stops a run if the specified fitness bound is reached.");
         descriptions.put("Fitness bound", "Stops a run if a certain fitness is reached.");
@@ -207,7 +199,7 @@ public class blueprintController implements Initializable {
             writer.write("Algorithm, ");
             writer.write(algorithmSelector.getValue() + "\n");
 
-            if (searchspaceSelector.getValue().equals("Bit strings")){
+            if (searchspaceSelector.getValue().equals("Bit strings") && batchData.isEmpty()){
                 writer.write("Dimension, ");
                 writer.write(dimensionTxtField.getText() + "\n");
             }
@@ -240,6 +232,11 @@ public class blueprintController implements Initializable {
                     writer.write("TSP problem, ");
                     writer.write(TSPSelector.getValue() + "\n");
                 }
+                if (algorithmSelector.getValue().equals("Ant Colony Optimization")){
+                    writer.write("ACO update rule, ");
+                    writer.write(updateRuleSelector.getValue() + "\n");
+                    writer.write("local search, " + localSearchCheckbox.isSelected() + "\n");
+                }
             }
             else {
                 // Write batch table data to the file
@@ -261,6 +258,8 @@ public class blueprintController implements Initializable {
                 getValueOrDefault(problemSelector),
                 getValueOrDefault(algorithmSelector),
                 getValueOrDefault(TSPSelector),
+                getValueOrDefault(updateRuleSelector),
+                getCheckBoxValue(localSearchCheckbox),
                 getCheckBoxValue(optimumReached),
                 getCheckBoxValue(fitnessBound),
                 getCheckBoxValue(iterationBound)
@@ -294,25 +293,31 @@ public class blueprintController implements Initializable {
 
     private void checkSpecialParameters(String selectedAlgo){
         hideSpecialFields();
-        if (selectedAlgo.equals("Ant System")){
+        if (selectedAlgo.equals("Ant Colony Optimization")){
             specialLbl1.setText("Colony size");
             specialLbl2.setText("Alpha");
             specialLbl3.setText("Beta");
-            specialLbl4.setText("Gamma");
             specialLbl1.setVisible(true);
             specialLbl2.setVisible(true);
             specialLbl3.setVisible(true);
-            specialLbl4.setVisible(true);
 
 
             specialTxtField1.setVisible(true);
             specialTxtField2.setVisible(true);
             specialTxtField3.setVisible(true);
-            specialTxtField4.setVisible(true);
 
             optimalSetting.setVisible(true);
+
+            updateRuleSelector.setVisible(true);
+            updateRuleLbl.setVisible(true);
+            localSearchCheckbox.setVisible(true);
+
+        } else {
+            updateRuleSelector.setVisible(false);
+            updateRuleLbl.setVisible(false);
+            localSearchCheckbox.setVisible(false);
         }
-        else if (selectedAlgo.equals("(u+y) EA")){
+        if (selectedAlgo.equals("(u+y) EA")){
             specialLbl1.setText(("u"));
             specialLbl2.setText("y");
             specialLbl1.setVisible(true);
@@ -357,11 +362,18 @@ public class blueprintController implements Initializable {
     @FXML
     void optimalSettingsHandler(ActionEvent event){
         if (optimalSetting.isSelected()){
-            if (Objects.equals(algorithmSelector.getValue(), "Ant System")) {
-                specialTxtField1.setText("100");
-                specialTxtField2.setText("1");
-                specialTxtField3.setText("2");
-                specialTxtField4.setText("2");
+            if (Objects.equals(algorithmSelector.getValue(), "Ant Colony Optimization")) {
+                if (updateRuleSelector.getValue().equals("MMAS")) {
+                    specialTxtField1.setText("100");
+                    specialTxtField2.setText("1");
+                    specialTxtField3.setText("2");
+                }
+                else if (updateRuleSelector.getValue().equals("Elitist")){
+                    specialTxtField1.setText("100");
+                    specialTxtField2.setText("5");
+                    specialTxtField3.setText("10");
+                }
+
             }
             else if (Objects.equals(algorithmSelector.getValue(), "(u+y) EA")){
                 specialTxtField1.setText("15");
@@ -384,53 +396,53 @@ public class blueprintController implements Initializable {
         try {
             String selectorValue = selector.getSelectionModel().getSelectedItem().toString();
 
+            //update depending on combobox selection
+            if (selector == algorithmSelector){
+                checkSpecialParameters(selectorValue);
+            }
+
             // Show description
             if (descriptions.containsKey(selectorValue)) {
                 explainingLabel.setText(descriptions.get(selectorValue));
             }
 
 
-        //check if iteration is needed
-        if (selector == searchspaceSelector) {
+            //category dependencies logic
+            if (selector == searchspaceSelector) {
                 dimensionLabel.setDisable(false);
                 dimensionTxtField.setDisable(false);
-        }
 
-        //category dependencies logic
-        if (selector == searchspaceSelector) {
-            if (selector.getValue().equals("Bit strings")) {
-                dependencies.addAll(Arrays.asList("TSP", "(1+1) EA TSP"));
-                dependencies.removeAll(Arrays.asList("OneMax", "LeadingOnes", "(1+1) EA", "RLS", "TEMP"));
-            } else if (selector.getValue().equals("Permutations")) {
-                dependencies.removeAll(Arrays.asList("TSP", "(1+1) EA TSP"));
-                dependencies.addAll(Arrays.asList("OneMax", "LeadingOnes", "(1+1) EA", "RLS", "TEMP"));
-                dimensionLabel.setDisable(true);
-                dimensionTxtField.setDisable(true);
+                if (selector.getValue().equals("Bit strings")) {
+                    dependencies.addAll(Arrays.asList("TSP", "(1+1) EA TSP"));
+                    dependencies.removeAll(Arrays.asList("OneMax", "LeadingOnes", "(1+1) EA", "RLS", "TEMP"));
+                } else if (selector.getValue().equals("Permutations")) {
+                    dependencies.removeAll(Arrays.asList("TSP", "(1+1) EA TSP"));
+                    dependencies.addAll(Arrays.asList("OneMax", "LeadingOnes", "(1+1) EA", "RLS", "TEMP"));
+                    dimensionLabel.setDisable(true);
+                    dimensionTxtField.setDisable(true);
+                }
+                String val = algorithmSelector.getValue();
+                updateCategories();
+                algorithmSelector.setValue(val);
             }
-            updateCategories();
-        }
 
-        if (problemSelector.getValue().equals("TSP")){
-            TSPSelector.setVisible(true);
-            tspProblemLbl.setVisible(true);
-            timeboundCheckbox.setVisible(true);
-            timeBoundTxtField.setVisible(true);
-        } else {
-            TSPSelector.setVisible(false);
-            tspProblemLbl.setVisible(false);
-            timeboundCheckbox.setVisible(false);
-            timeBoundTxtField.setVisible(false);
-        }
+            if (problemSelector.getValue().equals("TSP")){
+                TSPSelector.setVisible(true);
+                tspProblemLbl.setVisible(true);
+                //timeboundCheckbox.setVisible(true);
+                //timeBoundTxtField.setVisible(true);
+            } else {
+                TSPSelector.setVisible(false);
+                tspProblemLbl.setVisible(false);
+                //timeboundCheckbox.setVisible(false);
+                //timeBoundTxtField.setVisible(false);
+            }
 
-        //update depending on combobox selection
-        if (selector == algorithmSelector){
-            checkSpecialParameters(selectorValue);
-        }
         } catch (NullPointerException ignored) {
             TSPSelector.setVisible(false);
             tspProblemLbl.setVisible(false);
-            timeboundCheckbox.setVisible(false);
-            timeBoundTxtField.setVisible(false);
+            //timeboundCheckbox.setVisible(false);
+            //timeBoundTxtField.setVisible(false);
         }
 
     }
@@ -443,6 +455,10 @@ public class blueprintController implements Initializable {
         else {
             // Increment the id counter
             idCount = idCount + 1;
+
+            searchspaceSelector.setDisable(true);
+            problemSelector.setDisable(true);
+            algorithmSelector.setDisable(true);
 
             ArrayList<String> scheduleParameters = new ArrayList<>(List.of("id"));
 
@@ -525,12 +541,16 @@ public class blueprintController implements Initializable {
             }
 
         }
-        if (algorithmSelector.getValue().equals("Ant System")){
+        if (algorithmSelector.getValue().equals("Ant Colony Optimization")){
             String colonySize = specialTxtField1.getText();
             String alpha = specialTxtField2.getText();
             String beta = specialTxtField3.getText();
+            String updateRule = updateRuleSelector.getValue();
+            boolean localSearch = localSearchCheckbox.isSelected();
             optionalValues = new String[]{colonySize, alpha, beta};
 
+            newSchedule.setUpdateRule(updateRule);
+            newSchedule.setLocalSearch(localSearch);
             newSchedule.setOptional(optionalValues);
 
         }
@@ -557,7 +577,12 @@ public class blueprintController implements Initializable {
                 (specialTxtField2.isVisible() && specialTxtField2.getText().isEmpty()) ||
                 (specialTxtField3.isVisible() && specialTxtField3.getText().isEmpty()) ||
                 (specialTxtField4.isVisible() && specialTxtField4.getText().isEmpty()) ||
-                (specialTxtField5.isVisible() && specialTxtField5.getText().isEmpty());
+                (specialTxtField5.isVisible() && specialTxtField5.getText().isEmpty()) ||
+                (TSPSelector.getValue() == null) ||
+                (updateRuleSelector.getValue() == null) ||
+                (searchspaceSelector.getValue() == null) ||
+                (problemSelector.getValue() == null) ||
+                (algorithmSelector.getValue() == null) ;
     }
 
 
@@ -594,6 +619,12 @@ public class blueprintController implements Initializable {
         else if(category.equals("TSP problem")){
             res = TSPSelector.getValue();
         }
+        else if(category.equals("Update rule")){
+            res = updateRuleSelector.getValue();
+        }
+        else if(category.equals("Local search")){
+            res = String.valueOf(localSearchCheckbox.isSelected());
+        }
         else if(category.equals("Optimal")){
             res = "true";
         }
@@ -607,6 +638,12 @@ public class blueprintController implements Initializable {
         String selectedItem = batchList.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             batchList.getItems().remove(selectedItem);
+            batchData.removeIf(s -> s.equals(selectedItem));
+        }
+        if (batchData.isEmpty()){
+            searchspaceSelector.setDisable(false);
+            problemSelector.setDisable(false);
+            algorithmSelector.setDisable(false);
         }
     }
 
@@ -631,7 +668,7 @@ public class blueprintController implements Initializable {
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 
         Platform.runLater(root::requestFocus);
-        scene.getStylesheets().add("chart-styles.css");
+        //scene.getStylesheets().add("chart-styles.css");
         stage.setScene(scene);
         stage.show();}
 
