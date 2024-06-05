@@ -109,7 +109,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private Scene scene;
     private Parent parent;
     private HashMap<String, String> blueprintChoices = new HashMap<>();
-    private int bitStringValue;
     private boolean hypercubeSelected;
     @FXML
     private Button startButton,nextAlgorithm;
