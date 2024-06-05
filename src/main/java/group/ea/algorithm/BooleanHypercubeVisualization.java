@@ -22,19 +22,31 @@ public class BooleanHypercubeVisualization {
     private int currentWidth = 600; // Example width
     private int currentHeight = 400; // Example height
     private ArrayList<Circle> pointsList = new ArrayList<>();
+    private int runNumber;
     // Calculate the y-coordinate based on the number of 1-bits
 
-    public BooleanHypercubeVisualization(SearchSpace searchSpace, Problem problem, mainController controller, Pane hypercubenPane) {
+    public BooleanHypercubeVisualization(SearchSpace searchSpace, Problem problem, mainController controller, Pane hypercubenPane,int runNumber) {
         this.searchSpace = searchSpace;
         this.problem = problem;
         _mainController = controller;
         this.hypercubePane = hypercubenPane;
         hypercubePane.setPrefSize(fixedWidth, fixedHeight);
+        addRunNumber(runNumber);
 
 // Set min and max size to ensure the size stays fixed
         hypercubePane.setMinSize(fixedWidth, fixedHeight);
         hypercubePane.setMaxSize(fixedWidth, fixedHeight);
+        hypercubePane.getStyleClass().add("pane-border");
         drawSearchSpace();
+
+    }
+    private void addRunNumber(int runNumber) {
+        hypercubePane.getChildren().clear();
+        this.runNumber = runNumber;
+        Label runLabel = new Label("Run " + runNumber);
+        runLabel.setLayoutX(10);
+        runLabel.setLayoutY(10);
+        hypercubePane.getChildren().add(runLabel);
 
     }
 
@@ -157,7 +169,9 @@ public class BooleanHypercubeVisualization {
             return circle;
 
         } else {
-            return new Circle(centerX + xOffset, yOffset, 4);
+            Circle mainCircle = new Circle(centerX + xOffset, yOffset, 4);
+            mainCircle.setFill(Color.BLUE);
+            return mainCircle;
         }
     }
 

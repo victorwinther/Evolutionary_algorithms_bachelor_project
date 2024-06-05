@@ -7,19 +7,41 @@ import group.ea.helperClasses.Timer;
 import group.ea.helperClasses.Data;
 import group.ea.problem.Problem;
 import group.ea.searchspace.SearchSpace;
+import group.ea.structure.StoppingCriterias.MaxGenerationsCriterion;
+import group.ea.structure.StoppingCriterias.StoppingCriterion;
+import group.ea.structure.TSP.Solution;
+import group.ea.structure.helperClasses.Timer;
+import group.ea.structure.helperClasses.Data;
+import group.ea.structure.problem.Problem;
+import group.ea.structure.searchspace.SearchSpace;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.scene.chart.XYChart;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.util.Duration;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Algorithm {
-    public int mu = 1;
-    public int lambda = 1;
+    protected int mu = 0;
+    protected int lambda = 0;
     Problem problem;
 
     protected Solution _sl;
+
+    public int getFunctionEvaluations() {
+        return functionEvaluations;
+    }
+
     protected int functionEvaluations = 0;
     protected Solution _cloneSl;
+
+    protected boolean graphicsOn = true;
 
     public SearchSpace getSearchSpace() {
         return searchSpace;
@@ -56,6 +78,8 @@ public abstract class Algorithm {
         this.initialize();
         timer = new Timer();
     }
+
+
     public void addStoppingCriterion(StoppingCriterion criterion) {
         stoppingCriteria.add(criterion);
     }
@@ -68,6 +92,15 @@ public abstract class Algorithm {
         }
         return false;
     }
+    public int getMaxGenerations() {
+        for (StoppingCriterion criterion : stoppingCriteria) {
+            if (criterion instanceof MaxGenerationsCriterion) {
+                MaxGenerationsCriterion maxGenCriterion = (MaxGenerationsCriterion) criterion;
+                return maxGenCriterion.getMaxGenerations();
+            }
+        }
+        throw new IllegalStateException("MaxGenerationsCriterion not found in stopping criteria.");
+    }
 
     public abstract void performSingleUpdate(int generation);
 
@@ -75,7 +108,7 @@ public abstract class Algorithm {
 
     public void runAlgorithm() {
         timer.startTimer("Time elapsed");
-        while (!checkStoppingCriteria()) {
+        while (!checkStoppingCriteria() && !stoppingMet) {
             performSingleUpdate(generation);
             generation++;
         }

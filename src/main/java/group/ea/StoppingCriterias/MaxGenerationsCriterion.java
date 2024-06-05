@@ -14,4 +14,8 @@ public class MaxGenerationsCriterion implements StoppingCriterion {
         public boolean isMet(Algorithm algorithm) {
             return algorithm.getGeneration() >= maxGenerations;
         }
+
+        public int getMaxGenerations() {
+            return maxGenerations;
+        }
     }

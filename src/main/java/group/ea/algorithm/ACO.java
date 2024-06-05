@@ -50,12 +50,10 @@ public class ACO extends Algorithm {
         _generation = generation;
         improvedInGeneration = false;
 
-
         if(generation == 0){
             //listener.firstSolution(_sl);
             System.out.println("Generation 0 values: " + alpha + " " + beta + " " + numberOfAnts);
         }
-
 
 
         if (generation > maxGeneration) {
@@ -69,7 +67,6 @@ public class ACO extends Algorithm {
                 localSearch();
             }
             System.out.println("Fitness in solution after" + _cloneSl.computeFitness());
-
 
 
             TSPDATA tspdata = new TSPDATA(_cloneSl,_cloneSl.getSolution(),generation,(int) bestAnt.getCost(),gain,"ACO");

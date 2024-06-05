@@ -20,11 +20,8 @@ public class Ant {
         if(cityID == -1){
             System.out.println(cityID + " CityID");
         }
-
-
         trailOfAnt[counter++] = cityID;
         visited[cityID] = true;
-
     }
 
     public boolean visitedCity(int cityID){

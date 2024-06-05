@@ -174,6 +174,7 @@ public class Schedule implements Cloneable {
                 break;
             case "(u+y) EA":
                 uPlusyEA uyEA = new uPlusyEA(this.searchSpace, this.problem);
+                System.out.println("Mu: " + this.mu + " Lambda: " + this.lambda);
                 uyEA.setMu(this.mu);
                 uyEA.setLambda(this.lambda);
                 uyEA.initialize();

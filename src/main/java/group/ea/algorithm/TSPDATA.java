@@ -4,6 +4,8 @@ import group.ea.problem.TSP.City;
 import group.ea.problem.TSP.Solution;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class TSPDATA {
@@ -111,4 +113,18 @@ public class TSPDATA {
     public int getFunctionEvaluations() {
         return functionEvaluations;
     }
-}
+    public int getOptimum() {
+        String name = solution.get_tsp().getLastPartOfFilename();
+        if (Objects.equals(name, "berlin52")) {
+            return 7544;
+        } else if (Objects.equals(name, "a280")) {
+            return 2579;
+        } else if (Objects.equals(name, "bier127")){
+            return 118282;
+        }
+    return 0;
+    }
+
+    }
+
+

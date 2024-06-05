@@ -9,8 +9,6 @@ import java.util.*;
 
 public class PermutationuPlusyEA extends Algorithm {
     double chance = 0.5;
-    int lambda;
-    int mu;
     Random rand = new Random();
     Solution bestSolution;
 
@@ -22,15 +20,15 @@ public class PermutationuPlusyEA extends Algorithm {
         bestFitness = _sl.computeFitness();
     }
 
-    public void setMu(int mu) {this.mu = mu;}
-    public void setLambda(int lambda) {this.lambda = lambda;}
 
     @Override
     public void initialize() {
-        for (int i = 0; i < mu; i++) {
-            Solution solution = new Solution((TSPParser) searchSpace);
-            solution.shuffle(500);
-            population.add(solution);
+        if(mu > 0) {
+            for (int i = 0; i < mu; i++) {
+                Solution solution = new Solution((TSPParser) searchSpace);
+                solution.shuffle(500);
+                population.add(solution);
+            }
         }
     }
 
@@ -38,7 +36,7 @@ public class PermutationuPlusyEA extends Algorithm {
     public void performSingleUpdate(int gen) {
         int n = searchSpace.length;
 
-        while (true) {
+        while (!checkStoppingCriteria()) {
             boolean threeOpt = false;
             for (int i = 0; i < lambda; i++) {
                 if (generation == 0) {
@@ -65,18 +63,17 @@ public class PermutationuPlusyEA extends Algorithm {
             bestSolution = population.get(0);
 
             bestFitness = bestSolution.computeFitness();
+
             //System.out.println(bestFitness);
-            TSPDATA tspdata = new TSPDATA(bestSolution, bestSolution.getSolution(), generation, bestFitness, bestSolution.getImprovement,"(u+y)EA");
-            tspdata.setFunctionEvaluations(functionEvaluations);
-            tspdata.setTimeElapsed(timer.getCurrentTimer());
-            listener.receiveUpdate(tspdata);
-            if (checkStoppingCriteria()) {
-                break;
+            if(graphicsOn) {
+                TSPDATA tspdata = new TSPDATA(bestSolution, bestSolution.getSolution(), generation, bestFitness, bestSolution.getImprovement, "(u+y)EA");
+                tspdata.setFunctionEvaluations(functionEvaluations);
+                tspdata.setTimeElapsed(timer.getCurrentTimer());
+                listener.receiveUpdate(tspdata);
             }
             generation++;
-            //System.out.println(generation);
-
         }
+        stoppingMet = true;
     }
 
     private ArrayList<Solution> selectFittest(List<Solution> newPopulation, int mu) {
@@ -86,7 +83,7 @@ public class PermutationuPlusyEA extends Algorithm {
         for (Solution s : newPopulation) {
             System.out.println(s.computeFitness() + " ");
         }
-        */
+*/
 
             newPopulation.sort(Comparator.comparingDouble(Solution::computeFitness));
 /*
@@ -94,9 +91,9 @@ public class PermutationuPlusyEA extends Algorithm {
             for (Solution s : newPopulation) {
                 System.out.println(s.computeFitness() + " ");
             }
-        */
 
 
+*/
             return new ArrayList<>(newPopulation.subList(0, mu));
         }
     }

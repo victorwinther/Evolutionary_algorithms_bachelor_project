@@ -57,12 +57,12 @@ public class main extends Application {
     }
 
     public static void main(String[] args) {
-       // runExperiment();
+        //runExperiment();
         //runExperiment3();
         launch(args);
        //runSingle();
        // runSingle2();
-       // runExperimentTSP();
+      //runExperimentTSP();
 
 
 
@@ -128,23 +128,30 @@ public class main extends Application {
     private static void runExperimentTSP() {
         int iterations = 1;
         int perfectCount = 0;
-        int[] iterationsLength = {100000,200000,300000,400000,500000,600000,700000,800000,900000,1000000}; // Example lengths
+        int[] iterationsLength = {5000,10000,20000,40000,80000,160000,320000}; // Example lengths
+        int runsPerObservation = 100;
+        int [] variableValue = {2,4,6,8};
+        int [] mu_values = {2,4,6,8};
+        Schedule newSchedule = new Schedule();
 
-        int runsPerObservation = 200;
         List<DataPoint> dataPoints = new ArrayList<>();
-        int optimumAverage = 0;
-
+        for(int mu : variableValue){
+        for(int value : variableValue) {
+            int optimumAverage = 0;
             for (int length : iterationsLength) {
                 int totalFitness = 0;
                 perfectCount = 0;
                 optimumAverage = 0;
-
                 for (int run = 0; run < runsPerObservation; run++) {
-                    Schedule newSchedule = new Schedule();
+                    newSchedule= new Schedule();
+                    newSchedule.setTSPProblem("berlin52");
                     newSchedule.setSearchSpaceString("Permutations");
                     newSchedule.setProblemString("TSP");
-                    newSchedule.setAlgorithmString("1+1 EA TSP");
+                    newSchedule.setMu(mu);
+                    newSchedule.setLambda(value);
+                    newSchedule.setAlgorithmString("(u+y) EA TSP");
                     newSchedule.setIterationBound(length);
+                    newSchedule.setOptimumReached(true);
                     newSchedule.setUpAlgorithm();
                     newSchedule.getAlgorithm().runAlgorithm();
                     int thisRunFitness = newSchedule.getAlgorithm().getFitness();
@@ -152,58 +159,49 @@ public class main extends Application {
                         perfectCount++;
                         optimumAverage += newSchedule.getAlgorithm().getGeneration();
                     }
-
                     totalFitness += thisRunFitness;
-                    // System.out.println("Done with run nr " + run + "with " + iterations + " iterations");
-
-                    //controller.setSolution(newSchedule.getAlgorithm().get_sl());
                 }
                 dataPoints.add(new DataPoint(length, totalFitness / runsPerObservation));
-                saveDataToCSV("TSP_experiment.csv", dataPoints);
-                System.out.println("Done with length " + length);
+                saveDataToCSV("TSP_experimentmu+lambda2.csv", dataPoints);
+                System.out.println("Done with length " + length + "mu and lambda value" + newSchedule.getAlgorithm().getMu() + " " + newSchedule.getAlgorithm().getLambda());
                 System.out.println(perfectCount);
-                if (perfectCount > 0) {
-                    System.out.println(optimumAverage / perfectCount);
-                } else {
-                    System.out.println("No perfect runs");
+                if(perfectCount > 0){
+                    System.out.println("Average iterations for perfect runs: " + optimumAverage / perfectCount);
                 }
             }
+        }}
 
         System.out.println("Experiment done");
 
     }
     public static void runExperiment(){
-        int[] bitStringLengths = {100,200,300,400,500}; // Example lengths
-        int [] variableValue = {1};
+        int[] bitStringLengths = {10,20,50,100,200,500,1000,2000,3000}; // Example lengths
         int runsPerObservation = 200;
 
         List<DataPoint> dataPoints = new ArrayList<>();
-        for (int value : variableValue) {
+
             for (int length : bitStringLengths) {
                 int totalIterations = 0;
                 for (int run = 0; run < runsPerObservation; run++) {
                     Schedule newSchedule = new Schedule();
                     newSchedule.setSearchSpaceString("Bit strings");
                     newSchedule.setDimension(length);
-                    newSchedule.setProblemString("LeadingOnes");
-                    newSchedule.setAlgorithmString("UY (1+1 EA");
-                    //newSchedule.setIterationBound(100000);
+                    newSchedule.setProblemString("OneMax");
+                    newSchedule.setAlgorithmString("RLS");
                     newSchedule.setOptimumReached(true);
                     newSchedule.setUpAlgorithm();
-                    newSchedule.getAlgorithm().lambda = 1;
                     newSchedule.getAlgorithm().runAlgorithm();
                     int iterations = newSchedule.getAlgorithm().getGeneration();
                     totalIterations = totalIterations + iterations;
-                    //System.out.println("Done with run nr " + run + "with " + iterations + " iterations");
                 }
                 dataPoints.add(new DataPoint(length, totalIterations / runsPerObservation));
-                saveDataToCSV("OneMaxUYmuLeadingOnes_experiment.csv", dataPoints);
-                System.out.println("Done with length " + length + " and value " + value);
+                saveDataToCSV("RLS_experiment.csv", dataPoints);
+                System.out.println("Done with length " + length);
             }
 
-        }
+
+
         System.out.println("Experiment done");
-       // saveDataToCSV("onemax_experiment.csv", dataPoints);
     }
 
     public static void runExperiment3(){
@@ -226,10 +224,10 @@ public class main extends Application {
                     //newSchedule.setIterationBound(100000);
                     newSchedule.setOptimumReached(true);
                     newSchedule.setUpAlgorithm();
-                    newSchedule.getAlgorithm().lambda = 1;
-                    newSchedule.getAlgorithm().mu = value;
+                    newSchedule.getAlgorithm().setMu(1);
+                    newSchedule.getAlgorithm().setMu(value); ;
                     newSchedule.getAlgorithm().runAlgorithm();
-                    realMuValue = newSchedule.getAlgorithm().mu;
+                    realMuValue = newSchedule.getAlgorithm().getMu();
                     int iterations = newSchedule.getAlgorithm().getGeneration();
                     totalIterations = totalIterations + iterations;
                     //System.out.println("Done with run nr " + run + "with " + iterations + " iterations");

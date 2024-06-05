@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<!---
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="group.ea.TspResultController"
+      alignment="CENTER" spacing="10">
+    <ScrollPane fitToWidth="true" fitToHeight="true">
+        <FlowPane fx:id="mainFlowPane" hgap="20" vgap="20" alignment="CENTER" prefWrapLength="1000"/>
+    </ScrollPane>
+</VBox>
+-->
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="group.ea.TspResultController">
+    <center>
+        <Pane fx:id="tspVisualization" prefWidth="800" prefHeight="600" style="-fx-background-color: white;" />
+    </center>
+    <bottom>
+        <HBox spacing="10" alignment="CENTER" BorderPane.alignment="CENTER" style="-fx-padding: 10;">
+            <Button fx:id="startButton" text="Start" onAction="#startVisualization"/>
+            <Button fx:id="pauseButton" text="Pause" onAction="#pauseVisualization"/>
+            <Button fx:id="resetButton" text="Reset" onAction="#resetVisualization"/>
+            <Label text="Speed:"/>
+            <Slider fx:id="speedSlider" min="0.1" max="10.0" value="1.0" blockIncrement="1.0"/>
+        </HBox>
+    </bottom>
+</BorderPane>

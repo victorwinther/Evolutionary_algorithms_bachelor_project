@@ -91,6 +91,10 @@ public class Data {
         this.functionEvaluations = functionEvaluations;
     }
 
+    public void setGeneration(int generation) {
+        this.generation = generation;
+    }
+
     // getters and setters for each field
     // ...
 }
