@@ -85,10 +85,7 @@ public class blueprintController implements Initializable {
         addCategoryOptions();
         addDescriptions();
         initializeBatchParameters();
-        searchspaceSelector.getItems().addAll(searchspaces);
-        problemSelector.getItems().addAll(problems);
         TSPSelector.getItems().addAll(TSPproblems);
-        algorithmSelector.getItems().addAll(algorithms);
         updateRuleSelector.getItems().addAll(ACOupdateRules);
         sortComboBoxItems(allComboBoxes);
 
@@ -139,7 +136,7 @@ public class blueprintController implements Initializable {
     private void addCategoryOptions() {
         categoryOptions.put("searchSpace", Arrays.asList("Bit strings", "Permutations"));
         categoryOptions.put("problem", Arrays.asList("OneMax", "LeadingOnes", "TSP"));
-        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA","(u+y) EA", "RLS", "(1+1) EA TSP", "Simulated Annealing", "Ant Colony Optimization"));
+        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA","(u+y) EA", "RLS", "(1+1) EA TSP", "Simulated Annealing", "Ant Colony Optimization", "Simulated Annealing TSP"));
         categoryOptions.put("tsp problems", Arrays.asList("berlin52", "bier127", "a280"));
         categoryOptions.put("updateRule", Arrays.asList("MMAS", "Elitist"));
     }
@@ -413,11 +410,11 @@ public class blueprintController implements Initializable {
                 dimensionTxtField.setDisable(false);
 
                 if (selector.getValue().equals("Bit strings")) {
-                    dependencies.addAll(Arrays.asList("TSP", "(1+1) EA TSP"));
-                    dependencies.removeAll(Arrays.asList("OneMax", "LeadingOnes", "(1+1) EA", "RLS", "TEMP"));
+                    dependencies.addAll(Arrays.asList("TSP", "(1+1) EA TSP", "Simulated Annealing TSP"));
+                    dependencies.removeAll(Arrays.asList("OneMax", "LeadingOnes", "(1+1) EA", "RLS", "Simulated Annealing"));
                 } else if (selector.getValue().equals("Permutations")) {
-                    dependencies.removeAll(Arrays.asList("TSP", "(1+1) EA TSP"));
-                    dependencies.addAll(Arrays.asList("OneMax", "LeadingOnes", "(1+1) EA", "RLS", "TEMP"));
+                    dependencies.removeAll(Arrays.asList("TSP", "(1+1) EA TSP", "Simulated Annealing TSP"));
+                    dependencies.addAll(Arrays.asList("OneMax", "LeadingOnes", "(1+1) EA", "RLS", "Simulated Annealing"));
                     dimensionLabel.setDisable(true);
                     dimensionTxtField.setDisable(true);
                 }
@@ -502,7 +499,6 @@ public class blueprintController implements Initializable {
 
         }
 
-
         if (algorithmSelector.getValue().equals("(u+y) EA")){
             if (problemSelector.getValue().equals("TSP")){
                 newSchedule.setAlgorithmString("(u+y) EA TSP");
@@ -511,10 +507,19 @@ public class blueprintController implements Initializable {
                 newSchedule.setAlgorithmString("(u+y) EA");
             }
         }
+        else if (algorithmSelector.getValue().equals("Ant Colony Optimization")) {
+            if (updateRuleSelector.getValue().equals("MMAS")) {
+                newSchedule.setAlgorithmString("Ant Colony Optimization MMAS");
+            } else {
+                newSchedule.setAlgorithmString("Ant Colony Optimization Elitist");
+            }
+        }
         else {
             newSchedule.setAlgorithmString(algorithmSelector.getValue());
         }
+
         newSchedule.setProblemString(problemSelector.getValue());
+
         if (optimumReached.isSelected()) {
             newSchedule.setOptimumReached(true);
         }

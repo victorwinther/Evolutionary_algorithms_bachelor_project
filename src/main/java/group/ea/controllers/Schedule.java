@@ -191,14 +191,17 @@ public class Schedule implements Cloneable {
                 permEA.initialize();
                 this.algorithm = permEA;
                 break;
-            case "TEMP":
-                System.out.println("temp");
+            case "Simulated Annealing TSP":
                 this.algorithm = new PermutationSA(this.searchSpace, this.problem);
                 algorithm.addStoppingCriterion(new TempStopping());
                 break;
-            case "Ant Colony Optimization":
-                this.algorithm = new ACO(this.searchSpace, this.problem);
-                this.algorithm.setUpdateRule(updateRule);
+            case "Ant Colony Optimization Elitist":
+                this.algorithm = new ELITIST(this.searchSpace, this.problem);
+                this.algorithm.setLocalSearch(localSearch);
+                this.algorithm.setValues(Integer.parseInt(optionalValues[0]), Double.parseDouble(optionalValues[1]), Double.parseDouble(optionalValues[2]));
+                break;
+            case "Ant Colony Optimization MMAS":
+                this.algorithm = new MMAS(this.searchSpace, this.problem);
                 this.algorithm.setLocalSearch(localSearch);
                 this.algorithm.setValues(Integer.parseInt(optionalValues[0]), Double.parseDouble(optionalValues[1]), Double.parseDouble(optionalValues[2]));
                 break;
