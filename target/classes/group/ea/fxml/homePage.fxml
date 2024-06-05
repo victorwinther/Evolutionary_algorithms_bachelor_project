@@ -162,6 +162,11 @@
                   <Button fx:id="createBlueprintBtn" mnemonicParsing="false" onAction="#createBlueprintHandler" style="-fx-background-color: #353941;" stylesheets="@../../../css/styling.css" text="CREATE" textFill="WHITE" />
                </children>
             </HBox>
+            <Separator opacity="0.5" orientation="VERTICAL" prefHeight="200.0">
+               <HBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </HBox.margin>
+            </Separator>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="335.0" spacing="15.0">
                <children>
                   <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startEvolution" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="START" textFill="WHITE" />
@@ -213,11 +218,6 @@
                   </StackPane>
                </children>
             </VBox>
-            <Separator opacity="0.5" orientation="VERTICAL" prefHeight="200.0">
-               <HBox.margin>
-                  <Insets bottom="10.0" top="10.0" />
-               </HBox.margin>
-            </Separator>
          </children>
          <padding>
             <Insets left="20.0" />
