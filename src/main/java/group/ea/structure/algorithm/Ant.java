@@ -40,6 +40,7 @@ public class Ant {
     public void clearData(){
         for (int i = 0; i < _length; i++)
             visited[i] = false;
+        trailOfAnt = new int[_length];
         counter = 0;
     }
 

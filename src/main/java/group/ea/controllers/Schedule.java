@@ -195,10 +195,10 @@ public class Schedule implements Cloneable {
                 algorithm.addStoppingCriterion(new TempStopping());
                 break;
             case "Ant System":
-                System.out.println("ANT");
+                //System.out.println("ANT");
                 this.algorithm = new ACO(this.searchSpace, this.problem);
                 this.algorithm.setValues(Integer.parseInt(optionalValues[0]), Double.parseDouble(optionalValues[1]), Double.parseDouble(optionalValues[2]));
-                System.out.println(optionalValues[0]);
+                //System.out.println(optionalValues[0]);
                 break;
             default:
                 this.algorithm = null;

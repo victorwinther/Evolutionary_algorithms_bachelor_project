@@ -72,6 +72,7 @@ public class main extends Application {
        //runSingle();
        // runSingle2();
       //runExperimentTSP();
+        //RUNACOTEST();
 
 
 
@@ -250,6 +251,67 @@ public class main extends Application {
         System.out.println("Experiment done");
         // saveDataToCSV("onemax_experiment.csv", dataPoints);
     }
+
+
+    private static void RUNACOTEST() {
+        System.out.println("INIT");
+        int perfectCount = 0;
+        int[] iterationsLength = {250}; // Example lengths
+        int runsPerObservation = 10;
+        double [] alfaValues = {1};
+        int [] betaValues = {2};
+        int [] amountOfAnts = {100};
+        Schedule newSchedule = new Schedule();
+
+        List<DataPoint> dataPoints = new ArrayList<>();
+        for(int ants : amountOfAnts){
+            for(double alfa : alfaValues) {
+                for(double beta : betaValues){
+                    int optimumAverage = 0;
+                    for (int length : iterationsLength) {
+                        int totalFitness = 0;
+                        perfectCount = 0;
+                        optimumAverage = 0;
+                        for (int run = 0; run < runsPerObservation; run++) {
+                            System.out.println();
+                            System.out.println();
+                            newSchedule= new Schedule();
+                            newSchedule.setTSPProblem("berlin52");
+                            newSchedule.setSearchSpaceString("Permutations");
+                            newSchedule.setProblemString("TSP");
+                            newSchedule.setOptional(new String[]{String.valueOf(ants), String.valueOf(alfa), String.valueOf(beta)});
+                            newSchedule.setAlgorithmString("Ant System");
+                            newSchedule.setIterationBound(length);
+                            newSchedule.setOptimumReached(true);
+                            newSchedule.setUpAlgorithm();
+                            newSchedule.getAlgorithm().runAlgorithm();
+                            int thisRunFitness = newSchedule.getAlgorithm().getFitness();
+                            if (thisRunFitness == 7544) {
+                                perfectCount++;
+                                optimumAverage += newSchedule.getAlgorithm().getGeneration();
+                            }
+                            totalFitness += thisRunFitness;
+                        }
+                        dataPoints.add(new DataPoint(length, totalFitness / runsPerObservation));
+                        saveDataToCSV("TSP_experimentACO.csv", dataPoints);
+                        System.out.println("Done with length " + length + "ANTS ALFA BETA" + ants + " " + alfa + " " + beta);
+                        System.out.println(perfectCount);
+                        if(perfectCount > 0){
+                            System.out.println("Average iterations for perfect runs: " + optimumAverage / perfectCount);
+                        }
+                    }
+                }
+
+            }
+        }
+
+        System.out.println("Experiment done");
+
+    }
+
+
+
+
     public static void saveDataToCSV(String filename, List<DataPoint> dataPoints) {
         try (FileWriter writer = new FileWriter(filename)) {
             writer.append("BitStringLength,Iterations\n");
@@ -261,7 +323,8 @@ public class main extends Application {
             e.printStackTrace();
         }
     }
-    }
+}
+
 
 
 

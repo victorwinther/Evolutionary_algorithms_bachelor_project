@@ -54,25 +54,28 @@ public class ACO extends Algorithm {
 
         if(generation == 0){
             //listener.firstSolution(_sl);
-            System.out.println("Generation 0 values: " + alpha + " " + beta + " " + numberOfAnts);
+            //System.out.println("Generation 0 values: " + alpha + " " + beta + " " + numberOfAnts);
         }
+
+
+
 
 
         if (generation > maxGeneration) {
 
-            System.out.println("done");
-            System.out.println("Best " + bestAnt.getCost());
+            //System.out.println("done");
+            //System.out.println("Best " + bestAnt.getCost());
 
             antToSolution(bestAnt);
-            System.out.println("Fitness in solution before" + _cloneSl.computeFitness());
+            //System.out.println("Fitness in solution before" + _cloneSl.computeFitness());
             if (_localSearch) {
                 localSearch();
             }
-            System.out.println("Fitness in solution after" + _cloneSl.computeFitness());
+            //System.out.println("Fitness in solution after" + _cloneSl.computeFitness());
 
 
-            TSPDATA tspdata = new TSPDATA(_cloneSl,_cloneSl.getSolution(),generation,(int) bestAnt.getCost(),gain,"ACO");
-            listener.receiveUpdate(tspdata);
+            //TSPDATA tspdata = new TSPDATA(_cloneSl,_cloneSl.getSolution(),generation,(int) bestAnt.getCost(),gain,"ACO");
+            //listener.receiveUpdate(tspdata);
         }
 
 
@@ -80,6 +83,9 @@ public class ACO extends Algorithm {
         updateEvaporation();
         updatePheromone();
 
+        if((generation) % 10 == 0){
+            System.out.println(bestAnt.getCost());
+        }
     }
 
     public void Ants() {
@@ -110,9 +116,10 @@ public class ACO extends Algorithm {
 
             gain = (int) (temp - bestInGeneration);
             antToSolution(bestAnt);
-            TSPDATA tspdata = new TSPDATA(_cloneSl,_cloneSl.getSolution(),generation,(int) bestAnt.getCost(),gain,"ACO");
-            tspdata.setTimeElapsed(timer.getCurrentTimer());
-            listener.receiveUpdate(tspdata);
+
+            //TSPDATA tspdata = new TSPDATA(_cloneSl,_cloneSl.getSolution(),generation,(int) bestAnt.getCost(),gain,"ACO");
+            //tspdata.setTimeElapsed(timer.getCurrentTimer());
+            //listener.receiveUpdate(tspdata);
             improvedInGeneration = false;
         }
 
@@ -163,36 +170,19 @@ public class ACO extends Algorithm {
     }
 
     private int calculateCity(int step, Ant a) {
-        // First we take the random possibility of just going a way
-        int t = RNG.nextInt(dimension - step);
-        // Fuzzyrandom just being a number to determine how random
-        double test = RNG.nextDouble();
-        if (test < fuzzyRandom) {
-            int cityIndex = 0;
-            for (int i = 0; i < dimension; i++) {
-                if (i == t && !a.visitedCity(i)) {
-                    cityIndex = i;
-                    break;
-                }
-            }
-            // random city we haven't visited before
-            if (cityIndex != -1) {
-                return cityIndex;
-            }
-        }
-        // Now we assume we go by calculations
         // first let's calculate the pheromone and heuristic
         calculatePheromoneHeuristic(step, a);
 
         // accumulative
-        double r = RNG.nextDouble();
-        double total = 0;
+        double rand = RNG.nextDouble();
+        double city = 0;
         for (int i = 0; i < dimension; i++) {
-            total += probabilities[i];
-            if (total >= r) {
+            city += probabilities[i];
+            if (city >= rand) {
                 return i;
             }
         }
+
         return -1; // Fallback in case of an error
     }
 
@@ -201,18 +191,47 @@ public class ACO extends Algorithm {
         double sumProb = 0.0;
         for (int i = 0; i < dimension; i++) {
             if (!a.visitedCity(i)) {
-                sumProb += Math.pow(pheromone[index][i], alpha) * Math.pow(1.0 / graph[index][i], beta);
+                double pheromoneValue = pheromone[index][i];
+                double graphValue = graph[index][i];
+
+                if (graphValue <= 0) {
+                    throw new IllegalArgumentException("Graph values must be positive and non-zero.");
+                }
+
+                sumProb += Math.pow(pheromoneValue, alpha) * Math.pow(1.0 / graphValue, beta);
             }
         }
+
+
+
         for (int j = 0; j < dimension; j++) {
             if (a.visitedCity(j)) {
                 probabilities[j] = 0.0;
             } else {
+
+                if (sumProb == 0) {
+                    for (int i = 0; i < dimension; i++) {
+                        if (!a.visitedCity(i)){
+                            double pheromoneValue = pheromone[index][i];
+                            double graphValue = graph[index][i];
+                            System.out.println(pheromoneValue + " " + graphValue);
+                            System.out.println( Math.pow(pheromoneValue, alpha) * Math.pow(1.0 / graphValue, beta));
+                        }
+
+                    }
+
+                    throw new ArithmeticException("Sum of probabilities is zero, which will lead to division by zero.");
+                }
                 double numerator = Math.pow(pheromone[index][j], alpha) * Math.pow(1.0 / graph[index][j], beta);
+
+                // Debugging: Print numerator and probability
+                //System.out.println("Numerator: " + numerator);
                 probabilities[j] = numerator / sumProb;
+                //System.out.println("Probability[" + j + "]: " + probabilities[j]);
             }
         }
     }
+
 
     public void setupStructure() {
         graph = new double[dimension][dimension];
@@ -317,5 +336,8 @@ public class ACO extends Algorithm {
         _cloneSl.computeNewList(list);
     }
 
-
+    @Override
+    public int getFitness() {
+        return (int)bestAnt.getCost();
+    }
 }
