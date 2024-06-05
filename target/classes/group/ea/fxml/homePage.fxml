@@ -31,14 +31,22 @@
                <content>
                   <VBox fx:id="generalSettings" alignment="TOP_CENTER" prefHeight="589.0" prefWidth="197.0" style="-fx-background-color: #26282B;">
                      <children>
-                        <Label maxWidth="1.7976931348623157E308" prefHeight="29.0" prefWidth="187.0" text="GENERAL SETTINGS" textFill="WHITE">
+                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="63.0" prefWidth="189.0" spacing="20.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#loadScheduleHandler" prefHeight="26.0" prefWidth="70.0" stylesheets="@../../../css/buttonStyle.css" text="LOAD" textFill="WHITE">
+                                 <HBox.margin>
+                                    <Insets left="8.0" />
+                                 </HBox.margin></Button>
+                              <Button fx:id="createBlueprintBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#createBlueprintHandler" prefHeight="26.0" prefWidth="70.0" stylesheets="@../../../css/buttonStyle.css" text="CREATE" textFill="WHITE" />
+                           </children>
                            <VBox.margin>
                               <Insets left="10.0" />
                            </VBox.margin>
-                           <font>
-                              <Font name="System Bold" size="16.0" />
-                           </font>
-                        </Label>
+                        </HBox>
+                        <Label maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="320.0" text="GENERAL SETTINGS" textFill="WHITE">
+                           <VBox.margin>
+                              <Insets left="10.0" />
+                           </VBox.margin></Label>
                         <Separator opacity="0.5" prefWidth="294.0">
                            <padding>
                               <Insets left="5.0" right="20.0" />
@@ -47,7 +55,7 @@
                               <Insets bottom="5.0" />
                            </VBox.margin>
                         </Separator>
-                        <GridPane fx:id="gridGeneralSettings" prefHeight="124.0" prefWidth="187.0">
+                        <GridPane fx:id="gridGeneralSettings" prefHeight="93.0" prefWidth="187.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="118.1370620727539" minWidth="10.0" prefWidth="99.22233581542969" />
                           </columnConstraints>
@@ -67,13 +75,10 @@
                               <Insets left="10.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="187.0" text="BATCH INFORMATION" textFill="WHITE">
+                        <Label maxWidth="1.7976931348623157E308" prefHeight="40.0" text="BATCH INFORMATION" textFill="WHITE">
                            <VBox.margin>
                               <Insets left="10.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font name="System Bold" size="16.0" />
-                           </font></Label>
+                           </VBox.margin></Label>
                         <Separator opacity="0.5" prefWidth="200.0">
                            <padding>
                               <Insets left="5.0" right="20.0" />
@@ -82,7 +87,7 @@
                               <Insets bottom="5.0" />
                            </VBox.margin>
                         </Separator>
-                        <GridPane fx:id="batchInfo" prefHeight="93.0" prefWidth="187.0">
+                        <GridPane fx:id="batchInfo" prefHeight="59.0" prefWidth="187.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -104,13 +109,10 @@
                               <Insets left="10.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="187.0" text="STATISTICS " textFill="WHITE">
+                        <Label maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="173.0" text="STATISTICS OF CURRENT BRANCH" textFill="WHITE">
                            <VBox.margin>
                               <Insets left="10.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font name="System Bold" size="16.0" />
-                           </font></Label>
+                           </VBox.margin></Label>
                         <Separator opacity="0.5" prefWidth="200.0">
                            <padding>
                               <Insets left="5.0" right="20.0" />
@@ -137,17 +139,22 @@
                            <children>
                               <Label text="Max no. iterations" textFill="WHITE" />
                               <Label text="Avg no. iterations" textFill="WHITE" GridPane.rowIndex="1" />
-                              <Label text="Min. no.iterations" textFill="WHITE" GridPane.rowIndex="2" />
-                              <Label text="Max Func. Evals." textFill="WHITE" GridPane.rowIndex="3" />
-                              <Label text="Min Func. Evals." textFill="WHITE" GridPane.rowIndex="4" />
-                              <Label text="Max Fitness" textFill="WHITE" GridPane.rowIndex="5" />
-                              <Label text="Average Fitness" textFill="WHITE" GridPane.rowIndex="6" />
-                              <Label text="Minimum Fitness" textFill="WHITE" GridPane.rowIndex="7" />
+                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="2" />
+                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="3" />
+                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="4" />
+                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="5" />
+                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="6" />
+                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="7" />
                            </children>
                            <VBox.margin>
                               <Insets left="10.0" />
                            </VBox.margin>
                         </GridPane>
+                        <Separator prefWidth="200.0">
+                           <padding>
+                              <Insets left="5.0" right="20.0" />
+                           </padding>
+                        </Separator>
                      </children>
                      <padding>
                         <Insets top="10.0" />
@@ -161,21 +168,6 @@
    <bottom>
       <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="63.0" prefWidth="189.0" spacing="20.0">
-               <children>
-                  <Button mnemonicParsing="false" onAction="#loadScheduleHandler" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/buttonStyle.css" text="LOAD" textFill="WHITE">
-                     <HBox.margin>
-                        <Insets left="8.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button fx:id="createBlueprintBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#createBlueprintHandler" prefHeight="26.0" prefWidth="85.0" stylesheets="@../../../css/buttonStyle.css" text="CREATE" textFill="WHITE" />
-               </children>
-            </HBox>
-            <Separator opacity="0.5" orientation="VERTICAL" prefHeight="200.0">
-               <HBox.margin>
-                  <Insets bottom="10.0" top="10.0" />
-               </HBox.margin>
-            </Separator>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="335.0" spacing="15.0">
                <children>
                   <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startEvolution" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/styling.css" text="START" textFill="WHITE" />
@@ -185,23 +177,6 @@
                </children>
             </HBox>
             <Separator opacity="0.5" orientation="VERTICAL" prefHeight="80.0" prefWidth="19.0">
-               <HBox.margin>
-                  <Insets bottom="10.0" top="10.0" />
-               </HBox.margin>
-            </Separator>
-            <VBox alignment="CENTER" prefHeight="100.0" prefWidth="130.0" spacing="6.0">
-               <children>
-                  <Label text="Speed" textFill="WHITE" />
-                  <StackPane>
-                     <children>
-
-                        <Slider fx:id="sliderSpeed" blockIncrement="1.0" disable="true" majorTickUnit="1.0" max="10.0" min="0.1" prefHeight="26.0" prefWidth="119.0" showTickMarks="true" stylesheets="@../../../css/styling.css" value="1.0" />
-
-                     </children>
-                  </StackPane>
-               </children>
-            </VBox>
-            <Separator opacity="0.5" orientation="VERTICAL" prefHeight="200.0">
                <HBox.margin>
                   <Insets bottom="10.0" top="10.0" />
                </HBox.margin>
@@ -227,6 +202,28 @@
                   </GridPane>
                </children>
             </VBox>
+            <Separator opacity="0.5" orientation="VERTICAL" prefHeight="200.0">
+               <HBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </HBox.margin>
+            </Separator>
+            <VBox alignment="CENTER" prefHeight="100.0" prefWidth="156.0" spacing="6.0">
+               <children>
+                  <Label text="Speed" textFill="WHITE" />
+                  <StackPane>
+                     <children>
+
+                        <Slider fx:id="sliderSpeed" blockIncrement="1.0" disable="true" majorTickUnit="1.0" max="10.0" min="0.1" showTickMarks="true" stylesheets="@../../../css/styling.css" value="1.0" />
+
+                     </children>
+                  </StackPane>
+               </children>
+            </VBox>
+            <Separator opacity="0.5" orientation="VERTICAL" prefHeight="200.0">
+               <HBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </HBox.margin>
+            </Separator>
          </children>
          <padding>
             <Insets left="20.0" />

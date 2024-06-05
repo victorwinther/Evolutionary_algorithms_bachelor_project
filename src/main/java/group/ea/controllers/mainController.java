@@ -488,7 +488,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private void startAllEvolutions(Schedule schedule) {
         prepareUIBeforeAlgorithmRuns(schedule);
-        if (currentSchedule.getProblemString() == "TSP") {
+        if (currentSchedule.getProblemString().equals("TSP")) {
             resetVisualization();
             startVisualization();
 

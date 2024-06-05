@@ -312,9 +312,7 @@ public class ACO extends Algorithm {
     public void setUpdateRule(String rule){
         //TODO do something
     }
-    public void setLocalSearch(boolean search){
-        _localSearch = search;
-    }
+    public void setLocalSearch(boolean search){_localSearch = search;}
 
     private void antToSolution(Ant a){
         int[] list = a.getTrailOfAnt();
