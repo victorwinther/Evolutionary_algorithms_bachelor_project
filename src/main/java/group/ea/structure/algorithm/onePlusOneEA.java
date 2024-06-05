@@ -39,17 +39,23 @@ public class onePlusOneEA extends Algorithm {
                 data.setBitString(bitString);
                 data.setFitness(bestFitness);
             }
-            if (checkStoppingCriteria()) {
-                data.setStop(true);
-                functionEvaluations--;
-            }
             functionEvaluations++;
             data.setFunctionEvaluations(functionEvaluations);
             data.setTimeElapsed(timer.getCurrentTimer());
-            listener.receiveBitstringUpdate(data);
             generation++;
+            if (checkStoppingCriteria()) {
+                data.setStop(true);
+                //generation--;
+                data.setGeneration(generation);
+                listener.receiveBitstringUpdate(data);
+                break;
+            }
+            listener.receiveBitstringUpdate(data);
+
+
 
         }
+        generation--;
         stoppingMet = true;
     }
 
@@ -57,6 +63,5 @@ public class onePlusOneEA extends Algorithm {
     public void initialize() {
         bitString = searchSpace.init();
         bestFitness = (int) problem.computeFitness(bitString);
-
     }
 }

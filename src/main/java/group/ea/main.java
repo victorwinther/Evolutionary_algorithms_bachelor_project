@@ -66,12 +66,12 @@ public class main extends Application {
     }
 
     public static void main(String[] args) {
-       // runExperiment();
+        //runExperiment();
         //runExperiment3();
-        //launch(args);
+        launch(args);
        //runSingle();
        // runSingle2();
-      runExperimentTSP();
+      //runExperimentTSP();
 
 
 
@@ -184,32 +184,32 @@ public class main extends Application {
 
     }
     public static void runExperiment(){
-        int[] bitStringLengths = {100,200,300,400,500}; // Example lengths
-        int [] variableValue = {1};
+        int[] bitStringLengths = {10,20,50,100,200,500,1000,2000,3000}; // Example lengths
         int runsPerObservation = 200;
 
         List<DataPoint> dataPoints = new ArrayList<>();
-        for (int value : variableValue) {
+
             for (int length : bitStringLengths) {
                 int totalIterations = 0;
                 for (int run = 0; run < runsPerObservation; run++) {
                     Schedule newSchedule = new Schedule();
                     newSchedule.setSearchSpaceString("Bit strings");
                     newSchedule.setDimension(length);
-                    newSchedule.setProblemString("LeadingOnes");
-                    newSchedule.setAlgorithmString("UY (1+1 EA");
+                    newSchedule.setProblemString("OneMax");
+                    newSchedule.setAlgorithmString("RLS");
                     newSchedule.setOptimumReached(true);
                     newSchedule.setUpAlgorithm();
-                    newSchedule.getAlgorithm().setMu(1);
                     newSchedule.getAlgorithm().runAlgorithm();
                     int iterations = newSchedule.getAlgorithm().getGeneration();
                     totalIterations = totalIterations + iterations;
                 }
                 dataPoints.add(new DataPoint(length, totalIterations / runsPerObservation));
-                saveDataToCSV("OneMaxUYmuLeadingOnes_experiment.csv", dataPoints);
+                saveDataToCSV("RLS_experiment.csv", dataPoints);
+                System.out.println("Done with length " + length);
             }
 
-        }
+
+
         System.out.println("Experiment done");
     }
 

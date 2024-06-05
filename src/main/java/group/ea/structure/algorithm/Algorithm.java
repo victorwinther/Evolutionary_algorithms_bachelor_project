@@ -1,6 +1,7 @@
 package group.ea.structure.algorithm;
 
 import group.ea.controllers.mainController;
+import group.ea.structure.StoppingCriterias.MaxGenerationsCriterion;
 import group.ea.structure.StoppingCriterias.StoppingCriterion;
 import group.ea.structure.TSP.Solution;
 import group.ea.structure.helperClasses.Timer;
@@ -27,10 +28,15 @@ public abstract class Algorithm {
     Problem problem;
 
     protected Solution _sl;
+
+    public int getFunctionEvaluations() {
+        return functionEvaluations;
+    }
+
     protected int functionEvaluations = 0;
     protected Solution _cloneSl;
 
-    protected boolean graphicsOn = false;
+    protected boolean graphicsOn = true;
 
     public SearchSpace getSearchSpace() {
         return searchSpace;
@@ -80,6 +86,15 @@ public abstract class Algorithm {
             }
         }
         return false;
+    }
+    public int getMaxGenerations() {
+        for (StoppingCriterion criterion : stoppingCriteria) {
+            if (criterion instanceof MaxGenerationsCriterion) {
+                MaxGenerationsCriterion maxGenCriterion = (MaxGenerationsCriterion) criterion;
+                return maxGenCriterion.getMaxGenerations();
+            }
+        }
+        throw new IllegalStateException("MaxGenerationsCriterion not found in stopping criteria.");
     }
 
     public abstract void performSingleUpdate(int generation);

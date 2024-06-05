@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.*;
 public class uPlusyEA extends Algorithm{
-    public int mu;
-    public int lambda;
     ArrayList<String> population = new ArrayList<>();
     Random rand = new Random();
     public uPlusyEA(SearchSpace searchSpace, Problem problem) {
@@ -23,7 +21,7 @@ public class uPlusyEA extends Algorithm{
     public void performSingleUpdate(int gen) {
         int n = searchSpace.length;
         generation = 0;
-        Data firstData = new Data(bitString, generation, bestFitness, true, Optional.empty(),false);
+        Data firstData = new Data(population.get(0), generation, bestFitness, true, Optional.empty(),false);
         listener.receiveBitstringUpdate(firstData);
         //System.out.println("Performing single update og lambda værdi = " + lambda);
         while (true) {
@@ -76,11 +74,12 @@ public class uPlusyEA extends Algorithm{
 
     @Override
     public void initialize() {
-
-        for(int i = 0; i < mu; i++){
-            bitString = searchSpace.init();
-            population.add(bitString);
+        System.out.println("Initializing u+lambda EA" + mu + " + " + lambda);
+        if (mu > 0) {
+            for (int i = 0; i < mu; i++) {
+                bitString = searchSpace.init();
+                population.add(bitString);
+            }
         }
-
     }
 }
