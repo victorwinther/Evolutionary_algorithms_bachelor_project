@@ -1393,7 +1393,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 //updateVisualization();
             });
             setSolution(nextSolution);
-            if(nextSolution.getName() == "ACO" || nextSolution.getName() == "(u+y)EA" || nextSolution.getName() == "1+1EA"){
+            if(nextSolution.getName() == "ACO" || nextSolution.getName() == "(u+y)EA" || nextSolution.getName() == "1+1EA" || nextSolution.getName() == "SA"){
                 Platform.runLater(() -> {
                 deleteAndDraw(nextSolution.getSolution());
                 });

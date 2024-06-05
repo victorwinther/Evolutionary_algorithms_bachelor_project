@@ -2,11 +2,13 @@ package group.ea.algorithm;
 
 
 
+import group.ea.problem.TSP.City;
 import group.ea.problem.TSP.Solution;
 import group.ea.helperClasses.Data;
 import group.ea.problem.Problem;
 import group.ea.searchspace.SearchSpace;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 
@@ -16,7 +18,7 @@ import java.util.Optional;
 //MERGE THIS AND NORMAL SA
 public class PermutationSA extends  Algorithm {
 
-
+    Solution _slClone;
     double initTemp = 10000;
     double tempReduction = 0.9995;
 
@@ -36,14 +38,9 @@ public class PermutationSA extends  Algorithm {
 
     @Override
     public void performSingleUpdate(int generation) {
-        if(generation == 0){
-            Data firstData = new Data("bitString", generation, bestFitness, true, Optional.of(currentTemp),false);
-            listener.receiveBitstringUpdate(firstData);
-        }
-        Data data = new Data("bitString", generation, bestFitness, false, Optional.of(currentTemp),false);
+        _sl.clearData();
         if (currentTemp < 1) {
             System.out.println("too cool");
-            data.setStop(true);
             stoppingMet = true;
             return;
         }
@@ -52,25 +49,29 @@ public class PermutationSA extends  Algorithm {
 
         System.out.println(offspringFitness + " " + bestFitness);
 
+        functionEvaluations++;
 
         if (offspringFitness < bestFitness) {
-
-            data.setYesNo(true);
+            _slClone = new Solution(_sl.get_tsp());
+            _slClone.deepCopy(_sl);
+            TSPDATA tspdata = new TSPDATA(_slClone,_slClone.getSolution(),generation-1,offspringFitness,currentTemp,"SA");
+            tspdata.setTimeElapsed(timer.getCurrentTimer());
+            tspdata.setFunctionEvaluations(functionEvaluations);
+            listener.receiveUpdate(tspdata);
             bestFitness = offspringFitness;
-            data.setFitness(bestFitness);
 
         } else if (Math.exp((offspringFitness - bestFitness) / currentTemp) > Math.random()) {
             _sl.revert();
-            data.setBitString("Revert");
-            data.setFitness(bestFitness);
-
         }
         currentTemp *= tempReduction;
-        functionEvaluations++;
-        data.setTimeElapsed(timer.getCurrentTimer());
-        data.setFunctionEvaluations(functionEvaluations);
-        listener.receiveBitstringUpdate(data);
 
+    }
+    public void copyCreateCopy(Solution from){
+        _slClone = new Solution();
+        for(City c : from.getSolution()){
+            _slClone.getSolution().add(c);
+        }
+        _slClone.set_tsp(from.get_tsp());
 
     }
 }
