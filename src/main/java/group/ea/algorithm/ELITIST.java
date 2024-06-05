@@ -1,9 +1,9 @@
-package group.ea.structure.algorithm;
+package group.ea.algorithm;
 
-import group.ea.structure.problem.Problem;
-import group.ea.structure.TSP.Solution;
-import group.ea.structure.searchspace.SearchSpace;
-import javafx.util.Pair;
+
+
+import group.ea.problem.Problem;
+import group.ea.searchspace.SearchSpace;
 
 import java.util.ArrayList;
 import java.util.Optional;

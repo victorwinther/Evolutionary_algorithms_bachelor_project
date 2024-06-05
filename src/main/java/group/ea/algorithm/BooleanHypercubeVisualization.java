@@ -3,6 +3,7 @@ package group.ea.algorithm;
 import group.ea.controllers.mainController;
 import group.ea.problem.Problem;
 import group.ea.searchspace.SearchSpace;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;

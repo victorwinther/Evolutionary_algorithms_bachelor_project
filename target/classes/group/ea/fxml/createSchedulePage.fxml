@@ -44,7 +44,7 @@
                      <children>
                         <HBox prefHeight="456.0" prefWidth="959.0" VBox.vgrow="ALWAYS">
                            <children>
-                              <VBox maxHeight="-Infinity" prefHeight="429.0" prefWidth="458.0">
+                              <VBox maxHeight="-Infinity" prefHeight="453.0" prefWidth="500.0">
                                  <children>
                                     <HBox prefHeight="50.0" prefWidth="458.0">
                                        <children>
@@ -71,7 +71,7 @@
                                                       <Insets left="20.0" />
                                                    </VBox.margin>
                                                 </Label>
-                                                <TextField fx:id="dimensionTxtField" disable="true">
+                                                <TextField fx:id="dimensionTxtField" disable="true" text="100">
                                                    <VBox.margin>
                                                       <Insets bottom="20.0" left="20.0" top="10.0" />
                                                    </VBox.margin>
@@ -96,7 +96,7 @@
                                                 </ComboBox>
                                              </children>
                                           </VBox>
-                                          <VBox prefHeight="71.0" prefWidth="170.0">
+                                          <VBox prefHeight="71.0" prefWidth="130.0">
                                              <children>
                                                 <Label fx:id="tspProblemLbl" text="TSP Problem" textFill="WHITE">
                                                    <font>
@@ -115,21 +115,51 @@
                                           </VBox>
                                        </children>
                                     </HBox>
-                                    <Label text="Algorithm" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="12.0" />
-                                       </font>
-                                    </Label>
-                                    <ComboBox fx:id="algorithmSelector" onAction="#selectionHandler" prefWidth="170.0" stylesheets="@../../../css/styling.css">
-                                       <VBox.margin>
-                                          <Insets bottom="20.0" top="10.0" />
-                                       </VBox.margin>
-                                    </ComboBox>
+                                    <HBox prefHeight="100.0">
+                                       <children>
+                                          <VBox prefHeight="71.0" prefWidth="170.0">
+                                             <children>
+                                                <Label text="Algorithm" textFill="WHITE">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <ComboBox fx:id="algorithmSelector" onAction="#selectionHandler" prefWidth="170.0" stylesheets="@../../../css/styling.css">
+                                                   <VBox.margin>
+                                                      <Insets bottom="20.0" top="10.0" />
+                                                   </VBox.margin>
+                                                </ComboBox>
+                                             </children>
+                                          </VBox>
+                                          <VBox prefHeight="71.0" prefWidth="130.0">
+                                             <children>
+                                                <Label fx:id="updateRuleLbl" text="ACO update rule" textFill="WHITE">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                   <VBox.margin>
+                                                      <Insets left="20.0" />
+                                                   </VBox.margin>
+                                                </Label>
+                                                <ComboBox fx:id="updateRuleSelector" onAction="#selectionHandler" prefWidth="170.0" stylesheets="@../../../css/styling.css">
+                                                   <VBox.margin>
+                                                      <Insets bottom="20.0" left="20.0" top="10.0" />
+                                                   </VBox.margin>
+                                                </ComboBox>
+                                             </children>
+                                          </VBox>
+                                          <CheckBox fx:id="localSearchCheckbox" mnemonicParsing="false" onAction="#optimalSettingsHandler" text="Local search" textFill="WHITE">
+                                             <HBox.margin>
+                                                <Insets left="15.0" top="30.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                       </children>
+                                    </HBox>
                                     <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
                                        <children>
-                                          <VBox fillWidth="false" prefHeight="60.0">
+                                          <VBox alignment="CENTER" fillWidth="false" prefHeight="60.0">
                                              <children>
-                                                <Label fx:id="specialLbl1" maxWidth="1.7976931348623157E308" text="special" textFill="WHITE" VBox.vgrow="ALWAYS">
+                                                <Label fx:id="specialLbl1" maxWidth="1.7976931348623157E308" prefHeight="17.0" text="special" textAlignment="CENTER" textFill="WHITE">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
@@ -143,11 +173,8 @@
                                                    </VBox.margin>
                                                 </TextField>
                                              </children>
-                                             <HBox.margin>
-                                                <Insets left="5.0" right="5.0" />
-                                             </HBox.margin>
                                           </VBox>
-                                          <VBox fillWidth="false" prefHeight="60.0">
+                                          <VBox alignment="CENTER" fillWidth="false" prefHeight="60.0">
                                              <children>
                                                 <Label fx:id="specialLbl2" maxWidth="1.7976931348623157E308" prefHeight="17.0" text="special" textAlignment="CENTER" textFill="WHITE">
                                                    <font>
@@ -167,7 +194,7 @@
                                                 <Insets left="5.0" right="5.0" />
                                              </HBox.margin>
                                           </VBox>
-                                          <VBox fillWidth="false" prefHeight="60.0">
+                                          <VBox alignment="CENTER" fillWidth="false" prefHeight="60.0">
                                              <children>
                                                 <Label fx:id="specialLbl3" text="special" textFill="WHITE">
                                                    <font>
@@ -187,7 +214,7 @@
                                                 <Insets left="5.0" right="5.0" />
                                              </HBox.margin>
                                           </VBox>
-                                          <VBox fillWidth="false" prefHeight="60.0">
+                                          <VBox alignment="CENTER" fillWidth="false" prefHeight="60.0">
                                              <children>
                                                 <Label fx:id="specialLbl4" text="special" textFill="WHITE">
                                                    <font>
@@ -207,7 +234,7 @@
                                                 <Insets left="5.0" right="5.0" />
                                              </HBox.margin>
                                           </VBox>
-                                          <VBox fillWidth="false" prefHeight="60.0">
+                                          <VBox alignment="CENTER" fillWidth="false" prefHeight="60.0">
                                              <children>
                                                 <Label fx:id="specialLbl5" text="special" textFill="WHITE">
                                                    <font>
@@ -227,7 +254,10 @@
                                                 <Insets left="5.0" right="5.0" />
                                              </HBox.margin>
                                           </VBox>
-                                          <CheckBox fx:id="optimalSetting" mnemonicParsing="false" onAction="#optimalSettingsHandler" text="Optimal settings" textFill="WHITE" />
+                                          <CheckBox fx:id="optimalSetting" mnemonicParsing="false" onAction="#optimalSettingsHandler" text="Optimal settings" textFill="WHITE">
+                                             <HBox.margin>
+                                                <Insets top="5.0" />
+                                             </HBox.margin></CheckBox>
                                        </children>
                                     </HBox>
                                     <HBox prefHeight="100.0" prefWidth="200.0">
@@ -239,7 +269,7 @@
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <CheckBox fx:id="optimumReached" mnemonicParsing="false" onAction="#checkboxHandler" text="Optimum reached" textFill="WHITE">
+                                                <CheckBox fx:id="optimumReached" mnemonicParsing="false" onAction="#checkboxHandler" selected="true" text="Optimum reached" textFill="WHITE">
                                                    <VBox.margin>
                                                       <Insets bottom="10.0" top="10.0" />
                                                    </VBox.margin>
@@ -254,7 +284,7 @@
                                                       <Insets bottom="10.0" top="10.0" />
                                                    </VBox.margin>
                                                 </CheckBox>
-                                                <CheckBox fx:id="timeboundCheckbox" mnemonicParsing="false" onAction="#checkboxHandler" text="Time elapsed" textFill="WHITE">
+                                                <CheckBox fx:id="timeboundCheckbox" mnemonicParsing="false" onAction="#checkboxHandler" text="Time elapsed" textFill="WHITE" visible="false">
                                                    <VBox.margin>
                                                       <Insets bottom="10.0" top="10.0" />
                                                    </VBox.margin>
@@ -263,7 +293,7 @@
                                           </VBox>
                                           <VBox prefHeight="128.0" prefWidth="100.0">
                                              <children>
-                                                <Label fx:id="iterationLabel" disable="true" text="Iterations/sec" textFill="WHITE">
+                                                <Label fx:id="iterationLabel" disable="true" text="Iterations" textFill="WHITE">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
@@ -289,7 +319,7 @@
                                                       <Insets bottom="5.0" left="20.0" top="8.0" />
                                                    </VBox.margin>
                                                 </TextField>
-                                                <TextField fx:id="timeBoundTxtField" disable="true">
+                                                <TextField fx:id="timeBoundTxtField" disable="true" visible="false">
                                                    <VBox.margin>
                                                       <Insets bottom="5.0" left="20.0" top="8.0" />
                                                    </VBox.margin>
@@ -320,7 +350,7 @@
                         </HBox>
                         <VBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="184.0" prefWidth="959.0">
                            <children>
-                              <Label text="Batches" textFill="WHITE">
+                              <Label text="Batch" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
@@ -332,12 +362,12 @@
                               </ListView>
                               <HBox fillHeight="false" prefHeight="49.0" prefWidth="458.0">
                                  <children>
-                                    <Button alignment="CENTER" mnemonicParsing="false" onAction="#createNewBatch" prefHeight="54.0" prefWidth="100.0" stylesheets="@../../../css/buttonStyle.css" text="New batch" textFill="WHITE">
+                                    <Button alignment="CENTER" mnemonicParsing="false" onAction="#createNewBatch" prefHeight="54.0" prefWidth="130.0" stylesheets="@../../../css/buttonStyle.css" text="Add schedule" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="12.0" />
                                        </font>
                                     </Button>
-                                    <Button alignment="CENTER" mnemonicParsing="false" onAction="#removeBatch" prefHeight="54.0" prefWidth="100.0" stylesheets="@../../../css/buttonStyle.css" text="Remove batch" textFill="WHITE">
+                                    <Button alignment="CENTER" mnemonicParsing="false" onAction="#removeBatch" prefHeight="32.0" prefWidth="130.0" stylesheets="@../../../css/buttonStyle.css" text="Remove schedule" textFill="WHITE">
                                        <HBox.margin>
                                           <Insets left="20.0" />
                                        </HBox.margin>

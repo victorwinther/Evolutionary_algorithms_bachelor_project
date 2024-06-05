@@ -1,5 +1,6 @@
 package group.ea.algorithm;
 
+import group.ea.StoppingCriterias.MaxGenerationsCriterion;
 import group.ea.controllers.mainController;
 import group.ea.StoppingCriterias.StoppingCriterion;
 import group.ea.problem.TSP.Solution;
@@ -7,13 +8,7 @@ import group.ea.helperClasses.Timer;
 import group.ea.helperClasses.Data;
 import group.ea.problem.Problem;
 import group.ea.searchspace.SearchSpace;
-import group.ea.structure.StoppingCriterias.MaxGenerationsCriterion;
-import group.ea.structure.StoppingCriterias.StoppingCriterion;
-import group.ea.structure.TSP.Solution;
-import group.ea.structure.helperClasses.Timer;
-import group.ea.structure.helperClasses.Data;
-import group.ea.structure.problem.Problem;
-import group.ea.structure.searchspace.SearchSpace;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;

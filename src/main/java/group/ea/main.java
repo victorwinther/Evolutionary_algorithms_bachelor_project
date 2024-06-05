@@ -163,7 +163,7 @@ public class main extends Application {
                 }
                 dataPoints.add(new DataPoint(length, totalFitness / runsPerObservation));
                 saveDataToCSV("TSP_experimentmu+lambda2.csv", dataPoints);
-                System.out.println("Done with length " + length + "mu and lambda value" + newSchedule.getAlgorithm().getMu() + " " + newSchedule.getAlgorithm().getLambda());
+                //System.out.println("Done with length " + length + "mu and lambda value" + newSchedule.getAlgorithm().getMu() + " " + newSchedule.getAlgorithm().getLambda());
                 System.out.println(perfectCount);
                 if(perfectCount > 0){
                     System.out.println("Average iterations for perfect runs: " + optimumAverage / perfectCount);
@@ -227,7 +227,7 @@ public class main extends Application {
                     newSchedule.getAlgorithm().setMu(1);
                     newSchedule.getAlgorithm().setMu(value); ;
                     newSchedule.getAlgorithm().runAlgorithm();
-                    realMuValue = newSchedule.getAlgorithm().getMu();
+                   // realMuValue = newSchedule.getAlgorithm().getMu();
                     int iterations = newSchedule.getAlgorithm().getGeneration();
                     totalIterations = totalIterations + iterations;
                     //System.out.println("Done with run nr " + run + "with " + iterations + " iterations");
