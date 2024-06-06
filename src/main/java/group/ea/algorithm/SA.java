@@ -42,9 +42,6 @@ public class SA extends Algorithm {
             bestFitness = offspringFitness;
             data.setTimeElapsed(timer.getCurrentTimer());
             data.setFunctionEvaluations(functionEvaluations);
-            if(checkStoppingCriteria()){
-                data.setStop(true);
-            }
             listener.receiveBitstringUpdate(data);
         } else if (offspringFitness == bestFitness) {
             bitString = offspring;
@@ -58,7 +55,7 @@ public class SA extends Algorithm {
                 //data.setTemp(Optional.of(currentTemp));
             }
         }
-
+        currentTemp *= tempReduction;
     }
 
     private String mutate(String parent) {

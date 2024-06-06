@@ -43,34 +43,29 @@ public class ACO extends Algorithm {
     }
 
     @Override
-    public void performSingleUpdate(int generation) {
-        _generation = generation;
+    public void performSingleUpdate(int gen) {
         improvedInGeneration = false;
 
-        if(generation == 0){
-            //listener.firstSolution(_sl);
-            //System.out.println("Generation 0 values: " + alpha + " " + beta + " " + numberOfAnts);
-        }
 
 
+        if (generation > (getMaxGenerations() - 2)) {
 
-
-
-        if (generation > maxGeneration) {
-
-            //System.out.println("done");
-            //System.out.println("Best " + bestAnt.getCost());
+            System.out.println("done");
+            System.out.println("Best " + bestAnt.getCost());
 
             antToSolution(bestAnt);
             //System.out.println("Fitness in solution before" + _cloneSl.computeFitness());
             if (_localSearch) {
                 localSearch();
             }
-            //System.out.println("Fitness in solution after" + _cloneSl.computeFitness());
 
 
-            //TSPDATA tspdata = new TSPDATA(_cloneSl,_cloneSl.getSolution(),generation,(int) bestAnt.getCost(),gain,"ACO");
-            //listener.receiveUpdate(tspdata);
+            TSPDATA tspdata = new TSPDATA(_cloneSl,_cloneSl.getSolution(),generation,(int) bestAnt.getCost(),gain,"ACO");
+            tspdata.setTimeElapsed(timer.getCurrentTimer());
+            tspdata.setFunctionEvaluations(functionEvaluations);
+            tspdata.setStopped(true);
+            listener.receiveUpdate(tspdata);
+
         }
 
 
@@ -78,9 +73,6 @@ public class ACO extends Algorithm {
         updateEvaporation();
         updatePheromone();
 
-        if((generation) % 10 == 0){
-            System.out.println(bestAnt.getCost());
-        }
     }
 
     public void Ants() {
@@ -99,6 +91,7 @@ public class ACO extends Algorithm {
         // find best
         for (Ant a : ants) {
             a.setCost(calculateAntCost(a.getTrailOfAnt()));
+            functionEvaluations++;
             if (a.getCost() < bestInGeneration - 2) {
                 copyFromTo(a, bestAnt);
                 bestInGeneration = a.getCost();
@@ -112,9 +105,10 @@ public class ACO extends Algorithm {
             gain = (int) (temp - bestInGeneration);
             antToSolution(bestAnt);
 
-            //TSPDATA tspdata = new TSPDATA(_cloneSl,_cloneSl.getSolution(),generation,(int) bestAnt.getCost(),gain,"ACO");
-            //tspdata.setTimeElapsed(timer.getCurrentTimer());
-            //listener.receiveUpdate(tspdata);
+            TSPDATA tspdata = new TSPDATA(_cloneSl,_cloneSl.getSolution(),generation,(int) bestAnt.getCost(),gain,"ACO");
+            tspdata.setTimeElapsed(timer.getCurrentTimer());
+            tspdata.setFunctionEvaluations(functionEvaluations);
+            listener.receiveUpdate(tspdata);
             improvedInGeneration = false;
         }
 

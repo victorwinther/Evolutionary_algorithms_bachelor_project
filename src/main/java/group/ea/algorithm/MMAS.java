@@ -31,8 +31,8 @@ public class MMAS extends ACO {
     }
 
     private void limitPheromones(){
-        for (int i = 0; i  < (dimension / 2); i++){
-            for (int j = 0; j < (dimension / 2); j++){
+        for (int i = 0; i  < (dimension); i++){
+            for (int j = 0; j < (dimension); j++){
                 if (pheromone[i][j] > maxPheremone) {
                     pheromone[i][j] = maxPheremone;
                     pheromone[j][i] = maxPheremone;

@@ -373,8 +373,8 @@ public class blueprintController implements Initializable {
             }
             else if (Objects.equals(algorithmSelector.getValue(), "ACO Elitist")){
                 specialTxtField1.setText("100");
-                specialTxtField2.setText("5");
-                specialTxtField3.setText("10");
+                specialTxtField2.setText("1");
+                specialTxtField3.setText("2");
             }
             else if (Objects.equals(algorithmSelector.getValue(), "(u+y) EA")){
                 specialTxtField1.setText("15");

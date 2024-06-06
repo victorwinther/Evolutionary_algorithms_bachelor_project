@@ -228,8 +228,8 @@ public class main extends Application {
     private static void RUNACOTEST() {
         System.out.println("INIT");
         int perfectCount = 0;
-        int[] iterationsLength = {250}; // Example lengths
-        int runsPerObservation = 10;
+        int[] iterationsLength = {1000}; // Example lengths
+        int runsPerObservation = 25;
         double [] alfaValues = {1};
         int [] betaValues = {2};
         int [] amountOfAnts = {100};
