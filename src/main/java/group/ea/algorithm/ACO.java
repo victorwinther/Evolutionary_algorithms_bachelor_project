@@ -49,10 +49,6 @@ public class ACO extends Algorithm {
     public void performSingleUpdate(int gen) {
         improvedInGeneration = false;
 
-
-
-
-
         if (generation > (getMaxGenerations() - 2)) {
 
             System.out.println("done");
@@ -226,7 +222,7 @@ public class ACO extends Algorithm {
         antToSolution(a);
         localSearch();
         for (int i = 0; i < _depth; i++) {
-            temp = _cloneSl.getSolution().get(i).getId() % dimension;
+            temp = _cloneSl.getSolution().get(index -(_depth/2) + i).getId() % dimension;
             if (!a.visitedCity(i)) {
                 help = Math.pow(pheromone[index][temp], alpha) * Math.pow(1.0 / graph[index][temp], beta);
                 if (help > valueBest) {
@@ -235,7 +231,7 @@ public class ACO extends Algorithm {
                 }
             }
         }
-        if(next == dimension){
+        if(next == dimension || valueBest == -1){
             return chooseNextBestCity(step, a);
         }
         else {
