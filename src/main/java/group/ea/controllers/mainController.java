@@ -319,11 +319,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     }
                 }
 
-                if (dataMap.get("Problem")[0].equals("TSP")){
-                    String tspProblem = dataMap.get("TSP problem")[0];
-
-                    scheduleParameters.put("tspproblem", tspProblem);
-                }
 
                 if (isBatch){
                     for (String scheduleid : batchMap.keySet()){
@@ -370,10 +365,17 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
 
                 } else {
+
                     Schedule newSchedule = new Schedule();
                     newSchedule.setSearchSpaceString(scheduleParameters.get("searchspace"));
                     newSchedule.setProblemString(scheduleParameters.get("problem"));
                     newSchedule.setAlgorithmString(scheduleParameters.get("algorithm"));
+
+                    if (dataMap.get("Problem")[0].equals("TSP")){
+                        String tspProblem = dataMap.get("TSP problem")[0];
+
+                        scheduleParameters.put("tspproblem", tspProblem);
+                    }
 
                     if (!scheduleParameters.get("dimension").isEmpty()){
                         newSchedule.setDimension(Integer.parseInt(scheduleParameters.get("dimension")));
