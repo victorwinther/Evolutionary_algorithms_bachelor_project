@@ -23,12 +23,15 @@ public class ACO extends Algorithm {
     protected double[][] heuristic;
     protected double[][] graph;
     protected Ant bestAnt;
-    protected double fuzzyRandom = 0.00000;
+    protected double fuzzyRandom = 0.002;
     protected ArrayList<Ant> ants;
     int _generation;
     protected double bestInGeneration;
     protected boolean improvedInGeneration = false;
+    boolean flag;
+    int _foundCity;
     int gain = 0;
+    int _depth = 20;
 
     public ACO(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
@@ -45,6 +48,8 @@ public class ACO extends Algorithm {
     @Override
     public void performSingleUpdate(int gen) {
         improvedInGeneration = false;
+
+
 
 
 
@@ -159,8 +164,12 @@ public class ACO extends Algorithm {
     }
 
     private int calculateCity(int step, Ant a) {
+
         // first let's calculate the pheromone and heuristic
         calculatePheromoneHeuristic(step, a);
+        if(flag){
+            return _foundCity;
+        }
 
         // accumulative
         double rand = RNG.nextDouble();
@@ -171,56 +180,84 @@ public class ACO extends Algorithm {
                 return i;
             }
         }
-
+        System.out.println("Error in calculateCity");
         return -1; // Fallback in case of an error
     }
 
     public void calculatePheromoneHeuristic(int step, Ant a) {
+        flag = false;
         int index = a.getTrailOfAnt(step - 1);
         double sumProb = 0.0;
         for (int i = 0; i < dimension; i++) {
             if (!a.visitedCity(i)) {
                 double pheromoneValue = pheromone[index][i];
                 double graphValue = graph[index][i];
-
-                if (graphValue <= 0) {
-                    throw new IllegalArgumentException("Graph values must be positive and non-zero.");
-                }
-
                 sumProb += Math.pow(pheromoneValue, alpha) * Math.pow(1.0 / graphValue, beta);
             }
         }
 
-
-
         for (int j = 0; j < dimension; j++) {
             if (a.visitedCity(j)) {
                 probabilities[j] = 0.0;
-            } else {
-
-                if (sumProb == 0) {
-                    for (int i = 0; i < dimension; i++) {
-                        if (!a.visitedCity(i)){
-                            double pheromoneValue = pheromone[index][i];
-                            double graphValue = graph[index][i];
-                            System.out.println(pheromoneValue + " " + graphValue);
-                            System.out.println( Math.pow(pheromoneValue, alpha) * Math.pow(1.0 / graphValue, beta));
-                        }
-
-                    }
-
-                    throw new ArithmeticException("Sum of probabilities is zero, which will lead to division by zero.");
-                }
+            } else if(sumProb <= 0.0){
+                System.out.println("SumProb is 0, going into the next best city");
+                flag = true;
+                _foundCity = nnChooseBestCity(step, a);
+            }
+            else {
                 double numerator = Math.pow(pheromone[index][j], alpha) * Math.pow(1.0 / graph[index][j], beta);
-
-                // Debugging: Print numerator and probability
-                //System.out.println("Numerator: " + numerator);
                 probabilities[j] = numerator / sumProb;
-                //System.out.println("Probability[" + j + "]: " + probabilities[j]);
             }
         }
     }
 
+    public int nnChooseBestCity(int step, Ant a){
+        int index;
+        int next;
+        int temp;
+        double valueBest;
+        double help;
+        next = dimension;
+        index = a.getTrailOfAnt()[step - 1];
+        valueBest = -1;
+        antToSolution(a);
+        localSearch();
+        for (int i = 0; i < _depth; i++) {
+            temp = _cloneSl.getSolution().get(i).getId() % dimension;
+            if (!a.visitedCity(i)) {
+                help = Math.pow(pheromone[index][temp], alpha) * Math.pow(1.0 / graph[index][temp], beta);
+                if (help > valueBest) {
+                    valueBest = help;
+                    next = i;
+                }
+            }
+        }
+        if(next == dimension){
+            return chooseNextBestCity(step, a);
+        }
+        else {
+            System.out.println("Error in nnchooseNextBestCity " + next);
+            return next;
+        }
+
+    }
+
+    public int chooseNextBestCity(int step, Ant a){
+        int index = a.getTrailOfAnt(step - 1);
+        int next = dimension;
+        double valueBest = -1;
+        for(int i = 0; i < dimension; i++){
+            if(!a.visitedCity(i)){
+                double help = Math.pow(pheromone[index][i], alpha) * Math.pow(1.0 / graph[index][i], beta);
+                if(help > valueBest){
+                    valueBest = help;
+                    next = i;
+                }
+            }
+        }
+        System.out.println("Error in chooseNextBestCity " + next);
+        return next;
+    }
 
     public void setupStructure() {
         graph = new double[dimension][dimension];
