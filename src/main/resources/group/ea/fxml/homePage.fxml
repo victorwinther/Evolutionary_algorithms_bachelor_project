@@ -121,7 +121,7 @@
                               <Insets left="10.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label maxWidth="1.7976931348623157E308" prefHeight="24.0" prefWidth="187.0" text="STATISTICS OF CURRENT BRANCH" textFill="WHITE">
+                        <Label maxWidth="1.7976931348623157E308" prefHeight="24.0" prefWidth="187.0" text="STATISTICS " textFill="WHITE">
                            <VBox.margin>
                               <Insets left="10.0" />
                            </VBox.margin>
