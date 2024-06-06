@@ -121,6 +121,8 @@ public abstract class Algorithm {
 
             if (searchSpace instanceof BitString) {
                 Data firstData = new Data(bitString, generation, bestFitness, true, Optional.empty(), true);
+                firstData.setFunctionEvaluations(functionEvaluations);
+                firstData.setTimeElapsed(timer.getCurrentTimer());
                 listener.receiveBitstringUpdate(firstData);
             } else {
                 TSPDATA tspdata = new TSPDATA(_sl, _sl.getSolution(), generation, bestFitness, functionEvaluations, "(u+y)EA", true);

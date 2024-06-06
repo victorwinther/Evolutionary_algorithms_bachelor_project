@@ -59,11 +59,11 @@ public class TSPDATA {
 
     }
 
-    public TSPDATA (Solution solution, ArrayList<City> slSolution, int generation, int fitness, double improvement, String name, boolean stopped) {
+    public TSPDATA (Solution solution, ArrayList<City> slSolution, int generation, int fitness, int functionEvaluations, String name, boolean stopped) {
         this.solution = solution;
         this.generation = generation;
         this.fitness = fitness;
-        this.improvement = improvement;
+        this.functionEvaluations = functionEvaluations;
         this.slSolution = slSolution;
         allSolutions.add(this);
         this.name = name;

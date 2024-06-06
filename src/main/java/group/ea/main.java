@@ -27,32 +27,13 @@ public class main extends Application {
         Parent root = loader.load();
         Scene scene = new Scene(root);
         controller = loader.getController();
-        Platform.runLater(root::requestFocus);
 
-       // stage.initStyle(StageStyle.UNDECORATED); // no border
-        // Load the FXML file
-        /*
-        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/singlePage.fxml")));
-        Parent root = loader.load();
 
-        Platform.runLater(root::requestFocus); // don't focus any element initially
 
-        controller = loader.getController();
-*/
-
-        root.setOnMousePressed( event -> {
-            x = event.getSceneX();
-            y = event.getSceneY();
-        });
-        root.setOnMouseDragged(event -> {
-            stage.setX(event.getScreenX() - x);
-            stage.setY(event.getScreenY() - y);
-        });
-
-        // Set up the scene and stage
-        //Scene scene = new Scene(root);
         stage.setScene( scene);
         stage.show();
+        stage.requestFocus(); // Request focus for the stage
+        root.requestFocus();  // Request focus for the root node
         //runSingle();
     }
 

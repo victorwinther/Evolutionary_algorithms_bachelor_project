@@ -25,7 +25,7 @@ public class RLS extends Algorithm {
         }
         String offspring = mutate(bitString);
         int offspringFitness = (int) problem.computeFitness(offspring);
-        Data data = new Data(bitString, generation, bestFitness, false, Optional.empty(),false);
+        Data data = new Data(bitString, generation+1, bestFitness, false, Optional.empty(),false);
         if (offspringFitness > bestFitness) {
             bitString = offspring;
             bestFitness = offspringFitness;

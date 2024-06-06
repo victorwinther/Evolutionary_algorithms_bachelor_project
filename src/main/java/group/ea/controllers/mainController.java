@@ -179,7 +179,21 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     }
 
     @FXML
-    void loadScheduleHandler(ActionEvent event) {
+    void loadScheduleHandler(ActionEvent event) throws IOException {
+        runNr = 0;
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
+        Parent root = loader.load();
+
+        // Here you would get the controller if you need to call methods on it
+        mainController controller = loader.getController();
+        Scene scene = new Scene(root);
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+        Platform.runLater(root::requestFocus);
+        stage.setScene(scene);
+        stage.show();
+
+       Schedule.getSchedules().clear();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
         Map<String, String> scheduleParameters = new HashMap<>();
         addParametersToMap(scheduleParameters);
@@ -395,7 +409,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     newSchedule.setUpAlgorithm();
                 }
 
-                recieveArray(Schedule.getSchedules());
+                controller.recieveArray(Schedule.getSchedules()); // Call methods on the controller if needed
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -489,11 +503,13 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private void startAllEvolutions(Schedule schedule) {
         prepareUIBeforeAlgorithmRuns(schedule);
         if (currentSchedule.getProblemString().equals("TSP")) {
+            System.out.println("  IN TSP");
             resetVisualization();
             startVisualization();
 
         } else {
             startVisualizationBitString();
+            System.out.println("  IN bitstring");
         }
         timesRun++;
         updateStatistics(currentSchedule);
@@ -545,6 +561,33 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     }
     int runNr;
+    public void clearData(){
+        if (queueSchedule != null) {
+            queueSchedule.clear();
+        }
+        if (updateQueue != null) {
+            updateQueue.clear();
+        }
+        if (updateBitStringQueue != null) {
+            updateBitStringQueue.clear();
+        }
+        if (allSolutions != null) {
+            allSolutions.clear();
+        }
+        timesRun = 0;
+        sum = 0;
+        minIt = Integer.MAX_VALUE;
+        maxFunc = 0;
+        minFunc = Integer.MAX_VALUE;
+        maxFit = 0;
+        avgFit = 0;
+        minFit = Integer.MAX_VALUE;
+
+        // Reset algorithm-related data
+        currentSchedule = null;
+        runNr = 0;
+        firstTime = true;
+    }
     @FXML
     public void nextAlgorithm() {
                 firstTime = true;
@@ -609,8 +652,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         batchNumberLabel.setText(String.valueOf(schedules.size()));
 
         timesRunLabel.setText(""+timesRun);
-        dimensionLabel.setText(""+currentSchedule.getDimension());
-
+        if(currentSchedule.getTSP()){
+            String name = currentSchedule.getAlgorithm().get_sl().get_tsp().getLastPartOfFilename();
+            dimensionLabel.setText(name);
+        } else {
+            dimensionLabel.setText("" + currentSchedule.getDimension());
+        }
 
         int iter = currentSchedule.getAlgorithm().getGeneration();
         sum += iter;
@@ -1367,7 +1414,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         if (!updateQueue.isEmpty()) {
             TSPDATA nextSolution = updateQueue.poll();
             Platform.runLater(() -> {
-            System.out.println("Next data: " + nextSolution.getGeneration());
+            System.out.println("Next TSP data: " + nextSolution.getGeneration());
             tableIterations.setCellValueFactory(new PropertyValueFactory<>("iteration"));
             tableFitness.setCellValueFactory(new PropertyValueFactory<>("fitness"));
             tableFuncEval.setCellValueFactory(new PropertyValueFactory<>("funcEval"));
@@ -1393,8 +1440,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 setSolution(nextSolution);
                 //updateVisualization();
             });
-            setSolution(nextSolution);
-            if(nextSolution.getName() == "ACO" || nextSolution.getName() == "(u+y)EA" || nextSolution.getName() == "1+1EA" || nextSolution.getName() == "SA"){
+            //if(nextSolution.getName() == "ACO" || nextSolution.getName() == "(u+y)EA" || nextSolution.getName() == "1+1EA" || nextSolution.getName() == "SA"){
+                if(true){
                 Platform.runLater(() -> {
                 deleteAndDraw(nextSolution.getSolution());
                 });
