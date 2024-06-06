@@ -37,14 +37,11 @@ public class SA extends Algorithm {
 
         functionEvaluations++;
         if (offspringFitness > bestFitness) {
-            Data data = new Data(bitString, generation, bestFitness, true, Optional.empty(),false);
+            Data data = new Data(bitString, generation, bestFitness, true, Optional.of(currentTemp),false);
             bitString = offspring;
             bestFitness = offspringFitness;
             data.setTimeElapsed(timer.getCurrentTimer());
             data.setFunctionEvaluations(functionEvaluations);
-            if(checkStoppingCriteria()){
-                data.setStop(true);
-            }
             listener.receiveBitstringUpdate(data);
         } else if (offspringFitness == bestFitness) {
             bitString = offspring;
@@ -58,7 +55,7 @@ public class SA extends Algorithm {
                 //data.setTemp(Optional.of(currentTemp));
             }
         }
-
+        currentTemp *= tempReduction;
     }
 
     private String mutate(String parent) {

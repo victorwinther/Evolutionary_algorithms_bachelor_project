@@ -7,7 +7,6 @@ import group.ea.problem.TSP.Solution;
 import group.ea.problem.TSP.TSPParser;
 import group.ea.algorithm.*;
 import group.ea.algorithm.BooleanHypercubeVisualization;
-import group.ea.algorithm.Algorithm;
 import group.ea.helperClasses.Data;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -1118,9 +1117,14 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     // Method to delete all existing edges
     private void deleteAllEdges() {
+        System.out.println("Deleting all edges " + edgeMap.size());
         for (Line line : edgeMap.values()) {
             tspVisualization.getChildren().remove(line);
         }
+        for (Line line : edgeMap2.values()){
+            tspVisualization.getChildren().remove(line);
+        }
+        edgeMap2.clear();
         edgeMap.clear();
     }
 
@@ -1128,6 +1132,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     public void deleteAndDraw(Solution solution) {
         // Delete all existing edges
         deleteAllEdges();
+        System.out.println("Edgemap size + " + edgeMap.size());
 
         // Draw the new edges from the solution
         for (int i = 0; i < solution.getDimension(); i++) {
@@ -1438,16 +1443,17 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
             Platform.runLater(() -> {
                 setSolution(nextSolution);
-                //updateVisualization();
             });
-            //if(nextSolution.getName() == "ACO" || nextSolution.getName() == "(u+y)EA" || nextSolution.getName() == "1+1EA" || nextSolution.getName() == "SA"){
-                if(true){
-                Platform.runLater(() -> {
-                deleteAndDraw(nextSolution.getSolution());
-                });
-            }//else if (nextSolution.getName() == "1+1EA"){
-              //  updateVisualization();
-            //}
+            //if(nextSolution.getName() == "ACO") || nextSolution.getName() == "(u+y)EA" || nextSolution.getName() == "1+1EA" || nextSolution.getName() == "SA")
+
+                     Platform.runLater(() -> {
+                         deleteAndDraw(nextSolution.getSolution());
+                         if(nextSolution.getName() == "ACO") {
+                             drawLinesWithPheromones(nextSolution.getSolution(), nextSolution.getPheromone());
+                         }
+                     });
+
+
             if (nextSolution.isStopped()) {
                 timeline.stop();
                 pauseButton.setDisable(true);
@@ -1756,7 +1762,95 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     '}';
         }
     }
+    double[][] normalizedPheromone;
+    @Override
+    public void recievePheromone(double[][] pheromone){
+        double maxPheromone = findMax(pheromone);
+        // Normalize the pheromone matrix
+        int rows = pheromone.length;
+        int cols = pheromone[0].length;
+        normalizedPheromone = new double[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                normalizedPheromone[i][j] = pheromone[i][j] / maxPheromone;
+            }
+        }
+
+
+    }
+    private void drawLinesWithPheromones(Solution solution, double[][] pheromone) {
+        double maxPheromone = findMax(pheromone);
+        // Normalize the pheromone matrix
+        int rows = pheromone.length;
+        int cols = pheromone[0].length;
+        normalizedPheromone = new double[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                normalizedPheromone[i][j] = pheromone[i][j] / maxPheromone;
+            }
+        }
+
+
+        if(normalizedPheromone == null){
+            return;
+        }
+        int dimension = solution.getDimension();
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension; j++) {
+                if (i != j && normalizedPheromone[i][j] > 0) {
+                    int x1 = solution.getXSolution(i);
+                    int y1 = maxY - solution.getYSolution(i);
+                    int x2 = solution.getXSolution(j);
+                    int y2 = maxY - solution.getYSolution(j);
+
+                    // Find the corresponding pheromone value
+                    double pheromoneValue = normalizedPheromone[i][j];
+
+                    // Create a new line with the appropriate thickness
+                    Line line = new Line(xPush + x1 / xScaling, y1 / yScaling, xPush + x2 / xScaling, y2 / yScaling);
+                    line.setStrokeWidth(pheromoneValue ); // Scale thickness as needed
+
+                    // Optionally, set the opacity or color based on pheromone value
+                    line.setOpacity(0.1); // Set opacity based on pheromone value
+                    //line.setStroke(Color.hsb(0, 1.0, pheromoneValue)); // Set color based on pheromone value
+                    line.setStroke(Color.hsb(0, 1.0, 1.0)); // Set color based on pheromone value
+                    edgeMap2.put(new Edge(x1, y1, x2, y2), line);
+                   tspVisualization.getChildren().add(line);
+                }
+            }
+        }
+        System.out.println(edgeMap2.size());
+    }
+    private final Map<Edge, Line> edgeMap2 = new HashMap<Edge, Line>();
+    public double findMax(double mat[][])
+    {
+        //mat length
+        int N = mat.length;
+        int M = mat[0].length;
+
+
+        // Initializing max element as INT_MIN
+        double maxElement = Integer.MIN_VALUE;
+
+        // checking each element of matrix
+        // if it is greater than maxElement,
+        // update maxElement
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if (mat[i][j] > maxElement) {
+                    maxElement = mat[i][j];
+                }
+            }
+        }
+
+        // finally return maxElement
+        return maxElement;
+    }
+
 }
+
 
 
 
