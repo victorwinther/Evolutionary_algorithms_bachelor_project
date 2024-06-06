@@ -167,6 +167,8 @@ public class ACO extends Algorithm {
 
         // first let's calculate the pheromone and heuristic
         calculatePheromoneHeuristic(step, a);
+        //If the sum would be zero, something went wrong and we have to find the best city
+        //With a nearest neighbour algorithm
         if(flag){
             return _foundCity;
         }
@@ -200,7 +202,7 @@ public class ACO extends Algorithm {
             if (a.visitedCity(j)) {
                 probabilities[j] = 0.0;
             } else if(sumProb <= 0.0){
-                System.out.println("SumProb is 0, going into the next best city");
+                //If the sum of the probabilities is zero, we have to find the best city with a nearest neighbour algorithm
                 flag = true;
                 _foundCity = nnChooseBestCity(step, a);
             }
@@ -211,6 +213,7 @@ public class ACO extends Algorithm {
         }
     }
 
+    //at first we try to find the best city with the nearest neighbour algorithm
     public int nnChooseBestCity(int step, Ant a){
         int index;
         int next;
@@ -236,12 +239,12 @@ public class ACO extends Algorithm {
             return chooseNextBestCity(step, a);
         }
         else {
-            System.out.println("Error in nnchooseNextBestCity " + next);
             return next;
         }
 
     }
 
+    //If the nearest neighbour algorithm fails, we have to find the best city with the standard algorithm
     public int chooseNextBestCity(int step, Ant a){
         int index = a.getTrailOfAnt(step - 1);
         int next = dimension;
@@ -255,7 +258,6 @@ public class ACO extends Algorithm {
                 }
             }
         }
-        System.out.println("Error in chooseNextBestCity " + next);
         return next;
     }
 
