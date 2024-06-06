@@ -606,10 +606,15 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     startAllEvolutions(currentSchedule);
                     runNr++;
                     startButton.setDisable(true);
+
+
                 } else {
                     nextAlgorithm.setDisable(true);
                     runNr = 0;
-                    System.out.println("All schedules done");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText(null);
+                    alert.setContentText("All schedules done");
+                    alert.showAndWait();
                 }
     }
 
@@ -813,6 +818,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     public void stopEvolution() {
         stopGraphics();
         currentSchedule.getAlgorithm().stop();
+        if(!updateBitStringQueue.isEmpty()) {
+            updateBitStringQueue.clear();
+        }
+        if(!updateQueue.isEmpty()) {
+            updateQueue.clear();
+        }
     }
 
     public void startAlgorithm() {
