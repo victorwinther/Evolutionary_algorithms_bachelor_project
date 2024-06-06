@@ -24,7 +24,7 @@ public class uPlusyEA extends Algorithm{
         Data firstData = new Data(population.get(0), generation, bestFitness, true, Optional.empty(),false);
         listener.receiveBitstringUpdate(firstData);
         //System.out.println("Performing single update og lambda værdi = " + lambda);
-        while (true) {
+        while (!checkStoppingCriteria()) {
             List<String> newPopulation = new ArrayList<>(population);
 
             for (int i = 0; i < lambda; i++) {
@@ -52,6 +52,7 @@ public class uPlusyEA extends Algorithm{
             generation++;
 
         }
+        generation--;
 
     }
 
