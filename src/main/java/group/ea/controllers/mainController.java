@@ -297,7 +297,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
                 if (dataMap.containsKey("Special parameters")){
                     String[] special_parameters = dataMap.get("Special parameters");
-                    if (dataMap.get("Algorithm")[0].equals("ACO MMAS") || dataMap.get("Algorithm")[0].equals("ACO Elitist")){
+                    if (dataMap.get("Algorithm")[0].equals("ACO MMAS") || dataMap.get("Algorithm")[0].equals("ACO Elitist") || dataMap.get("Algorithm")[0].equals("ACO")){
                         String colonySize = special_parameters[0];
                         String alpha = special_parameters[1];
                         String beta = special_parameters[2];
@@ -348,7 +348,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                             batchSchedule.setTSPProblem(batchMap.get(scheduleid).get("TSP problem"));
                         }
 
-                        if (scheduleParameters.get("algorithm").equals("ACO MMAS") || scheduleParameters.get("algorithm").equals("ACO Elitist")){
+                        if (scheduleParameters.get("algorithm").equals("ACO MMAS") || scheduleParameters.get("algorithm").equals("ACO Elitist") || scheduleParameters.get("algorithm").equals("ACO")){
                             String colonySize = scheduleParameters.get("colonysize");
                             String alpha = scheduleParameters.get("alpha");
                             String beta = scheduleParameters.get("beta");
@@ -390,7 +390,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     if (!scheduleParameters.get("tspproblem").isEmpty()){
                         newSchedule.setTSPProblem(scheduleParameters.get("tspproblem"));
                     }
-                    if (scheduleParameters.get("algorithm").equals("ACO MMAS") || scheduleParameters.get("algorithm").equals("ACO Elitist")){
+                    if (scheduleParameters.get("algorithm").equals("ACO MMAS") || scheduleParameters.get("algorithm").equals("ACO Elitist") || scheduleParameters.get("algorithm").equals("ACO")){
                         String colonySize = scheduleParameters.get("colonysize");
                         String alpha = scheduleParameters.get("alpha");
                         String beta = scheduleParameters.get("beta");

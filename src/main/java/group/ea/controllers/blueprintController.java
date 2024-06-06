@@ -137,12 +137,13 @@ public class blueprintController implements Initializable {
     private void addCategoryOptions() {
         categoryOptions.put("searchSpace", Arrays.asList("Bit strings", "Permutations"));
         categoryOptions.put("problem", Arrays.asList("OneMax", "LeadingOnes", "TSP"));
-        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA","(u+y) EA", "RLS", "(1+1) EA TSP", "Simulated Annealing", "ACO MMAS", "ACO Elitist", "Simulated Annealing TSP"));
+        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA","(u+y) EA", "RLS", "(1+1) EA TSP", "Simulated Annealing","ACO", "ACO MMAS", "ACO Elitist", "Simulated Annealing TSP"));
         categoryOptions.put("tsp problems", Arrays.asList("berlin52", "bier127", "a280"));
         categoryOptions.put("updateRule", Arrays.asList("AS-update", "Iteration Best (IB)", "best-so-far(BS)"));
     }
 
     private void initializeBatchParameters() {
+        batchParameters.put("ACO", List.of("Colony size", "Alpha", "Beta", "Update rule", "Local search"));
         batchParameters.put("ACO MMAS", List.of("Colony size", "Alpha", "Beta", "Update rule", "Local search"));
         batchParameters.put("ACO Elitist", List.of("Colony size", "Alpha", "Beta", "Update rule", "Local search"));
         batchParameters.put("(u+y) EA", List.of("u","y"));
@@ -166,6 +167,7 @@ public class blueprintController implements Initializable {
         descriptions.put("(1+1) EA TSP", "The (1+1) EA is a simple evolutionary strategy that involves maintaining a single individual in the population, generating a mutated offspring, and replacing the current individual with the offspring only if it has higher fitness.");
         descriptions.put("RLS", "A simple optimization algorithm that iteratively improves a solution by making small random changes and selecting better solutions.");
         descriptions.put("Simulated Annealing", "An optimization algorithm inspired by the annealing process in metallurgy. It iteratively explores the solution space by making random changes to the current solution.");
+        descriptions.put("ACO", "A nature-inspired optimization algorithm based on the foraging behavior of ants. It uses a population of artificial ants to find optimal solutions by simulating the way real ants deposit pheromones to communicate paths to resources.");
         descriptions.put("ACO MMAS", "A nature-inspired optimization algorithm based on the foraging behavior of ants. It uses a population of artificial ants to find optimal solutions by simulating the way real ants deposit pheromones to communicate paths to resources.");
         descriptions.put("ACO Elitist", "A nature-inspired optimization algorithm based on the foraging behavior of ants. It uses a population of artificial ants to find optimal solutions by simulating the way real ants deposit pheromones to communicate paths to resources.");
 
@@ -232,7 +234,7 @@ public class blueprintController implements Initializable {
                     writer.write("TSP problem, ");
                     writer.write(TSPSelector.getValue() + "\n");
                 }
-                if (algorithmSelector.getValue().equals("ACO MMAS") || algorithmSelector.getValue().equals("ACO Elitist")){
+                if (algorithmSelector.getValue().equals("ACO MMAS") || algorithmSelector.getValue().equals("ACO Elitist") || algorithmSelector.getValue().equals("ACO")){
                     writer.write("ACO update rule, ");
                     writer.write(updateRuleSelector.getValue() + "\n");
                     writer.write("local search, " + localSearchCheckbox.isSelected() + "\n");
@@ -294,7 +296,7 @@ public class blueprintController implements Initializable {
     private void checkSpecialParameters(String selectedAlgo){
         hideSpecialFields();
         System.out.println(selectedAlgo);
-        if (selectedAlgo.equals("ACO MMAS") || selectedAlgo.equals("ACO Elitist")){
+        if (selectedAlgo.equals("ACO MMAS") || selectedAlgo.equals("ACO Elitist") || selectedAlgo.equals("ACO")){
             specialLbl1.setText("Colony size");
             specialLbl2.setText("Alpha");
             specialLbl3.setText("Beta");
@@ -371,7 +373,7 @@ public class blueprintController implements Initializable {
                 specialTxtField2.setText("1");
                 specialTxtField3.setText("20");
             }
-            else if (Objects.equals(algorithmSelector.getValue(), "ACO Elitist")){
+            else if (Objects.equals(algorithmSelector.getValue(), "ACO Elitist") || Objects.equals(algorithmSelector.getValue(), "ACO")){
                 specialTxtField1.setText("100");
                 specialTxtField2.setText("1");
                 specialTxtField3.setText("2");
@@ -414,10 +416,10 @@ public class blueprintController implements Initializable {
                 dimensionTxtField.setDisable(false);
 
                 if (selector.getValue().equals("Bit strings")) {
-                    dependencies.addAll(Arrays.asList("TSP", "(1+1) EA TSP", "Simulated Annealing TSP", "ACO MMAS", "ACO Elitist"));
+                    dependencies.addAll(Arrays.asList("TSP", "(1+1) EA TSP", "Simulated Annealing TSP","ACO", "ACO MMAS", "ACO Elitist"));
                     dependencies.removeAll(Arrays.asList("OneMax", "LeadingOnes", "(1+1) EA", "RLS", "Simulated Annealing"));
                 } else if (selector.getValue().equals("Permutations")) {
-                    dependencies.removeAll(Arrays.asList("TSP", "(1+1) EA TSP", "Simulated Annealing TSP", "ACO MMAS", "ACO Elitist"));
+                    dependencies.removeAll(Arrays.asList("TSP", "(1+1) EA TSP", "Simulated Annealing TSP", "ACO", "ACO MMAS", "ACO Elitist"));
                     dependencies.addAll(Arrays.asList("OneMax", "LeadingOnes", "(1+1) EA", "RLS", "Simulated Annealing"));
                     dimensionLabel.setDisable(true);
                     dimensionTxtField.setDisable(true);
@@ -535,7 +537,7 @@ public class blueprintController implements Initializable {
             }
 
         }
-        if (algorithmSelector.getValue().equals("ACO MMAS") || algorithmSelector.getValue().equals("ACO Elitist")){
+        if (algorithmSelector.getValue().equals("ACO MMAS") || algorithmSelector.getValue().equals("ACO Elitist") || algorithmSelector.getValue().equals("ACO")){
             String colonySize = specialTxtField1.getText();
             String alpha = specialTxtField2.getText();
             String beta = specialTxtField3.getText();
