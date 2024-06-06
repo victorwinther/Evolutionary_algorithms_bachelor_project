@@ -2,6 +2,7 @@ package group.ea;
 
 import group.ea.controllers.Schedule;
 import group.ea.controllers.mainController;
+import group.ea.helperClasses.Timer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -229,13 +230,15 @@ public class main extends Application {
         System.out.println("INIT");
         int perfectCount = 0;
         int[] iterationsLength = {1000}; // Example lengths
-        int runsPerObservation = 25;
+        int runsPerObservation = 50;
         double [] alfaValues = {1};
         int [] betaValues = {2};
-        int [] amountOfAnts = {100};
+        int [] amountOfAnts = {20};
         Schedule newSchedule = new Schedule();
+        Timer timer = new Timer();
 
         List<DataPoint> dataPoints = new ArrayList<>();
+        timer.startTimer("1, 20, 20, ls = 1");
         for(int ants : amountOfAnts){
             for(double alfa : alfaValues) {
                 for(double beta : betaValues){
@@ -245,6 +248,7 @@ public class main extends Application {
                         perfectCount = 0;
                         optimumAverage = 0;
                         for (int run = 0; run < runsPerObservation; run++) {
+
                             System.out.println();
                             System.out.println();
                             newSchedule= new Schedule();
@@ -252,7 +256,9 @@ public class main extends Application {
                             newSchedule.setSearchSpaceString("Permutations");
                             newSchedule.setProblemString("TSP");
                             newSchedule.setOptional(new String[]{String.valueOf(ants), String.valueOf(alfa), String.valueOf(beta)});
-                            newSchedule.setAlgorithmString("Ant System");
+                            newSchedule.setAlgorithmString("ACO");
+                            newSchedule.setLocalSearch(true);
+                            newSchedule.setUpdateRule("AS-Update");
                             newSchedule.setIterationBound(length);
                             newSchedule.setOptimumReached(true);
                             newSchedule.setUpAlgorithm();
@@ -266,8 +272,9 @@ public class main extends Application {
                         }
                         dataPoints.add(new DataPoint(length, totalFitness / runsPerObservation));
                         saveDataToCSV("TSP_experimentACO.csv", dataPoints);
-                        System.out.println("Done with length " + length + "ANTS ALFA BETA" + ants + " " + alfa + " " + beta);
+                        System.out.println("Done with length " + length + "ANTS ALFA BETA and runs" + ants + " " + alfa + " " + beta + " " + runsPerObservation);
                         System.out.println(perfectCount);
+                        timer.endTimer();
                         if(perfectCount > 0){
                             System.out.println("Average iterations for perfect runs: " + optimumAverage / perfectCount);
                         }

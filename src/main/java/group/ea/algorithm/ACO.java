@@ -70,10 +70,14 @@ public class ACO extends Algorithm {
         }
 
 
+
         Ants();
         updateEvaporation();
         updatePheromone();
 
+        if(generation % 10 == 0 && generation < 150){
+            System.out.println(bestAnt.getCost());
+        }
     }
 
     public void Ants() {
