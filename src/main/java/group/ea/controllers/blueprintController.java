@@ -85,6 +85,7 @@ public class blueprintController implements Initializable {
         updateRuleSelector.getItems().addAll(ACOupdateRules);
         sortComboBoxItems(allComboBoxes);
 
+        txtFieldListener(allTextFields);
         TSPSelector.setValue(TSPSelector.getItems().getFirst());
         updateRuleSelector.setValue(updateRuleSelector.getItems().getFirst());
 
@@ -103,6 +104,12 @@ public class blueprintController implements Initializable {
 
         explainingLabel.setWrapText(true);
 
+    }
+
+    private void txtFieldListener(List<TextField> allTextFields) {
+        for (TextField textField : allTextFields) {
+            applyIntegerTextFormatter(textField);
+        }
     }
 
     private void updateCategories() {
@@ -538,16 +545,22 @@ public class blueprintController implements Initializable {
 
         }
         if (algorithmSelector.getValue().equals("ACO MMAS") || algorithmSelector.getValue().equals("ACO Elitist") || algorithmSelector.getValue().equals("ACO")){
-            String colonySize = specialTxtField1.getText();
-            String alpha = specialTxtField2.getText();
-            String beta = specialTxtField3.getText();
-            String updateRule = updateRuleSelector.getValue();
-            boolean localSearch = localSearchCheckbox.isSelected();
-            optionalValues = new String[]{colonySize, alpha, beta};
+            try{
+                String colonySize = specialTxtField1.getText();
+                String alpha = specialTxtField2.getText();
+                String beta = specialTxtField3.getText();
+                String updateRule = updateRuleSelector.getValue();
+                boolean localSearch = localSearchCheckbox.isSelected();
+                optionalValues = new String[]{colonySize, alpha, beta};
 
-            newSchedule.setUpdateRule(updateRule);
-            newSchedule.setLocalSearch(localSearch);
-            newSchedule.setOptional(optionalValues);
+                newSchedule.setUpdateRule(updateRule);
+                newSchedule.setLocalSearch(localSearch);
+                newSchedule.setOptional(optionalValues);
+            } catch (Exception e) {
+                showAlert("Enter only integers for iteration bound");
+                return ;
+            }
+
 
         }
         if (algorithmSelector.getValue().equals("(u+y) EA")) {
@@ -579,6 +592,15 @@ public class blueprintController implements Initializable {
                 (searchspaceSelector.getValue() == null) ||
                 (problemSelector.getValue() == null) ||
                 (algorithmSelector.getValue() == null) ;
+    }
+
+    private void applyIntegerTextFormatter(TextField textField) {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                showAlert("Please enter only integers.");
+                textField.setText(oldValue);
+            }
+        });
     }
 
 
@@ -697,22 +719,4 @@ public class blueprintController implements Initializable {
             stage.setScene(scene);
             stage.show();
         }
-
-
-
-    public String getSearchspaceSelector() {
-        return searchspaceSelector.getValue();
-    }
-    public String getProblemSelector() {
-        return problemSelector.getValue();
-    }
-    public String getAlgorithmSelector() {
-        return algorithmSelector.getValue();
-    }
-
-    /*
-    public String getSelectioncriteriaSelector() {
-        return stoppingcriteriaSelector.getValue();
-    }
-*/
 }
