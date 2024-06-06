@@ -180,6 +180,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     @FXML
     void loadScheduleHandler(ActionEvent event) {
+        Schedule.getSchedules().clear();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
         Map<String, String> scheduleParameters = new HashMap<>();
         addParametersToMap(scheduleParameters);
@@ -282,7 +283,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
                 if (dataMap.containsKey("Special parameters")){
                     String[] special_parameters = dataMap.get("Special parameters");
-                    if (dataMap.get("Algorithm")[0].equals("Ant Colony Optimization")){
+                    if (dataMap.get("Algorithm")[0].equals("ACO MMAS") || dataMap.get("Algorithm")[0].equals("ACO Elitist")){
                         String colonySize = special_parameters[0];
                         String alpha = special_parameters[1];
                         String beta = special_parameters[2];
@@ -333,7 +334,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                             batchSchedule.setTSPProblem(batchMap.get(scheduleid).get("TSP problem"));
                         }
 
-                        if (scheduleParameters.get("algorithm").equals("Ant Colony Optimization")){
+                        if (scheduleParameters.get("algorithm").equals("ACO MMAS") || scheduleParameters.get("algorithm").equals("ACO Elitist")){
                             String colonySize = scheduleParameters.get("colonysize");
                             String alpha = scheduleParameters.get("alpha");
                             String beta = scheduleParameters.get("beta");
@@ -375,7 +376,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     if (!scheduleParameters.get("tspproblem").isEmpty()){
                         newSchedule.setTSPProblem(scheduleParameters.get("tspproblem"));
                     }
-                    if (scheduleParameters.get("algorithm").equals("Ant Colony Optimization")){
+                    if (scheduleParameters.get("algorithm").equals("ACO MMAS") || scheduleParameters.get("algorithm").equals("ACO Elitist")){
                         String colonySize = scheduleParameters.get("colonysize");
                         String alpha = scheduleParameters.get("alpha");
                         String beta = scheduleParameters.get("beta");
@@ -394,6 +395,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
                     newSchedule.setUpAlgorithm();
                 }
+
 
                 recieveArray(Schedule.getSchedules());
 
@@ -733,11 +735,11 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         criteriasLabel.setStyle("-fx-font-size: 14px;");
         for (int j = 0; j < schedules.size(); j++) {
             Schedule newSchedule = schedules.get(j);
-            for (int k = 0; k < newSchedule.getRuns(); k++) {
-                System.out.println("added runs from runscount");
+            System.out.println("added runs from runscount");
             queueSchedule.add(newSchedule);
+            System.out.println(queueSchedule.size());
            // newSchedule.getAlgorithm().sendListener(this);
-            }
+
         }
 
     }
@@ -1388,7 +1390,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 //updateVisualization();
             });
             setSolution(nextSolution);
-            if(nextSolution.getName() == "ACO" || nextSolution.getName() == "(u+y)EA" || nextSolution.getName() == "1+1EA" || nextSolution.getName() == "SA"){
+            if(nextSolution.getName().equals("ACO") || nextSolution.getName().equals("(u+y)EA") || nextSolution.getName().equals("1+1EA") || nextSolution.getName().equals("SA")){
                 Platform.runLater(() -> {
                 deleteAndDraw(nextSolution.getSolution());
                 });

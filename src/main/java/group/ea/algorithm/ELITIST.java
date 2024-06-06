@@ -22,5 +22,12 @@ public class ELITIST extends ACO{
         updatePheromoneALL();
     }
 
+    public boolean getLocalSearch() {
+        return _localSearch;
+    }
+    public boolean getIBFlag(){
+        return _IBFlag;
+    }
+
 
 }

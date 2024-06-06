@@ -14,8 +14,6 @@ public class MMAS extends ACO {
         maxPheremone = 1.0 / ((evaporation * getValue()));
         minPheremone = maxPheremone / (2.0 * dimension);
         Q = maxPheremone;
-        _IBFlag = false;
-
     }
 
     public double getValue(){

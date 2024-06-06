@@ -34,10 +34,7 @@ public class ACO extends Algorithm {
         super(searchSpace, problem);
         _sl = (Solution) problem;
         dimension = _sl.getDimension();
-
         bestInGeneration = Double.MAX_VALUE;
-        _localSearch = false;
-        _IBFlag = false;
     }
 
     @Override
@@ -329,9 +326,20 @@ public class ACO extends Algorithm {
     }
 
     public void setUpdateRule(String rule){
-        //TODO do something
+
+        if (rule.equals("AS-update")){
+            setIBFlag(false);
+        }
+        else if (rule.equals("best-so-far(BS)")){
+            setIBFlag(true);
+        }
+        else if (rule.equals("Iteration Best (IB)")){
+            setIBFlag(false);
+        }
     }
-    public void setLocalSearch(boolean search){_localSearch = search;}
+    public void setLocalSearch(boolean search){
+        _localSearch = search;
+    }
 
     private void antToSolution(Ant a){
         int[] list = a.getTrailOfAnt();
@@ -343,4 +351,5 @@ public class ACO extends Algorithm {
     public int getFitness() {
         return (int)bestAnt.getCost();
     }
+
 }
