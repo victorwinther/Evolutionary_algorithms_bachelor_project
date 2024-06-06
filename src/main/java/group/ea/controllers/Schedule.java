@@ -205,6 +205,7 @@ public class Schedule implements Cloneable {
                 this.algorithm.setValues(Integer.parseInt(optionalValues[0]), Double.parseDouble(optionalValues[1]), Double.parseDouble(optionalValues[2]));
                 break;
             default:
+                System.out.println(this.algorithmString);
                 this.algorithm = null;
                 break;
         }
