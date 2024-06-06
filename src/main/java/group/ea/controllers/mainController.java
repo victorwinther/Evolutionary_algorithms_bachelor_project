@@ -187,6 +187,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         // Here you would get the controller if you need to call methods on it
         mainController controller = loader.getController();
         Scene scene = new Scene(root);
+
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
         Platform.runLater(root::requestFocus);
