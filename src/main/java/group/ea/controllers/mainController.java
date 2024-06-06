@@ -1376,11 +1376,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     Long.toString(nextSolution.getTimeElapsed())
             );
 
-            // add a value to tablefitness
-            String fitness1 = Integer.toString(nextSolution.getFitness());
-            //ArrayList<String> data = new ArrayList<>();
-
-
             ObservableList<RowData> data = FXCollections.observableArrayList();
             data.add(rowData);
 
@@ -1412,6 +1407,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             }
             firstTime = false;
             System.out.println("stopped it");
+
         }
     }
     @FXML
