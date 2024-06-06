@@ -47,14 +47,7 @@ public class uPlusyEA extends Algorithm{
                 data.setFitness(bestFitness);
                 data.setYesNo(true);
             }
-            if (checkStoppingCriteria()) {
-                data.setTimeElapsed(timer.getCurrentTimer());
-                functionEvaluations+=mu;
-                data.setFunctionEvaluations(functionEvaluations);
-                data.setStop(true);
-                listener.receiveBitstringUpdate(data);
-                break;
-            }
+
             data.setTimeElapsed(timer.getCurrentTimer());
             functionEvaluations+=mu;
             data.setFunctionEvaluations(functionEvaluations);

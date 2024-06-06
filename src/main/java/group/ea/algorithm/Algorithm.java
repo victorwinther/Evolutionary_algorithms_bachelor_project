@@ -106,8 +106,6 @@ public abstract class Algorithm {
     public abstract void initialize();
 
     public void runAlgorithm() {
-
-
             timer.startTimer("Time elapsed");
             while (!checkStoppingCriteria() && !stoppingMet) {
                 if (!paused) {
@@ -129,10 +127,13 @@ public abstract class Algorithm {
                 TSPDATA tspdata = new TSPDATA(_cloneSl, _cloneSl.getSolution(), generation, (int) acoInstance.bestAnt.getCost(), functionEvaluations, "ACO", true);
                 tspdata.setPhermone(acoInstance.getPheromone());
                 tspdata.setTimeElapsed(timer.getCurrentTimer());
+                tspdata.improved();
                 listener.receiveUpdate(tspdata);
             } else{
-                TSPDATA tspdata = new TSPDATA(_cloneSl, _cloneSl.getSolution(), generation, bestFitness, functionEvaluations, "(1+1)EA", true);
+                System.out.println("stopped in algo");
+                TSPDATA tspdata = new TSPDATA(_sl, _sl.getSolution(), generation, bestFitness, functionEvaluations, "(1+1)EA", true);
                 tspdata.setTimeElapsed(timer.getCurrentTimer());
+                tspdata.improved();
                 listener.receiveUpdate(tspdata);
 
             }

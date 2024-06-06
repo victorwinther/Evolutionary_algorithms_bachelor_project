@@ -127,7 +127,7 @@ public class ACO extends Algorithm {
             tspdata.setFunctionEvaluations(functionEvaluations);
             listener.receiveUpdate(tspdata);
             improvedInGeneration = false;
-            listener.recievePheromone(pheromone);
+            //            listener.recievePheromone(pheromone);
         }
 
     }

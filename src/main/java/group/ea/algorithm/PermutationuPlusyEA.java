@@ -61,7 +61,7 @@ public class PermutationuPlusyEA extends Algorithm {
             functionEvaluations += mu;
             population = selectFittest(population, mu);
             bestSolution = population.get(0);
-
+            int oldBestFitness = bestFitness;
             bestFitness = bestSolution.computeFitness();
 
             //System.out.println(bestFitness);
@@ -69,6 +69,9 @@ public class PermutationuPlusyEA extends Algorithm {
                 TSPDATA tspdata = new TSPDATA(bestSolution, bestSolution.getSolution(), generation, bestFitness, bestSolution.getImprovement, "(u+y)EA");
                 tspdata.setFunctionEvaluations(functionEvaluations);
                 tspdata.setTimeElapsed(timer.getCurrentTimer());
+                if (oldBestFitness > bestFitness) {
+                    tspdata.improved();
+                }
                 listener.receiveUpdate(tspdata);
             }
             generation++;

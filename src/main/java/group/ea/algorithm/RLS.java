@@ -34,11 +34,7 @@ public class RLS extends Algorithm {
                 data.setYesNo(true);
             }
         }
-        if(graphicsOn){
-            if (checkStoppingCriteria()) {
-                data.setStop(true);
-            }
-        }
+
         functionEvaluations++;
         if(graphicsOn){
             data.setTimeElapsed(timer.getCurrentTimer());

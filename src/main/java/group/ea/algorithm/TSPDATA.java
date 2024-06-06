@@ -31,6 +31,9 @@ public class TSPDATA {
     static ArrayList<TSPDATA> allSolutions = new ArrayList<>();
     private double[][] pheromone;
 
+
+    private boolean improved = false;
+
     public TSPDATA (Solution solution, ArrayList<City> slSolution, int generation, int fitness, double improvement, City X1, City X2, City X3, City X4, Optional<City> A5, Optional<City> A6, Optional<Integer> optCase, boolean b, String name) {
         this.solution = solution;
         this.generation = generation;
@@ -154,6 +157,14 @@ public class TSPDATA {
     public boolean isStopped() {
         return stopped;
     }
+
+    public void improved() {
+        this.improved = true;
+    }
+    public boolean isImproved() {
+        return improved;
+    }
+
 }
 
 

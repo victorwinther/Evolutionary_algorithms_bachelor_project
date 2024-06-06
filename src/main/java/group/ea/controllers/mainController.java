@@ -85,7 +85,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private ChoiceBox<Integer> stringLength;
     @FXML
-    private CheckBox graphSelector, textSelector, hypercubeCheck, phermoneTrail;
+    private CheckBox graphSelector, textSelector, hypercubeCheck, phermoneTrail,onlyImprovement;
 
     @FXML
     private Label searchspaceLabel,problemLabel, algorithmLabel,criteriasLabel,timeLabel,mutationLabel, selectionLabel,crossoverLabel;
@@ -600,6 +600,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                         textSelector.setDisable(true);
                         hypercubeCheck.setDisable(true);
 
+                    } else {
+                        phermoneTrail.setDisable(false);
                     }
                     startAllEvolutions(currentSchedule);
                     runNr++;
@@ -764,7 +766,25 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             graphSelector.setDisable(false);
             textSelector.setDisable(false);
             hypercubeCheck.setDisable(false);
+            sliderSpeed.setMin(logTransform(0.1, 0.1, 500));
+            sliderSpeed.setMax(logTransform(500, 0.1, 500));
+            sliderSpeed.setValue(logTransform(5, 0.1, 500));
+            sliderSpeed.setBlockIncrement(logTransform(50, 0.1, 500) / 10); // Adjust as needed
+
+            sliderSpeed.setMajorTickUnit((logTransform(500, 0.1, 500) - logTransform(0.1, 0.1, 500)) / 5); // Adjust as needed
+            sliderSpeed.setMinorTickCount(10);
+            sliderSpeed.setShowTickMarks(true);
+            sliderSpeed.setShowTickLabels(true);
         } else {
+            sliderSpeed.setMin(logTransform(0.1, 0.1, 50));
+            sliderSpeed.setMax(logTransform(50, 0.1, 50));
+            sliderSpeed.setValue(logTransform(1, 0.1, 50));
+            sliderSpeed.setBlockIncrement(logTransform(1.0, 0.1, 50) / 10); // Adjust as needed
+
+            sliderSpeed.setMajorTickUnit((logTransform(1.0, 0.1, 50) - logTransform(0.1, 0.1, 50)) / 5); // Adjust as needed
+            sliderSpeed.setMinorTickCount(10);
+            sliderSpeed.setShowTickMarks(true);
+            sliderSpeed.setShowTickLabels(true);
             phermoneTrail.setDisable(false);
         }
         startButton.setDisable(false);
@@ -916,8 +936,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         sliderSpeed.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (timeline != null) {
                 timeline.stop(); // Stop the timeline to reset the key frame duration
-                double speed = newValue.doubleValue();
-                KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
+                double transformedValue = inverseLogTransform(newValue.doubleValue(), 0.1, 50);
+                KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / transformedValue), event -> {
                    // System.out.println("Keyframe 1 running");
                     processQueue();
                 });
@@ -948,11 +968,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             tspIntialize();
         }
 
-        sliderSpeed.setBlockIncrement(1.0);
-        sliderSpeed.setMax(10.0);
-        sliderSpeed.setMin(0.1);
-        sliderSpeed.setValue(1.0);
-        sliderSpeed.setMajorTickUnit(2.0);
 
 
         Solution solution = new Solution((TSPParser) currentSchedule.getSearchSpace());
@@ -960,7 +975,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
 
 
-        speed = sliderSpeed.getValue();
+        speed = inverseLogTransform(sliderSpeed.getValue(), 0.1, 50);
 
 
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
@@ -1410,7 +1425,9 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @Override
     public void receiveUpdate(TSPDATA solution){
         System.out.println("Added solution");
-        updateQueue.add(solution);
+        if((onlyImprovement.isSelected() && solution.isImproved()) || !onlyImprovement.isSelected()) {
+            updateQueue.add(solution);
+        }
     }
     boolean firstTime = true;
     boolean ACO = true;
@@ -1442,18 +1459,19 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             extractKeyFeaturesTable.refresh();
 
 
-            Platform.runLater(() -> {
-                setSolution(nextSolution);
-            });
-            //if(nextSolution.getName() == "ACO") || nextSolution.getName() == "(u+y)EA" || nextSolution.getName() == "1+1EA" || nextSolution.getName() == "SA")
 
-                     Platform.runLater(() -> {
-                         deleteAndDraw(nextSolution.getSolution());
-                         if(nextSolution.getName() == "ACO" && phermoneTrail.isSelected()) {
-                             drawLinesWithPheromones(nextSolution.getSolution(), nextSolution.getPheromone());
-                         }
-                     });
+                Platform.runLater(() -> {
+                    setSolution(nextSolution);
+                });
+                //if(nextSolution.getName() == "ACO") || nextSolution.getName() == "(u+y)EA" || nextSolution.getName() == "1+1EA" || nextSolution.getName() == "SA")
+                System.out.println(onlyImprovement.isSelected() + " is selected "+ nextSolution.isImproved() + " is improved");
 
+                Platform.runLater(() -> {
+                    deleteAndDraw(nextSolution.getSolution());
+                    if (nextSolution.getName() == "ACO" && phermoneTrail.isSelected()) {
+                        drawLinesWithPheromones(nextSolution.getSolution(), nextSolution.getPheromone());
+                    }
+                });
 
             if (nextSolution.isStopped()) {
                 timeline.stop();
@@ -1504,16 +1522,20 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             timeline = new Timeline();
             timeline.setCycleCount(Timeline.INDEFINITE);
 
-            KeyFrame keyFrame1 = new KeyFrame(Duration.seconds(1 / speed), event -> {
+            // Get the initial speed from the slider using the inverse log transform
+            double initialSpeed = inverseLogTransform(sliderSpeed.getValue(), 0.1, 500);
+
+            KeyFrame keyFrame1 = new KeyFrame(Duration.seconds(1 / initialSpeed), event -> {
                 processBitStringQueue();
             });
 
             timeline.getKeyFrames().add(keyFrame1);
 
             sliderSpeed.valueProperty().addListener((observable, oldValue, newValue) -> {
-                speed = newValue.doubleValue();
+                //speed = newValue.doubleValue();
+                double transformedValue = inverseLogTransform(newValue.doubleValue(), 0.1, 500);
                 timeline.getKeyFrames().clear();
-                KeyFrame newKeyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
+                KeyFrame newKeyFrame = new KeyFrame(Duration.seconds(1 / transformedValue), event -> {
                     processBitStringQueue();
                 });
                 timeline.getKeyFrames().add(newKeyFrame);
@@ -1522,11 +1544,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 }
             });
         }
-        sliderSpeed.setBlockIncrement(50.0);
-        sliderSpeed.setMax(500);
-        sliderSpeed.setMin(0.1);
-        sliderSpeed.setValue(50);
-        sliderSpeed.setMajorTickUnit(100.0);
 
         speed = sliderSpeed.getValue();
         timeline.play();
@@ -1552,11 +1569,22 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         stopButton.setDisable(false);
 
     }
+    public double logTransform(double value, double min, double max) {
+        return Math.log(value / min) / Math.log(max / min);
+    }
+
+    public double inverseLogTransform(double value, double min, double max) {
+        return min * Math.pow(max / min, value);
+    }
     private final Queue<Data> updateBitStringQueue = new LinkedList<Data>();
     @Override
     public void receiveBitstringUpdate(Data data) {
-        updateBitStringQueue.add(data);
-        System.out.println("Added data");
+        if((onlyImprovement.isSelected() && data.getImproved()) || !onlyImprovement.isSelected()) {
+            updateBitStringQueue.add(data);
+            System.out.println("Added data");
+        }
+
+
     }
 
     private void processBitStringQueue() {
