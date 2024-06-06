@@ -167,8 +167,7 @@ public class Schedule implements Cloneable {
                 this.algorithm = new RLS(this.searchSpace, this.problem);
                 break;
             case "Simulated Annealing":
-                this.algorithm = new PermutationSA(this.searchSpace, this.problem);
-                //this.algorithm = new SA(this.searchSpace, this.problem);
+                this.algorithm = new SA(this.searchSpace, this.problem);
                 break;
             case "(1+1) EA":
                 this.algorithm = new onePlusOneEA(this.searchSpace, this.problem);
