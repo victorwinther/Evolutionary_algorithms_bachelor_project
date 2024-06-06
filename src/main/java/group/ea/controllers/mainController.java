@@ -91,12 +91,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private Label searchspaceLabel,problemLabel, algorithmLabel,criteriasLabel,timeLabel,mutationLabel, selectionLabel,crossoverLabel;
 
-    Label minIterationsLabel = new Label("0");
-    Label maxFuncEvalLabel = new Label("0");
-    Label minFuncEvalLabel = new Label("0");
-    Label maxFitnessLabel = new Label("0");
-    Label averageFitnessLabel = new Label("0");
-    Label minFitnessLabel = new Label("0");
+    Label minIterationsLabel = new Label();
+    Label maxFuncEvalLabel = new Label();
+    Label minFuncEvalLabel = new Label();
+    Label maxFitnessLabel = new Label();
+    Label averageFitnessLabel = new Label();
+    Label minFitnessLabel = new Label();
     TSPParser tp;
 
     boolean animationDone = true;
