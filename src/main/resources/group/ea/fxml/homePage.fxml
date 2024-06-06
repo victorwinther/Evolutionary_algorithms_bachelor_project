@@ -57,10 +57,22 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label fx:id="searchspaceLabel" prefHeight="17.0" prefWidth="97.0" text="Searchspace:" textFill="WHITE" />
-                              <Label fx:id="problemLabel" text="Problem:" textFill="#fffdfd" GridPane.rowIndex="1" />
-                              <Label fx:id="criteriasLabel" prefHeight="17.0" prefWidth="102.0" text="Stopping criteria:" textFill="#fffdfd" GridPane.rowIndex="3" />
-                              <Label fx:id="algorithmLabel" text="Algorithm:" textFill="WHITE" GridPane.rowIndex="2" />
+                              <Label fx:id="searchspaceLabel" prefHeight="17.0" prefWidth="97.0" text="Searchspace:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></Label>
+                              <Label fx:id="problemLabel" text="Problem:" textFill="#fffdfd" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></Label>
+                              <Label fx:id="criteriasLabel" prefHeight="17.0" prefWidth="102.0" text="Stopping criteria:" textFill="#fffdfd" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></Label>
+                              <Label fx:id="algorithmLabel" text="Algorithm:" textFill="WHITE" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></Label>
                            </children>
                            <VBox.margin>
                               <Insets left="10.0" />
@@ -96,8 +108,14 @@
                                  <font>
                                     <Font size="14.0" />
                                  </font></Label>
-                              <Label text="Run number:" textFill="WHITE" GridPane.rowIndex="1" />
-                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="2" />
+                              <Label text="Run number:" textFill="WHITE" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></Label>
+                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></Label>
                            </children>
                            <VBox.margin>
                               <Insets left="10.0" />
@@ -134,14 +152,38 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Max no. iterations" textFill="WHITE" />
-                              <Label text="Avg no. iterations" textFill="WHITE" GridPane.rowIndex="1" />
-                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="2" />
-                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="3" />
-                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="4" />
-                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="5" />
-                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="6" />
-                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="7" />
+                              <Label text="Max no. iterations" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></Label>
+                              <Label text="Avg no. iterations" textFill="WHITE" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></Label>
+                              <Label text="Min. no. iterations" textFill="WHITE" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></Label>
+                              <Label text="Max. func. eval." textFill="WHITE" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></Label>
+                              <Label text="Min. func. eval." textFill="WHITE" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></Label>
+                              <Label text="Max fitness" textFill="WHITE" GridPane.rowIndex="5">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></Label>
+                              <Label text="Average fitness" textFill="WHITE" GridPane.rowIndex="6">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></Label>
+                              <Label text="Min fitness" textFill="WHITE" GridPane.rowIndex="7">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></Label>
                            </children>
                            <VBox.margin>
                               <Insets left="10.0" />
