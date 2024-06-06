@@ -10,7 +10,7 @@ import java.util.*;
 public class PermutationuPlusyEA extends Algorithm {
     double chance = 0.5;
     Random rand = new Random();
-    Solution bestSolution;
+
 
     ArrayList<Solution> population = new ArrayList<>();
 
@@ -60,22 +60,24 @@ public class PermutationuPlusyEA extends Algorithm {
             }
             functionEvaluations += mu;
             population = selectFittest(population, mu);
-            bestSolution = population.get(0);
+            _sl = population.getFirst();
             int oldBestFitness = bestFitness;
-            bestFitness = bestSolution.computeFitness();
+            bestFitness = _sl.computeFitness();
 
             //System.out.println(bestFitness);
             if(graphicsOn) {
-                TSPDATA tspdata = new TSPDATA(bestSolution, bestSolution.getSolution(), generation, bestFitness, bestSolution.getImprovement, "(u+y)EA");
-                tspdata.setFunctionEvaluations(functionEvaluations);
-                tspdata.setTimeElapsed(timer.getCurrentTimer());
+
                 if (oldBestFitness > bestFitness) {
-                    tspdata.improved();
+                    TSPDATA tspdata = new TSPDATA(_sl, _sl.getSolution(), generation, bestFitness, _sl.getImprovement, "(u+y)EA");
+                    tspdata.setFunctionEvaluations(functionEvaluations);
+                    tspdata.setTimeElapsed(timer.getCurrentTimer());
+                    listener.receiveUpdate(tspdata);
                 }
-                listener.receiveUpdate(tspdata);
+
             }
             generation++;
         }
+        generation--;
         stoppingMet = true;
     }
 

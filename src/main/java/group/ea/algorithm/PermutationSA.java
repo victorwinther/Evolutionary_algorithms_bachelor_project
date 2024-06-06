@@ -49,21 +49,21 @@ public class PermutationSA extends  Algorithm {
 
         System.out.println(offspringFitness + " " + bestFitness);
 
-        functionEvaluations++;
-        _slClone = new Solution(_sl.get_tsp());
-        _slClone.deepCopy(_sl);
-        TSPDATA tspdata = new TSPDATA(_slClone,_slClone.getSolution(),generation-1,offspringFitness,currentTemp,"SA");
-        tspdata.setTimeElapsed(timer.getCurrentTimer());
-        tspdata.setFunctionEvaluations(functionEvaluations);
+
 
         if (offspringFitness < bestFitness) {
-            tspdata.improved();
+            functionEvaluations++;
+            _slClone = new Solution(_sl.get_tsp());
+            _slClone.deepCopy(_sl);
+            TSPDATA tspdata = new TSPDATA(_slClone,_slClone.getSolution(),generation-1,offspringFitness,currentTemp,"SA");
+            tspdata.setTimeElapsed(timer.getCurrentTimer());
+            tspdata.setFunctionEvaluations(functionEvaluations);
+            listener.receiveUpdate(tspdata);
             bestFitness = offspringFitness;
 
         } else if (Math.exp((offspringFitness - bestFitness) / currentTemp) > Math.random()) {
             _sl.revert();
         }
-        listener.receiveUpdate(tspdata);
         currentTemp *= tempReduction;
 
     }

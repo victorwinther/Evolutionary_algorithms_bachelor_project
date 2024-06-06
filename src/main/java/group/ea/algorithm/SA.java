@@ -35,16 +35,16 @@ public class SA extends Algorithm {
         String offspring = mutate(bitString);
         int offspringFitness = (int) problem.computeFitness(offspring);
 
-        Data data = new Data(bitString, generation, bestFitness, false, Optional.of(currentTemp),false);
 
         functionEvaluations++;
-        data.setTimeElapsed(timer.getCurrentTimer());
-        data.setFunctionEvaluations(functionEvaluations);
+
 
         if (offspringFitness > bestFitness) {
             bitString = offspring;
             bestFitness = offspringFitness;
-            data.setYesNo(true);
+            Data data = new Data(bitString, generation, bestFitness, true, Optional.of(currentTemp),false);
+            data.setTimeElapsed(timer.getCurrentTimer());
+            data.setFunctionEvaluations(functionEvaluations);
         } else if (offspringFitness == bestFitness) {
             bitString = offspring;
         } else {
@@ -57,7 +57,6 @@ public class SA extends Algorithm {
                 //data.setTemp(Optional.of(currentTemp));
             }
         }
-        listener.receiveBitstringUpdate(data);
         currentTemp *= tempReduction;
     }
 

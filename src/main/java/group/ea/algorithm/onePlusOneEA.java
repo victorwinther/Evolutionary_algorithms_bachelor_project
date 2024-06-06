@@ -20,7 +20,6 @@ public class onePlusOneEA extends Algorithm {
         listener.receiveBitstringUpdate(firstData);
         while (!checkStoppingCriteria()) {
             StringBuilder y = new StringBuilder(bitString);
-            Data data = new Data(bitString, generation, bestFitness, false, Optional.empty(),false);
             for (int i = 0; i < n; i++) {
                 if (Math.random() <= 1.0 / n) {
                     y.setCharAt(i, y.charAt(i) == '0' ? '1' : '0');
@@ -29,31 +28,18 @@ public class onePlusOneEA extends Algorithm {
             String yString = y.toString();
             double yFitness = problem.computeFitness(yString);
             //double currentFitness = problem.computeFitness(bitString);
-
+            functionEvaluations++;
             if (yFitness >= bestFitness) {
-                if (yFitness > bestFitness) {
-                    data.setYesNo(true);
-                }
                 bitString = yString;
                 bestFitness = (int) yFitness;
-                data.setBitString(bitString);
-                data.setFitness(bestFitness);
-            }
-            functionEvaluations++;
-            data.setFunctionEvaluations(functionEvaluations);
-            data.setTimeElapsed(timer.getCurrentTimer());
-            generation++;
-            if (checkStoppingCriteria()) {
-                data.setStop(true);
-                //generation--;
-                data.setGeneration(generation);
+
+                Data data = new Data(bitString, generation, bestFitness, true, Optional.empty(),false);
+                data.setFunctionEvaluations(functionEvaluations);
+                data.setTimeElapsed(timer.getCurrentTimer());
                 listener.receiveBitstringUpdate(data);
-                break;
+
             }
-            listener.receiveBitstringUpdate(data);
-
-
-
+            generation++;
         }
         generation--;
         stoppingMet = true;

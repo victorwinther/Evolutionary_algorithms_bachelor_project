@@ -26,7 +26,6 @@ public class uPlusyEA extends Algorithm{
         //System.out.println("Performing single update og lambda værdi = " + lambda);
         while (true) {
             List<String> newPopulation = new ArrayList<>(population);
-            Data data = new Data(bitString, generation, bestFitness, false, Optional.empty(),false);
 
             for (int i = 0; i < lambda; i++) {
                 String parent = population.get(rand.nextInt(mu));
@@ -43,15 +42,13 @@ public class uPlusyEA extends Algorithm{
             int oldFitness = bestFitness;
 
             bestFitness = (int) problem.computeFitness(population.get(0));
-            if(bestFitness > oldFitness){
-                data.setFitness(bestFitness);
-                data.setYesNo(true);
-            }
-
-            data.setTimeElapsed(timer.getCurrentTimer());
             functionEvaluations+=mu;
-            data.setFunctionEvaluations(functionEvaluations);
-            listener.receiveBitstringUpdate(data);
+            if(bestFitness > oldFitness){
+                Data data = new Data(bitString, generation, bestFitness, true, Optional.empty(),false);
+                data.setTimeElapsed(timer.getCurrentTimer());
+                data.setFunctionEvaluations(functionEvaluations);
+                listener.receiveBitstringUpdate(data);
+            }
             generation++;
 
         }
