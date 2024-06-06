@@ -268,7 +268,7 @@
             <VBox spacing="10.0">
                <children>
                   <Label text="Display settings" textFill="#fffbfb" />
-                  <GridPane prefHeight="83.0" prefWidth="212.0">
+                  <GridPane prefHeight="57.0" prefWidth="212.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.67095947265625" minWidth="10.0" prefWidth="155.34658813476562" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.67095947265625" minWidth="10.0" prefWidth="155.34658813476562" />
@@ -276,12 +276,12 @@
                      <rowConstraints>
                         <RowConstraints maxHeight="45.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="45.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="45.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
                         <CheckBox fx:id="graphSelector" disable="true" mnemonicParsing="false" onAction="#graphListener" prefHeight="18.0" prefWidth="129.0" selected="true" stylesheets="@../../../css/styling.css" text="Graph" textFill="WHITE" />
                         <CheckBox fx:id="textSelector" disable="true" mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" stylesheets="@../../../css/styling.css" text="Bitstrings" textFill="WHITE" GridPane.rowIndex="1" />
                         <CheckBox fx:id="hypercubeCheck" disable="true" mnemonicParsing="false" onAction="#hypercubeListener" prefHeight="18.0" prefWidth="128.0" stylesheets="@../../../css/styling.css" text="Boolean Hypercube" textFill="WHITE" GridPane.columnIndex="1" />
+                        <CheckBox fx:id="phermoneTrail" disable="true" mnemonicParsing="false" prefHeight="18.0" prefWidth="129.0" stylesheets="@../../../css/styling.css" text="Phermone trail" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                </children>

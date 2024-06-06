@@ -85,7 +85,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private ChoiceBox<Integer> stringLength;
     @FXML
-    private CheckBox graphSelector, textSelector, hypercubeCheck;
+    private CheckBox graphSelector, textSelector, hypercubeCheck, phermoneTrail;
 
     @FXML
     private Label searchspaceLabel,problemLabel, algorithmLabel,criteriasLabel,timeLabel,mutationLabel, selectionLabel,crossoverLabel;
@@ -764,7 +764,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             graphSelector.setDisable(false);
             textSelector.setDisable(false);
             hypercubeCheck.setDisable(false);
-
+        } else {
+            phermoneTrail.setDisable(false);
         }
         startButton.setDisable(false);
         sliderSpeed.setDisable(false);
@@ -1448,7 +1449,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
                      Platform.runLater(() -> {
                          deleteAndDraw(nextSolution.getSolution());
-                         if(nextSolution.getName() == "ACO") {
+                         if(nextSolution.getName() == "ACO" && phermoneTrail.isSelected()) {
                              drawLinesWithPheromones(nextSolution.getSolution(), nextSolution.getPheromone());
                          }
                      });

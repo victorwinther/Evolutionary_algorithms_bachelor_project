@@ -128,10 +128,13 @@ public abstract class Algorithm {
                 ACO acoInstance = (ACO) this;
                 TSPDATA tspdata = new TSPDATA(_cloneSl, _cloneSl.getSolution(), generation, (int) acoInstance.bestAnt.getCost(), functionEvaluations, "ACO", true);
                 tspdata.setPhermone(acoInstance.getPheromone());
+                tspdata.setTimeElapsed(timer.getCurrentTimer());
                 listener.receiveUpdate(tspdata);
             } else{
                 TSPDATA tspdata = new TSPDATA(_cloneSl, _cloneSl.getSolution(), generation, bestFitness, functionEvaluations, "(1+1)EA", true);
+                tspdata.setTimeElapsed(timer.getCurrentTimer());
                 listener.receiveUpdate(tspdata);
+
             }
 
             Solution.setGeneration(0);
