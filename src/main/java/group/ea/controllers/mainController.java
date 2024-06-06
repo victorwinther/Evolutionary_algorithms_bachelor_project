@@ -85,7 +85,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private ChoiceBox<Integer> stringLength;
     @FXML
-    private CheckBox graphSelector, textSelector, hypercubeCheck, phermoneTrail,onlyImprovement;
+    private CheckBox graphSelector, textSelector, hypercubeCheck, phermoneTrail;
 
     @FXML
     private Label searchspaceLabel,problemLabel, algorithmLabel,criteriasLabel,timeLabel,mutationLabel, selectionLabel,crossoverLabel;
@@ -840,9 +840,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     public void stopGraphics() {
         //wait 5 sec
         resetVisualization();
-        currentSchedule.getAlgorithm().stop();
-
-
         isRunning = false; // Set running state to false to stop the algorithm
     }
 
@@ -1136,7 +1133,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     // Method to delete all existing edges
     private void deleteAllEdges() {
-        System.out.println("Deleting all edges " + edgeMap.size());
         for (Line line : edgeMap.values()) {
             tspVisualization.getChildren().remove(line);
         }
@@ -1151,7 +1147,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     public void deleteAndDraw(Solution solution) {
         // Delete all existing edges
         deleteAllEdges();
-        System.out.println("Edgemap size + " + edgeMap.size());
 
         // Draw the new edges from the solution
         for (int i = 0; i < solution.getDimension(); i++) {
@@ -1428,9 +1423,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @Override
     public void receiveUpdate(TSPDATA solution){
         System.out.println("Added solution");
-        if((onlyImprovement.isSelected() && solution.isImproved()) || !onlyImprovement.isSelected()) {
             updateQueue.add(solution);
-        }
     }
     boolean firstTime = true;
     boolean ACO = true;
@@ -1467,7 +1460,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     setSolution(nextSolution);
                 });
                 //if(nextSolution.getName() == "ACO") || nextSolution.getName() == "(u+y)EA" || nextSolution.getName() == "1+1EA" || nextSolution.getName() == "SA")
-                System.out.println(onlyImprovement.isSelected() + " is selected "+ nextSolution.isImproved() + " is improved");
 
                 Platform.runLater(() -> {
                     deleteAndDraw(nextSolution.getSolution());
@@ -1582,12 +1574,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private final Queue<Data> updateBitStringQueue = new LinkedList<Data>();
     @Override
     public void receiveBitstringUpdate(Data data) {
-        if((onlyImprovement.isSelected() && data.getImproved()) || !onlyImprovement.isSelected()) {
             updateBitStringQueue.add(data);
             System.out.println("Added data");
-        }
-
-
     }
 
     private void processBitStringQueue() {

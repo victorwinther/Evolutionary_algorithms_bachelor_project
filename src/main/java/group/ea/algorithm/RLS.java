@@ -24,23 +24,17 @@ public class RLS extends Algorithm {
         } }
         String offspring = mutate(bitString);
         int offspringFitness = (int) problem.computeFitness(offspring);
-        Data data = new Data(bitString, generation+1, bestFitness, false, Optional.empty(),false);
+        functionEvaluations++;
         if (offspringFitness > bestFitness) {
             bitString = offspring;
             bestFitness = offspringFitness;
-            if(graphicsOn) {
-                data.setBitString(bitString);
-                data.setFitness(bestFitness);
-                data.setYesNo(true);
-            }
-        }
-
-        functionEvaluations++;
-        if(graphicsOn){
+            Data data = new Data(bitString, generation+1, bestFitness, true, Optional.empty(),false);
             data.setTimeElapsed(timer.getCurrentTimer());
             data.setFunctionEvaluations(functionEvaluations);
             listener.receiveBitstringUpdate(data);
+
         }
+
     }
     private String mutate(String parent) {
         int mutateIndex = (int) (Math.random() * parent.length());
