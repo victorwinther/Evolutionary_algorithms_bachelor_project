@@ -37,7 +37,8 @@
                            </VBox.margin>
                            <font>
                               <Font name="System Bold" size="15.0" />
-                           </font></Label>
+                           </font>
+                        </Label>
                         <Separator opacity="0.5" prefWidth="294.0">
                            <padding>
                               <Insets left="5.0" right="20.0" />
@@ -60,19 +61,23 @@
                               <Label fx:id="searchspaceLabel" prefHeight="17.0" prefWidth="97.0" text="Searchspace:" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
-                                 </font></Label>
+                                 </font>
+                              </Label>
                               <Label fx:id="problemLabel" text="Problem:" textFill="#fffdfd" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
-                                 </font></Label>
+                                 </font>
+                              </Label>
                               <Label fx:id="criteriasLabel" prefHeight="17.0" prefWidth="102.0" text="Stopping criteria:" textFill="#fffdfd" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
-                                 </font></Label>
+                                 </font>
+                              </Label>
                               <Label fx:id="algorithmLabel" text="Algorithm:" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
-                                 </font></Label>
+                                 </font>
+                              </Label>
                            </children>
                            <VBox.margin>
                               <Insets left="10.0" />
@@ -84,7 +89,8 @@
                            </VBox.margin>
                            <font>
                               <Font name="System Bold" size="15.0" />
-                           </font></Label>
+                           </font>
+                        </Label>
                         <Separator opacity="0.5" prefWidth="200.0">
                            <padding>
                               <Insets left="5.0" right="20.0" />
@@ -107,27 +113,31 @@
                               <Label text="Batch Number:" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
-                                 </font></Label>
+                                 </font>
+                              </Label>
                               <Label text="Run number:" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
-                                 </font></Label>
+                                 </font>
+                              </Label>
                               <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
-                                 </font></Label>
+                                 </font>
+                              </Label>
                            </children>
                            <VBox.margin>
                               <Insets left="10.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label maxWidth="1.7976931348623157E308" prefHeight="24.0" prefWidth="187.0" text="STATISTICS OF CURRENT BRANCH" textFill="WHITE">
+                        <Label maxWidth="1.7976931348623157E308" prefHeight="24.0" prefWidth="187.0" text="STATISTICS " textFill="WHITE">
                            <VBox.margin>
                               <Insets left="10.0" />
                            </VBox.margin>
                            <font>
                               <Font name="System Bold" size="15.0" />
-                           </font></Label>
+                           </font>
+                        </Label>
                         <Separator opacity="0.5" prefWidth="200.0">
                            <padding>
                               <Insets left="5.0" right="20.0" />
@@ -155,35 +165,43 @@
                               <Label text="Max no. iterations" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
-                                 </font></Label>
+                                 </font>
+                              </Label>
                               <Label text="Avg no. iterations" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
-                                 </font></Label>
+                                 </font>
+                              </Label>
                               <Label text="Min. no. iterations" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
-                                 </font></Label>
+                                 </font>
+                              </Label>
                               <Label text="Max. func. eval." textFill="WHITE" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
-                                 </font></Label>
+                                 </font>
+                              </Label>
                               <Label text="Min. func. eval." textFill="WHITE" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="14.0" />
-                                 </font></Label>
+                                 </font>
+                              </Label>
                               <Label text="Max fitness" textFill="WHITE" GridPane.rowIndex="5">
                                  <font>
                                     <Font size="14.0" />
-                                 </font></Label>
+                                 </font>
+                              </Label>
                               <Label text="Average fitness" textFill="WHITE" GridPane.rowIndex="6">
                                  <font>
                                     <Font size="14.0" />
-                                 </font></Label>
+                                 </font>
+                              </Label>
                               <Label text="Min fitness" textFill="WHITE" GridPane.rowIndex="7">
                                  <font>
                                     <Font size="14.0" />
-                                 </font></Label>
+                                 </font>
+                              </Label>
                            </children>
                            <VBox.margin>
                               <Insets left="10.0" />
@@ -204,12 +222,12 @@
          <children>
             <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="63.0" prefWidth="189.0" spacing="20.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#loadScheduleHandler" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/buttonStyle.css" text="LOAD" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#loadScheduleHandler" prefHeight="30.0" prefWidth="85.0" stylesheets="@../../../css/buttonStyle.css" text="LOAD" textFill="WHITE">
                      <HBox.margin>
                         <Insets left="8.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="createBlueprintBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#createBlueprintHandler" prefHeight="32.0" prefWidth="85.0" stylesheets="@../../../css/buttonStyle.css" text="CREATE" textFill="WHITE" />
+                  <Button fx:id="createBlueprintBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#createBlueprintHandler" prefHeight="30.0" prefWidth="85.0" stylesheets="@../../../css/buttonStyle.css" text="CREATE" textFill="WHITE" />
                </children>
             </HBox>
             <Separator opacity="0.5" orientation="VERTICAL" prefHeight="200.0">

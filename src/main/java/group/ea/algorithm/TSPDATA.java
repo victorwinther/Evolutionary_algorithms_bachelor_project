@@ -17,6 +17,7 @@ public class TSPDATA {
     public double improvement;
     private long timeElapsed = 0;
     public City X1,X2,X3,X4,X5,X6;
+    private boolean stopped = false;
 
     public boolean opt3;
 
@@ -55,6 +56,18 @@ public class TSPDATA {
         this.name = name;
         allSolutions.add(this);
 
+
+    }
+
+    public TSPDATA (Solution solution, ArrayList<City> slSolution, int generation, int fitness, int functionEvaluations, String name, boolean stopped) {
+        this.solution = solution;
+        this.generation = generation;
+        this.fitness = fitness;
+        this.functionEvaluations = functionEvaluations;
+        this.slSolution = slSolution;
+        allSolutions.add(this);
+        this.name = name;
+        this.stopped = stopped;
 
     }
 
@@ -125,6 +138,13 @@ public class TSPDATA {
     return 0;
     }
 
+    public void setStopped(boolean stopped) {
+        this.stopped = stopped;
     }
+
+    public boolean isStopped() {
+        return stopped;
+    }
+}
 
 

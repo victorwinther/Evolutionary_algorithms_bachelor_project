@@ -91,12 +91,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private Label searchspaceLabel,problemLabel, algorithmLabel,criteriasLabel,timeLabel,mutationLabel, selectionLabel,crossoverLabel;
 
-    Label minIterationsLabel = new Label("0");
-    Label maxFuncEvalLabel = new Label("0");
-    Label minFuncEvalLabel = new Label("0");
-    Label maxFitnessLabel = new Label("0");
-    Label averageFitnessLabel = new Label("0");
-    Label minFitnessLabel = new Label("0");
+    Label minIterationsLabel = new Label();
+    Label maxFuncEvalLabel = new Label();
+    Label minFuncEvalLabel = new Label();
+    Label maxFitnessLabel = new Label();
+    Label averageFitnessLabel = new Label();
+    Label minFitnessLabel = new Label();
     TSPParser tp;
 
     boolean animationDone = true;
@@ -179,8 +179,21 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     }
 
     @FXML
-    void loadScheduleHandler(ActionEvent event) {
-        Schedule.getSchedules().clear();
+    void loadScheduleHandler(ActionEvent event) throws IOException {
+        runNr = 0;
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
+        Parent root = loader.load();
+
+        // Here you would get the controller if you need to call methods on it
+        mainController controller = loader.getController();
+        Scene scene = new Scene(root);
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+        Platform.runLater(root::requestFocus);
+        stage.setScene(scene);
+        stage.show();
+
+       Schedule.getSchedules().clear();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
         Map<String, String> scheduleParameters = new HashMap<>();
         addParametersToMap(scheduleParameters);
@@ -396,8 +409,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     newSchedule.setUpAlgorithm();
                 }
 
-
-                recieveArray(Schedule.getSchedules());
+                controller.recieveArray(Schedule.getSchedules()); // Call methods on the controller if needed
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -491,11 +503,13 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private void startAllEvolutions(Schedule schedule) {
         prepareUIBeforeAlgorithmRuns(schedule);
         if (currentSchedule.getProblemString().equals("TSP")) {
+            System.out.println("  IN TSP");
             resetVisualization();
             startVisualization();
 
         } else {
             startVisualizationBitString();
+            System.out.println("  IN bitstring");
         }
         timesRun++;
         updateStatistics(currentSchedule);
@@ -547,6 +561,33 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     }
     int runNr;
+    public void clearData(){
+        if (queueSchedule != null) {
+            queueSchedule.clear();
+        }
+        if (updateQueue != null) {
+            updateQueue.clear();
+        }
+        if (updateBitStringQueue != null) {
+            updateBitStringQueue.clear();
+        }
+        if (allSolutions != null) {
+            allSolutions.clear();
+        }
+        timesRun = 0;
+        sum = 0;
+        minIt = Integer.MAX_VALUE;
+        maxFunc = 0;
+        minFunc = Integer.MAX_VALUE;
+        maxFit = 0;
+        avgFit = 0;
+        minFit = Integer.MAX_VALUE;
+
+        // Reset algorithm-related data
+        currentSchedule = null;
+        runNr = 0;
+        firstTime = true;
+    }
     @FXML
     public void nextAlgorithm() {
                 firstTime = true;
@@ -579,6 +620,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
         if (isPaused) {
             timeline.play();
+            currentSchedule.getAlgorithm().resume();
             isPaused = false;
             pauseButton.setDisable(false);
             startButton.setDisable(true);
@@ -610,8 +652,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         batchNumberLabel.setText(String.valueOf(schedules.size()));
 
         timesRunLabel.setText(""+timesRun);
-        dimensionLabel.setText(""+currentSchedule.getDimension());
-
+        if(currentSchedule.getTSP()){
+            String name = currentSchedule.getAlgorithm().get_sl().get_tsp().getLastPartOfFilename();
+            dimensionLabel.setText(name);
+        } else {
+            dimensionLabel.setText("" + currentSchedule.getDimension());
+        }
 
         int iter = currentSchedule.getAlgorithm().getGeneration();
         sum += iter;
@@ -735,17 +781,18 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         criteriasLabel.setStyle("-fx-font-size: 14px;");
         for (int j = 0; j < schedules.size(); j++) {
             Schedule newSchedule = schedules.get(j);
-            System.out.println("added runs from runscount");
+            for (int k = 0; k < newSchedule.getRuns(); k++) {
+                System.out.println("added runs from runscount");
             queueSchedule.add(newSchedule);
-            System.out.println(queueSchedule.size());
            // newSchedule.getAlgorithm().sendListener(this);
-
+            }
         }
 
     }
 
     public void stopEvolution() {
         stopGraphics();
+        currentSchedule.getAlgorithm().stop();
     }
 
     public void startAlgorithm() {
@@ -770,6 +817,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     public void stopGraphics() {
         //wait 5 sec
         resetVisualization();
+        currentSchedule.getAlgorithm().stop();
+
 
         isRunning = false; // Set running state to false to stop the algorithm
     }
@@ -951,6 +1000,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private void pauseVisualization() {
         if (timeline != null) {
+            currentSchedule.getAlgorithm().pause();
             timeline.pause();
             System.out.println("paused");
             isPaused = true;
@@ -1360,10 +1410,11 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     boolean ACO = true;
 
     private void processQueue() {
+
         if (!updateQueue.isEmpty()) {
             TSPDATA nextSolution = updateQueue.poll();
-
-            System.out.println("Next data: " + nextSolution.getGeneration());
+            Platform.runLater(() -> {
+            System.out.println("Next TSP data: " + nextSolution.getGeneration());
             tableIterations.setCellValueFactory(new PropertyValueFactory<>("iteration"));
             tableFitness.setCellValueFactory(new PropertyValueFactory<>("fitness"));
             tableFuncEval.setCellValueFactory(new PropertyValueFactory<>("funcEval"));
@@ -1389,28 +1440,44 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 setSolution(nextSolution);
                 //updateVisualization();
             });
-            setSolution(nextSolution);
-            if(nextSolution.getName().equals("ACO") || nextSolution.getName().equals("(u+y)EA") || nextSolution.getName().equals("1+1EA") || nextSolution.getName().equals("SA")){
+            //if(nextSolution.getName() == "ACO" || nextSolution.getName() == "(u+y)EA" || nextSolution.getName() == "1+1EA" || nextSolution.getName() == "SA"){
+                if(true){
                 Platform.runLater(() -> {
                 deleteAndDraw(nextSolution.getSolution());
                 });
             }//else if (nextSolution.getName() == "1+1EA"){
               //  updateVisualization();
             //}
-
-
-        } else{
-
-            timeline.stop();
-            pauseButton.setDisable(true);
-            stopButton.setDisable(true);
-            if(firstTime){
-            updateUIPostAlgorithm(currentSchedule);
+            if (nextSolution.isStopped()) {
+                timeline.stop();
+                pauseButton.setDisable(true);
+                stopButton.setDisable(true);
+                if (firstTime) {
+                    updateUIPostAlgorithm(currentSchedule);
+                }
+                firstTime = false;
+                System.out.println("stopped it");
+                if (nextSolution.generation >= 9999999){
+                    Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText(null);
+                    alert.setContentText("Optimum not reached");
+                    alert.showAndWait();
+                    });
+                }
             }
-            firstTime = false;
-            System.out.println("stopped it");
+            });
+
 
         }
+
+    }
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
     @FXML
     private void startVisualizationBitString() {
@@ -1484,6 +1551,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         updateBitStringQueue.add(data);
         System.out.println("Added data");
     }
+
     private void processBitStringQueue() {
         done = false;
         if (!updateBitStringQueue.isEmpty()) {
@@ -1516,6 +1584,9 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
 
 
+            if(nextData.getImproved()) {
+                runGraphics2(nextData);
+            }
             if(nextData.isStop()) {
                 done = true;
                 timeline.stop();
@@ -1523,9 +1594,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 stopButton.setDisable(true);
                 updateUIPostAlgorithm(currentSchedule);
                 System.out.println("Stopped succesfully");
-            }
-            if(nextData.getImproved()) {
-                runGraphics2(nextData);
             }
         }
     }

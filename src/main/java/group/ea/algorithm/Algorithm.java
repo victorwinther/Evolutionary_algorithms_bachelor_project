@@ -7,6 +7,7 @@ import group.ea.problem.TSP.Solution;
 import group.ea.helperClasses.Timer;
 import group.ea.helperClasses.Data;
 import group.ea.problem.Problem;
+import group.ea.searchspace.BitString;
 import group.ea.searchspace.SearchSpace;
 
 import javafx.animation.KeyFrame;
@@ -21,11 +22,14 @@ import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class Algorithm {
     protected int mu = 0;
     protected int lambda = 0;
     Problem problem;
+    private boolean paused = false;
+    private boolean stopped = false;
 
     protected Solution _sl;
 
@@ -102,14 +106,34 @@ public abstract class Algorithm {
     public abstract void initialize();
 
     public void runAlgorithm() {
-        timer.startTimer("Time elapsed");
-        while (!checkStoppingCriteria() && !stoppingMet) {
-            performSingleUpdate(generation);
-            generation++;
+
+
+            timer.startTimer("Time elapsed");
+            while (!checkStoppingCriteria() && !stoppingMet) {
+                if (!paused) {
+                performSingleUpdate(generation);
+                generation++;
+                }
+                if (stopped) {
+                    break;
+                }
+            }
+
+            if (searchSpace instanceof BitString) {
+                Data firstData = new Data(bitString, generation, bestFitness, true, Optional.empty(), true);
+                firstData.setFunctionEvaluations(functionEvaluations);
+                firstData.setTimeElapsed(timer.getCurrentTimer());
+                listener.receiveBitstringUpdate(firstData);
+            } else {
+                TSPDATA tspdata = new TSPDATA(_sl, _sl.getSolution(), generation, bestFitness, functionEvaluations, "(u+y)EA", true);
+                listener.receiveUpdate(tspdata);
+            }
+
+            Solution.setGeneration(0);
+            stoppingMet = true;
         }
-        Solution.setGeneration(0);
-        stoppingMet = true;
-    }
+
+
 
     public void clearAndContinue(int i, int newI) {
 
@@ -137,7 +161,8 @@ public abstract class Algorithm {
         this.listener = controller;
         //System.out.println("Listener set" + listener + " Controller sent= "+ controller);
     }
-    public  void setValues(int a, double b, double r){}
+    public  void setValues(int a, double b, double r){
+    }
     public void setMu(int a){
         mu = a;
     }
@@ -147,4 +172,21 @@ public abstract class Algorithm {
 
     public void setUpdateRule(String rule){}
     public void setLocalSearch(boolean search){}
+
+
+
+    public void pause() {
+        paused = true;
+    }
+
+    public void resume() {
+            paused = false;
+
+    }
+
+    public void stop() {
+        stopped = true;
+        resume(); // Ensure any paused threads are released
+    }
 }
+
