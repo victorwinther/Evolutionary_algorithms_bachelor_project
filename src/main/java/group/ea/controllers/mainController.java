@@ -7,7 +7,6 @@ import group.ea.problem.TSP.Solution;
 import group.ea.problem.TSP.TSPParser;
 import group.ea.algorithm.*;
 import group.ea.algorithm.BooleanHypercubeVisualization;
-import group.ea.algorithm.Algorithm;
 import group.ea.helperClasses.Data;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -86,7 +85,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private ChoiceBox<Integer> stringLength;
     @FXML
-    private CheckBox graphSelector, textSelector, hypercubeCheck;
+    private CheckBox graphSelector, textSelector, hypercubeCheck, phermoneTrail,onlyImprovement;
 
     @FXML
     private Label searchspaceLabel,problemLabel, algorithmLabel,criteriasLabel,timeLabel,mutationLabel, selectionLabel,crossoverLabel;
@@ -604,6 +603,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                         textSelector.setDisable(true);
                         hypercubeCheck.setDisable(true);
 
+                    } else {
+                        phermoneTrail.setDisable(false);
                     }
                     startAllEvolutions(currentSchedule);
                     runNr++;
@@ -768,7 +769,26 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             graphSelector.setDisable(false);
             textSelector.setDisable(false);
             hypercubeCheck.setDisable(false);
+            sliderSpeed.setMin(logTransform(0.1, 0.1, 500));
+            sliderSpeed.setMax(logTransform(500, 0.1, 500));
+            sliderSpeed.setValue(logTransform(5, 0.1, 500));
+            sliderSpeed.setBlockIncrement(logTransform(50, 0.1, 500) / 10); // Adjust as needed
 
+            sliderSpeed.setMajorTickUnit((logTransform(500, 0.1, 500) - logTransform(0.1, 0.1, 500)) / 5); // Adjust as needed
+            sliderSpeed.setMinorTickCount(10);
+            sliderSpeed.setShowTickMarks(true);
+            sliderSpeed.setShowTickLabels(true);
+        } else {
+            sliderSpeed.setMin(logTransform(0.1, 0.1, 50));
+            sliderSpeed.setMax(logTransform(50, 0.1, 50));
+            sliderSpeed.setValue(logTransform(1, 0.1, 50));
+            sliderSpeed.setBlockIncrement(logTransform(1.0, 0.1, 50) / 10); // Adjust as needed
+
+            sliderSpeed.setMajorTickUnit((logTransform(1.0, 0.1, 50) - logTransform(0.1, 0.1, 50)) / 5); // Adjust as needed
+            sliderSpeed.setMinorTickCount(10);
+            sliderSpeed.setShowTickMarks(true);
+            sliderSpeed.setShowTickLabels(true);
+            phermoneTrail.setDisable(false);
         }
         startButton.setDisable(false);
         sliderSpeed.setDisable(false);
@@ -919,8 +939,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         sliderSpeed.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (timeline != null) {
                 timeline.stop(); // Stop the timeline to reset the key frame duration
-                double speed = newValue.doubleValue();
-                KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
+                double transformedValue = inverseLogTransform(newValue.doubleValue(), 0.1, 50);
+                KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / transformedValue), event -> {
                    // System.out.println("Keyframe 1 running");
                     processQueue();
                 });
@@ -951,11 +971,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             tspIntialize();
         }
 
-        sliderSpeed.setBlockIncrement(1.0);
-        sliderSpeed.setMax(10.0);
-        sliderSpeed.setMin(0.1);
-        sliderSpeed.setValue(1.0);
-        sliderSpeed.setMajorTickUnit(2.0);
 
 
         Solution solution = new Solution((TSPParser) currentSchedule.getSearchSpace());
@@ -963,7 +978,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
 
 
-        speed = sliderSpeed.getValue();
+        speed = inverseLogTransform(sliderSpeed.getValue(), 0.1, 50);
 
 
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
@@ -1121,9 +1136,14 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     // Method to delete all existing edges
     private void deleteAllEdges() {
+        System.out.println("Deleting all edges " + edgeMap.size());
         for (Line line : edgeMap.values()) {
             tspVisualization.getChildren().remove(line);
         }
+        for (Line line : edgeMap2.values()){
+            tspVisualization.getChildren().remove(line);
+        }
+        edgeMap2.clear();
         edgeMap.clear();
     }
 
@@ -1131,6 +1151,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     public void deleteAndDraw(Solution solution) {
         // Delete all existing edges
         deleteAllEdges();
+        System.out.println("Edgemap size + " + edgeMap.size());
 
         // Draw the new edges from the solution
         for (int i = 0; i < solution.getDimension(); i++) {
@@ -1407,7 +1428,9 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @Override
     public void receiveUpdate(TSPDATA solution){
         System.out.println("Added solution");
-        updateQueue.add(solution);
+        if((onlyImprovement.isSelected() && solution.isImproved()) || !onlyImprovement.isSelected()) {
+            updateQueue.add(solution);
+        }
     }
     boolean firstTime = true;
     boolean ACO = true;
@@ -1439,18 +1462,20 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             extractKeyFeaturesTable.refresh();
 
 
-            Platform.runLater(() -> {
-                setSolution(nextSolution);
-                //updateVisualization();
-            });
-            //if(nextSolution.getName() == "ACO" || nextSolution.getName() == "(u+y)EA" || nextSolution.getName() == "1+1EA" || nextSolution.getName() == "SA"){
-                if(true){
+
                 Platform.runLater(() -> {
-                deleteAndDraw(nextSolution.getSolution());
+                    setSolution(nextSolution);
                 });
-            }//else if (nextSolution.getName() == "1+1EA"){
-              //  updateVisualization();
-            //}
+                //if(nextSolution.getName() == "ACO") || nextSolution.getName() == "(u+y)EA" || nextSolution.getName() == "1+1EA" || nextSolution.getName() == "SA")
+                System.out.println(onlyImprovement.isSelected() + " is selected "+ nextSolution.isImproved() + " is improved");
+
+                Platform.runLater(() -> {
+                    deleteAndDraw(nextSolution.getSolution());
+                    if (nextSolution.getName() == "ACO" && phermoneTrail.isSelected()) {
+                        drawLinesWithPheromones(nextSolution.getSolution(), nextSolution.getPheromone());
+                    }
+                });
+
             if (nextSolution.isStopped()) {
                 timeline.stop();
                 pauseButton.setDisable(true);
@@ -1500,16 +1525,20 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             timeline = new Timeline();
             timeline.setCycleCount(Timeline.INDEFINITE);
 
-            KeyFrame keyFrame1 = new KeyFrame(Duration.seconds(1 / speed), event -> {
+            // Get the initial speed from the slider using the inverse log transform
+            double initialSpeed = inverseLogTransform(sliderSpeed.getValue(), 0.1, 500);
+
+            KeyFrame keyFrame1 = new KeyFrame(Duration.seconds(1 / initialSpeed), event -> {
                 processBitStringQueue();
             });
 
             timeline.getKeyFrames().add(keyFrame1);
 
             sliderSpeed.valueProperty().addListener((observable, oldValue, newValue) -> {
-                speed = newValue.doubleValue();
+                //speed = newValue.doubleValue();
+                double transformedValue = inverseLogTransform(newValue.doubleValue(), 0.1, 500);
                 timeline.getKeyFrames().clear();
-                KeyFrame newKeyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
+                KeyFrame newKeyFrame = new KeyFrame(Duration.seconds(1 / transformedValue), event -> {
                     processBitStringQueue();
                 });
                 timeline.getKeyFrames().add(newKeyFrame);
@@ -1518,11 +1547,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 }
             });
         }
-        sliderSpeed.setBlockIncrement(50.0);
-        sliderSpeed.setMax(500);
-        sliderSpeed.setMin(0.1);
-        sliderSpeed.setValue(50);
-        sliderSpeed.setMajorTickUnit(100.0);
 
         speed = sliderSpeed.getValue();
         timeline.play();
@@ -1548,11 +1572,22 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         stopButton.setDisable(false);
 
     }
+    public double logTransform(double value, double min, double max) {
+        return Math.log(value / min) / Math.log(max / min);
+    }
+
+    public double inverseLogTransform(double value, double min, double max) {
+        return min * Math.pow(max / min, value);
+    }
     private final Queue<Data> updateBitStringQueue = new LinkedList<Data>();
     @Override
     public void receiveBitstringUpdate(Data data) {
-        updateBitStringQueue.add(data);
-        System.out.println("Added data");
+        if((onlyImprovement.isSelected() && data.getImproved()) || !onlyImprovement.isSelected()) {
+            updateBitStringQueue.add(data);
+            System.out.println("Added data");
+        }
+
+
     }
 
     private void processBitStringQueue() {
@@ -1759,7 +1794,95 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     '}';
         }
     }
+    double[][] normalizedPheromone;
+    @Override
+    public void recievePheromone(double[][] pheromone){
+        double maxPheromone = findMax(pheromone);
+        // Normalize the pheromone matrix
+        int rows = pheromone.length;
+        int cols = pheromone[0].length;
+        normalizedPheromone = new double[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                normalizedPheromone[i][j] = pheromone[i][j] / maxPheromone;
+            }
+        }
+
+
+    }
+    private void drawLinesWithPheromones(Solution solution, double[][] pheromone) {
+        double maxPheromone = findMax(pheromone);
+        // Normalize the pheromone matrix
+        int rows = pheromone.length;
+        int cols = pheromone[0].length;
+        normalizedPheromone = new double[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                normalizedPheromone[i][j] = pheromone[i][j] / maxPheromone;
+            }
+        }
+
+
+        if(normalizedPheromone == null){
+            return;
+        }
+        int dimension = solution.getDimension();
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension; j++) {
+                if (i != j && normalizedPheromone[i][j] > 0) {
+                    int x1 = solution.getXSolution(i);
+                    int y1 = maxY - solution.getYSolution(i);
+                    int x2 = solution.getXSolution(j);
+                    int y2 = maxY - solution.getYSolution(j);
+
+                    // Find the corresponding pheromone value
+                    double pheromoneValue = normalizedPheromone[i][j];
+
+                    // Create a new line with the appropriate thickness
+                    Line line = new Line(xPush + x1 / xScaling, y1 / yScaling, xPush + x2 / xScaling, y2 / yScaling);
+                    line.setStrokeWidth(pheromoneValue ); // Scale thickness as needed
+
+                    // Optionally, set the opacity or color based on pheromone value
+                    line.setOpacity(0.1); // Set opacity based on pheromone value
+                    //line.setStroke(Color.hsb(0, 1.0, pheromoneValue)); // Set color based on pheromone value
+                    line.setStroke(Color.hsb(0, 1.0, 1.0)); // Set color based on pheromone value
+                    edgeMap2.put(new Edge(x1, y1, x2, y2), line);
+                   tspVisualization.getChildren().add(line);
+                }
+            }
+        }
+        System.out.println(edgeMap2.size());
+    }
+    private final Map<Edge, Line> edgeMap2 = new HashMap<Edge, Line>();
+    public double findMax(double mat[][])
+    {
+        //mat length
+        int N = mat.length;
+        int M = mat[0].length;
+
+
+        // Initializing max element as INT_MIN
+        double maxElement = Integer.MIN_VALUE;
+
+        // checking each element of matrix
+        // if it is greater than maxElement,
+        // update maxElement
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if (mat[i][j] > maxElement) {
+                    maxElement = mat[i][j];
+                }
+            }
+        }
+
+        // finally return maxElement
+        return maxElement;
+    }
+
 }
+
 
 
 

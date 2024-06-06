@@ -21,8 +21,7 @@ public class RLS extends Algorithm {
         if(generation == 0){
             Data firstData = new Data(bitString, 0, bestFitness, true, Optional.empty(),false);
             listener.receiveBitstringUpdate(firstData);
-        }
-        }
+        } }
         String offspring = mutate(bitString);
         int offspringFitness = (int) problem.computeFitness(offspring);
         Data data = new Data(bitString, generation+1, bestFitness, false, Optional.empty(),false);
@@ -35,11 +34,7 @@ public class RLS extends Algorithm {
                 data.setYesNo(true);
             }
         }
-        if(graphicsOn){
-            if (checkStoppingCriteria()) {
-                data.setStop(true);
-            }
-        }
+
         functionEvaluations++;
         if(graphicsOn){
             data.setTimeElapsed(timer.getCurrentTimer());

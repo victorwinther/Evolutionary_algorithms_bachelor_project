@@ -18,4 +18,6 @@ public interface AlgorithmUpdateListener {
     void receiveUpdate(TSPDATA tspdata);
 
     void receiveBitstringUpdate(Data data);
+
+    void recievePheromone(double[][] pheromone);
 }

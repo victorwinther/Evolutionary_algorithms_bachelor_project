@@ -23,7 +23,7 @@ public class ACO extends Algorithm {
     protected double[][] heuristic;
     protected double[][] graph;
     protected Ant bestAnt;
-    protected double fuzzyRandom = 0.002;
+    protected double fuzzyRandom = 0.00000;
     protected ArrayList<Ant> ants;
     int _generation;
     protected double bestInGeneration;
@@ -49,8 +49,14 @@ public class ACO extends Algorithm {
     public void performSingleUpdate(int gen) {
         improvedInGeneration = false;
 
-        if (generation > (getMaxGenerations() - 2)) {
 
+
+
+
+        if (generation > getMaxGenerations()-2) {
+
+            //System.out.println("done");
+            //System.out.println("Best " + bestAnt.getCost());
             System.out.println("done");
             System.out.println("Best " + bestAnt.getCost());
 
@@ -61,12 +67,15 @@ public class ACO extends Algorithm {
             }
 
 
+
+
             TSPDATA tspdata = new TSPDATA(_cloneSl,_cloneSl.getSolution(),generation,(int) bestAnt.getCost(),gain,"ACO");
+            tspdata.setPhermone(pheromone);
             tspdata.setTimeElapsed(timer.getCurrentTimer());
             tspdata.setFunctionEvaluations(functionEvaluations);
-            tspdata.setStopped(true);
+            System.out.println("Generation when stopped: " + generation);
+            //tspdata.isStopped();
             listener.receiveUpdate(tspdata);
-
         }
 
 
@@ -112,9 +121,11 @@ public class ACO extends Algorithm {
 
             TSPDATA tspdata = new TSPDATA(_cloneSl,_cloneSl.getSolution(),generation,(int) bestAnt.getCost(),gain,"ACO");
             tspdata.setTimeElapsed(timer.getCurrentTimer());
+            tspdata.setPhermone(pheromone);
             tspdata.setFunctionEvaluations(functionEvaluations);
             listener.receiveUpdate(tspdata);
             improvedInGeneration = false;
+            //listener.recievePheromone(pheromone);
         }
 
     }
@@ -385,4 +396,8 @@ public class ACO extends Algorithm {
         return (int)bestAnt.getCost();
     }
 
+
+    public double[][] getPheromone() {
+        return pheromone;
+    }
 }
