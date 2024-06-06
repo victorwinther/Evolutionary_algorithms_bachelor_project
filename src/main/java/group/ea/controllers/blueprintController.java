@@ -375,12 +375,7 @@ public class blueprintController implements Initializable {
     @FXML
     void optimalSettingsHandler(ActionEvent event){
         if (optimalSetting.isSelected()){
-            if (Objects.equals(algorithmSelector.getValue(), "ACO MMAS")) {
-                specialTxtField1.setText("100");
-                specialTxtField2.setText("1");
-                specialTxtField3.setText("20");
-            }
-            else if (Objects.equals(algorithmSelector.getValue(), "ACO Elitist") || Objects.equals(algorithmSelector.getValue(), "ACO")){
+            if (Objects.equals(algorithmSelector.getValue(), "ACO Elitist") || Objects.equals(algorithmSelector.getValue(), "ACO") || Objects.equals(algorithmSelector.getValue(), "ACO MMAS")){
                 specialTxtField1.setText("100");
                 specialTxtField2.setText("1");
                 specialTxtField3.setText("2");

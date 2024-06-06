@@ -233,7 +233,7 @@ public class main extends Application {
         int runsPerObservation = 50;
         double [] alfaValues = {1};
         int [] betaValues = {2};
-        int [] amountOfAnts = {20};
+        int [] amountOfAnts = {100};
         Schedule newSchedule = new Schedule();
         Timer timer = new Timer();
 
@@ -256,9 +256,9 @@ public class main extends Application {
                             newSchedule.setSearchSpaceString("Permutations");
                             newSchedule.setProblemString("TSP");
                             newSchedule.setOptional(new String[]{String.valueOf(ants), String.valueOf(alfa), String.valueOf(beta)});
-                            newSchedule.setAlgorithmString("ACO");
-                            newSchedule.setLocalSearch(true);
-                            newSchedule.setUpdateRule("AS-Update");
+                            newSchedule.setAlgorithmString("ACO MMAS");
+                            newSchedule.setLocalSearch(false);
+                            newSchedule.setUpdateRule("best-so-far(BS)");
                             newSchedule.setIterationBound(length);
                             newSchedule.setOptimumReached(true);
                             newSchedule.setUpAlgorithm();
