@@ -577,6 +577,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
         if (isPaused) {
             timeline.play();
+            currentSchedule.getAlgorithm().resume();
             isPaused = false;
             pauseButton.setDisable(false);
             startButton.setDisable(true);
@@ -744,6 +745,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     public void stopEvolution() {
         stopGraphics();
+        currentSchedule.getAlgorithm().stop();
     }
 
     public void startAlgorithm() {
@@ -768,6 +770,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     public void stopGraphics() {
         //wait 5 sec
         resetVisualization();
+        currentSchedule.getAlgorithm().stop();
+
 
         isRunning = false; // Set running state to false to stop the algorithm
     }
@@ -949,6 +953,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private void pauseVisualization() {
         if (timeline != null) {
+            currentSchedule.getAlgorithm().pause();
             timeline.pause();
             System.out.println("paused");
             isPaused = true;
@@ -1358,9 +1363,10 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     boolean ACO = true;
 
     private void processQueue() {
+
         if (!updateQueue.isEmpty()) {
             TSPDATA nextSolution = updateQueue.poll();
-
+            Platform.runLater(() -> {
             System.out.println("Next data: " + nextSolution.getGeneration());
             tableIterations.setCellValueFactory(new PropertyValueFactory<>("iteration"));
             tableFitness.setCellValueFactory(new PropertyValueFactory<>("fitness"));
@@ -1395,20 +1401,36 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             }//else if (nextSolution.getName() == "1+1EA"){
               //  updateVisualization();
             //}
-
-
-        } else{
-
-            timeline.stop();
-            pauseButton.setDisable(true);
-            stopButton.setDisable(true);
-            if(firstTime){
-            updateUIPostAlgorithm(currentSchedule);
+            if (nextSolution.isStopped()) {
+                timeline.stop();
+                pauseButton.setDisable(true);
+                stopButton.setDisable(true);
+                if (firstTime) {
+                    updateUIPostAlgorithm(currentSchedule);
+                }
+                firstTime = false;
+                System.out.println("stopped it");
+                if (nextSolution.generation >= 9999999){
+                    Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText(null);
+                    alert.setContentText("Optimum not reached");
+                    alert.showAndWait();
+                    });
+                }
             }
-            firstTime = false;
-            System.out.println("stopped it");
+            });
+
 
         }
+
+    }
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
     @FXML
     private void startVisualizationBitString() {
@@ -1482,6 +1504,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         updateBitStringQueue.add(data);
         System.out.println("Added data");
     }
+
     private void processBitStringQueue() {
         done = false;
         if (!updateBitStringQueue.isEmpty()) {
@@ -1514,6 +1537,9 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
 
 
+            if(nextData.getImproved()) {
+                runGraphics2(nextData);
+            }
             if(nextData.isStop()) {
                 done = true;
                 timeline.stop();
@@ -1521,9 +1547,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 stopButton.setDisable(true);
                 updateUIPostAlgorithm(currentSchedule);
                 System.out.println("Stopped succesfully");
-            }
-            if(nextData.getImproved()) {
-                runGraphics2(nextData);
             }
         }
     }

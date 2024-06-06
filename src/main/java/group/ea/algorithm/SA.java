@@ -34,12 +34,18 @@ public class SA extends Algorithm {
         }
         String offspring = mutate(bitString);
         int offspringFitness = (int) problem.computeFitness(offspring);
-        Data data = new Data(bitString, generation, bestFitness, false, Optional.empty(),false);
 
+        functionEvaluations++;
         if (offspringFitness > bestFitness) {
+            Data data = new Data(bitString, generation, bestFitness, true, Optional.empty(),false);
             bitString = offspring;
             bestFitness = offspringFitness;
-            data.setYesNo(true);
+            data.setTimeElapsed(timer.getCurrentTimer());
+            data.setFunctionEvaluations(functionEvaluations);
+            if(checkStoppingCriteria()){
+                data.setStop(true);
+            }
+            listener.receiveBitstringUpdate(data);
         } else if (offspringFitness == bestFitness) {
             bitString = offspring;
         } else {
@@ -49,16 +55,10 @@ public class SA extends Algorithm {
             if (SAEnergy > SARate) {
                 bitString = offspring;
                 bestFitness = offspringFitness;
-                data.setTemp(Optional.of(currentTemp));
+                //data.setTemp(Optional.of(currentTemp));
             }
         }
-        if(checkStoppingCriteria()){
-            data.setStop(true);
-        }
-        functionEvaluations++;
-        data.setTimeElapsed(timer.getCurrentTimer());
-        data.setFunctionEvaluations(functionEvaluations);
-        listener.receiveBitstringUpdate(data);
+
     }
 
     private String mutate(String parent) {
