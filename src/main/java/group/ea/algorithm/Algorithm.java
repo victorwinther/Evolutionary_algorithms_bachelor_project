@@ -64,11 +64,9 @@ public abstract class Algorithm {
 
     int bitLength;
     protected int generation;
-    private boolean hyperDone = true;
     private List<StoppingCriterion> stoppingCriteria = new ArrayList<>();
 
     protected double currentTemp = 10000;
-    protected int maxGeneration = 998;
 
     protected AlgorithmUpdateListener listener;
 

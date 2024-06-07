@@ -989,14 +989,10 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private final Queue<TSPDATA> updateQueue = new LinkedList<>();
 
     public void setSolution(TSPDATA initialSolution) {
-       /* if(firstCall){
-            firstSolution(initialSolution.solution);
-            firstCall = false;
-        }*/
+
         this.currentSolution = initialSolution;
         this.nextSolution = initialSolution;// Copy initial solution
-        // this.changedEdges = new HashSet<>();
-        //resetVisualization();
+
     }
 
     @FXML
@@ -1014,7 +1010,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
             processQueue();
-            //System.out.println("Keyframe 2 running");
 
         });
 
@@ -1120,17 +1115,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         double yPush = 40 / (1200 / maxXFirst);
         maxY = (int) ((int) maxYFirst + yPush);
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
-        /*
 
-        Circle circle4 = new Circle(40,360, 3, Color.RED);
-        tspVisualization.getChildren().add(circle4);
-        Circle circle1 = new Circle(40,18, 3, Color.RED);
-        tspVisualization.getChildren().add(circle1);
-        Circle circle2 = new Circle(590,360, 3, Color.RED);
-        tspVisualization.getChildren().add(circle2);
-        Circle circle3 = new Circle(590,18, 3, Color.RED);
-        tspVisualization.getChildren().add(circle3);
-*/
         double graphWidth = 590 - 40;
         double graphHeight = 360 - 18;
         double extraScaleX = 1800 / maxXFirst;
@@ -1145,10 +1130,9 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             int y = maxY - firstSolution.getYSolution(i);
             Circle circle = new Circle(xPush + x / xScaling, y / yScaling, 3, Color.RED);
             tspVisualization.getChildren().add(circle);
-            //series.getData().add(new XYChart.Data<>(x, y));
         }
 
-        //scatterChart.getData().add(series);
+
         // Draw the edges
         for (int i = 0; i < numPoints; i++) {
             int x1 = firstSolution.getXSolution(i);
@@ -1158,10 +1142,9 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             Line line = new Line(xPush + x1 / xScaling, y1 / yScaling, xPush + x2 / xScaling, y2 / yScaling);
             edgeMap.put(new Edge(x1, y1, x2, y2), line);
             tspVisualization.getChildren().add(line);
-            //System.out.println("Adding line "+ new Edge(x1, y1, x2, y2));
-            //overlayPane.getChildren().add(line);
+
         }
-        //printEdgeMapDetails();
+
 
     }
 
@@ -1191,7 +1174,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             Line line = new Line(xPush + x1 / xScaling, y1 / yScaling, xPush + x2 / xScaling, y2 / yScaling);
             edgeMap.put(new Edge(x1, y1, x2, y2), line);
             tspVisualization.getChildren().add(line);
-            //System.out.println("Adding line " + new Edge(x1, y1, x2, y2));
         }
     }
 
@@ -1311,13 +1293,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                             newEdges.add(new Edge(x2, y2, x6, y6));
                             newEdges.add(new Edge(x3, y3, x4, y4));
                             //new edges added:
-                    /*
-                    System.out.println("Case 1");
-                    System.out.println("x1: " + x1 + " y1: " + y1 + " x5: " + x5 + " y5: " + y5);
-                    System.out.println("x2: " + x2 + " y2: " + y2 + " x6: " + x6 + " y6: " + y6);
-                    System.out.println("x3: " + x3 + " y3: " + y3 + " x4: " + x4 + " y4: " + y4);
 
-                     */
 
                             break;
                         case 2:
@@ -1325,25 +1301,14 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                             newEdges.add(new Edge(x3, y3, x5, y5));
                             newEdges.add(new Edge(x4, y4, x6, y6));
                             newEdges.add(new Edge(x1, y1, x2, y2));
-                    /*
-                    System.out.println("Case 2");
-                    System.out.println("x3: " + x3 + " y3: " + y3 + " x5: " + x5 + " y5: " + y5);
-                    System.out.println("x4: " + x4 + " y4: " + y4 + " x6: " + x6 + " y6: " + y6);
-                    System.out.println("x1: " + x1 + " y1: " + y1 + " x2: " + x2 + " y2: " + y2);
 
-                     */
                             break;
                         case 3:
                             // i -> j and i + 1 -> j +1 and remain k -> k +1
                             newEdges.add(new Edge(x1, y1, x3, y3));
                             newEdges.add(new Edge(x2, y2, x4, y4));
                             newEdges.add(new Edge(x5, y5, x6, y6));
-                    /*
-                    System.out.println("Case 3");
-                    System.out.println("x1: " + x1 + " y1: " + y1 + " x3: " + x3 + " y3: " + y3);
-                    System.out.println("x2: " + x2 + " y2: " + y2 + " x4: " + x4 + " y4: " + y4);
-                    System.out.println("x5: " + x5 + " y5: " + y5 + " x6: " + x6 + " y6: " + y6);
-                    */
+
 
                             break;
                         case 4:
@@ -1352,50 +1317,26 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                             newEdges.add(new Edge(x1, y1, x3, y3));
                             newEdges.add(new Edge(x2, y2, x5, y5));
                             newEdges.add(new Edge(x6, y6, x4, y4));
-                    /*
-                    System.out.println("Case 4");
-                    System.out.println("x1: " + x1 + " y1: " + y1 + " x3: " + x3 + " y3: " + y3);
-                    System.out.println("x2: " + x2 + " y2: " + y2 + " x5: " + x5 + " y5: " + y5);
-                    System.out.println("x6: " + x6 + " y6: " + y6 + " x4: " + x4 + " y4: " + y4);
 
-                     */
                             break;
                         case 5:
                             newEdges.add(new Edge(x1, y1, x5, y5));
                             newEdges.add(new Edge(x2, y2, x4, y4));
                             newEdges.add(new Edge(x3, y3, x6, y6));
-                    /*
-                    System.out.println("Case 5");
-                    System.out.println("x1: " + x1 + " y1: " + y1 + " x5: " + x5 + " y5: " + y5);
-                    System.out.println("x2: " + x2 + " y2: " + y2 + " x4: " + x4 + " y4: " + y4);
-                    System.out.println("x3: " + x3 + " y3: " + y3 + " x6: " + x6 + " y6: " + y6);
 
-                     */
                             break;
                         case 6:
                             newEdges.add(new Edge(x1, y1, x4, y4));
                             newEdges.add(new Edge(x2, y2, x6, y6));
                             newEdges.add(new Edge(x3, y3, x5, y5));
-                    /*
-                    System.out.println("Case 6");
-                    System.out.println("x1: " + x1 + " y1: " + y1 + " x4: " + x4 + " y4: " + y4);
-                    System.out.println("x2: " + x2 + " y2: " + y2 + " x6: " + x6 + " y6: " + y6);
-                    System.out.println("x3: " + x3 + " y3: " + y3 + " x5: " + x5 + " y5: " + y5);
 
-                     */
 
                             break;
                         case 7:
                             newEdges.add(new Edge(x1, y1, x4, y4));
                             newEdges.add(new Edge(x2, y2, x5, y5));
                             newEdges.add(new Edge(x3, y3, x6, y6));
-                    /*
-                    System.out.println("Case 7");
-                    System.out.println("x1: " + x1 + " y1: " + y1 + " x4: " + x4 + " y4: " + y4);
-                    System.out.println("x2: " + x2 + " y2: " + y2 + " x5: " + x5 + " y5: " + y5);
-                    System.out.println("x3: " + x3 + " y3: " + y3 + " x6: " + x6 + " y6: " + y6);
 
-                     */
                             break;
                         default:
                             break;
@@ -1463,8 +1404,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         updateQueue.add(solution);
     }
 
-    boolean firstTime = true;
-    boolean ACO = true;
+    boolean firstTime = true;;
 
     private void processQueue() {
 
@@ -1496,7 +1436,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 Platform.runLater(() -> {
                     setSolution(nextSolution);
                 });
-                //if(nextSolution.getName() == "ACO") || nextSolution.getName() == "(u+y)EA" || nextSolution.getName() == "1+1EA" || nextSolution.getName() == "SA")
 
                 Platform.runLater(() -> {
                     deleteAndDraw(nextSolution.getSolution());
@@ -1565,7 +1504,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             timeline.getKeyFrames().add(keyFrame1);
 
             sliderSpeed.valueProperty().addListener((observable, oldValue, newValue) -> {
-                //speed = newValue.doubleValue();
                 double transformedValue = inverseLogTransform(newValue.doubleValue(), 0.1, 500);
                 timeline.getKeyFrames().clear();
                 KeyFrame newKeyFrame = new KeyFrame(Duration.seconds(1 / transformedValue), event -> {
@@ -1638,7 +1576,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
             // add a value to tablefitness
             String fitness1 = Integer.toString(nextData.getFitness());
-            //ArrayList<String> data = new ArrayList<>();
+
 
 
             ObservableList<RowData> data = FXCollections.observableArrayList();
@@ -1710,12 +1648,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         System.out.println("Generation: " + generation);
         int fitness = data.getFitness();
         Optional<Double> temp = data.getTemp();
-        /*
-        generationSlider.setBlockIncrement(10);
-        generationSlider.setMajorTickUnit(50);
-        generationSlider.setSnapToTicks(true);
-        generationSlider.adjustValue(i);
-        */
+
         // Create a Task for the background processing
         Task<Void> task = new Task<Void>() {
             @Override

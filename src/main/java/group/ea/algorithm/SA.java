@@ -17,8 +17,6 @@ public class SA extends Algorithm {
     public SA(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
         bestFitness = (int) problem.computeFitness(bitString);
-        //initTemp = Math.pow(searchSpace.length, 3);
-        //tempReduction = 1.0 - (1.0/Math.pow(searchSpace.length, 2));
         initTemp = 1;
         tempReduction = 0.99;
         currentTemp = initTemp;

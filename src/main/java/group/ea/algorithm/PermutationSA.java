@@ -68,12 +68,5 @@ public class PermutationSA extends Algorithm {
 
     }
 
-    public void copyCreateCopy(Solution from) {
-        _slClone = new Solution();
-        for (City c : from.getSolution()) {
-            _slClone.getSolution().add(c);
-        }
-        _slClone.set_tsp(from.get_tsp());
 
-    }
 }

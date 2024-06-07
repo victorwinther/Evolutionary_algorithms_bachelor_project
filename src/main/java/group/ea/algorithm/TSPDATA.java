@@ -26,7 +26,6 @@ public class TSPDATA {
 
     private int functionEvaluations = 0;
 
-    // private static List<TspResultController> listeners = new ArrayList<>();
     static ArrayList<TSPDATA> allSolutions = new ArrayList<>();
     private double[][] pheromone;
 

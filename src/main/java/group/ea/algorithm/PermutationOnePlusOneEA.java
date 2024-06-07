@@ -30,9 +30,7 @@ public class PermutationOnePlusOneEA extends Algorithm {
 
     @Override
     public void performSingleUpdate(int generation) {
-        if (generation == 0) {
-            // listener.firstSolution(_sl);
-        }
+
         // Save the current solution
         // randomly at uniform
         boolean threeOpt = false;
@@ -40,12 +38,9 @@ public class PermutationOnePlusOneEA extends Algorithm {
         _sl.clearData();
 
         if (tempChance < chance) {
-            //_sl.twoOptMutate2();
-            //_sl.ls3Opt();
             _sl.twoOptMutate();
 
         } else {
-            //_sl.ls3Opt();
             _sl.random3Opt();
             threeOpt = true;
         }
@@ -61,7 +56,6 @@ public class PermutationOnePlusOneEA extends Algorithm {
             tspdata.setFunctionEvaluations(functionEvaluations - 1);
             listener.receiveUpdate(tspdata);
         } else {
-            //noImprovementCounter++;
             _sl.revert();
         }
 
@@ -70,7 +64,6 @@ public class PermutationOnePlusOneEA extends Algorithm {
 
 
         if (noImprovementCounter > RESTART_THRESHOLD) {
-            //System.out.println("Restarting the algorithm... in generation"+ generation + " with fitness: " + bestFitness );
             _sl.restart(); // Reinitialize the solution
             bestFitness = _sl.computeFitness();
             noImprovementCounter = 0; // Reset counter

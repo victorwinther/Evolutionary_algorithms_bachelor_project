@@ -47,15 +47,10 @@ public class PermutationuPlusyEA extends Algorithm {
                 double tempChance = Math.random();
 
                 if (tempChance < chance) {
-                    //_sl.twoOptMutate2();
-                    //_sl.ls3Opt();
                     parent.twoOptMutate();
-                    threeOpt = false;
 
                 } else {
-                    //_sl.ls3Opt();
                     parent.random3Opt();
-                    threeOpt = true;
                 }
                 population.add(parent);
             }
@@ -65,7 +60,6 @@ public class PermutationuPlusyEA extends Algorithm {
             int oldBestFitness = bestFitness;
             bestFitness = _sl.computeFitness();
 
-            //System.out.println(bestFitness);
             if (graphicsOn) {
 
                 if (oldBestFitness > bestFitness) {
@@ -83,23 +77,9 @@ public class PermutationuPlusyEA extends Algorithm {
     }
 
     private ArrayList<Solution> selectFittest(List<Solution> newPopulation, int mu) {
-        // Use a lambda expression to call the computeFitness() method
-/*
-        System.out.println("New population before sort ");
-        for (Solution s : newPopulation) {
-            System.out.println(s.computeFitness() + " ");
-        }
-*/
 
         newPopulation.sort(Comparator.comparingDouble(Solution::computeFitness));
-/*
-            System.out.println("New population after sort ");
-            for (Solution s : newPopulation) {
-                System.out.println(s.computeFitness() + " ");
-            }
 
-
-*/
         return new ArrayList<>(newPopulation.subList(0, mu));
     }
 }
