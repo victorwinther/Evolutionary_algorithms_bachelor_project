@@ -855,6 +855,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     public void stopGraphics() {
         //wait 5 sec
         resetVisualization();
+        if(updateBitStringQueue != null) {
+            updateBitStringQueue.clear();
+        }
+        if (updateQueue != null) {
+            updateQueue.clear();
+        }
         isRunning = false; // Set running state to false to stop the algorithm
     }
 
