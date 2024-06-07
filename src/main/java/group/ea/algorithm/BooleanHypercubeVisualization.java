@@ -2,6 +2,7 @@ package group.ea.algorithm;
 
 import group.ea.controllers.mainController;
 import group.ea.problem.Problem;
+import group.ea.searchspace.BitString;
 import group.ea.searchspace.SearchSpace;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -172,14 +173,14 @@ public class BooleanHypercubeVisualization {
 
         } else {
             Circle mainCircle = new Circle(centerX + xOffset, yOffset, 4);
-            mainCircle.setFill(Color.BLUE);
+            mainCircle.setFill(getColorByFitness(bitString));
             return mainCircle;
         }
     }
 
     private void drawPixel(Pane pane, int x, int y) {
         //Line line = new Line(x - 1, y, x + 1, y);
-        Circle point = new Circle(x, y, 1); // x and y are the coordinates, radius is 2
+        Circle point = new Circle(x, y, 1);
         point.setFill(Color.BLUE); // Color of the point
         //pane.getChildren().add(line);
         pane.getChildren().add(point);
@@ -192,4 +193,23 @@ public class BooleanHypercubeVisualization {
         return null;
     }
 
+    public Color getColorByFitness(String individual) {
+        try {
+
+            double lowerFitnessBound = 0;
+            double upperFitnessBound = individual.length();
+
+            double fitnessValue = problem.computeFitness(individual);
+            double normalizedFitnessValue = (fitnessValue - lowerFitnessBound) / (upperFitnessBound - lowerFitnessBound);
+            double hue = (1 - normalizedFitnessValue) * 360.0;
+
+            Color result = Color.hsb(hue, 1, 1);
+
+            return result;
+
+        } catch (UnsupportedOperationException ex) {
+
+            return Color.BLUE;
+        }
+    }
 }
