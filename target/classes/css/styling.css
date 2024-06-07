@@ -155,3 +155,7 @@
     -fx-border-color: #90B8F8;
     -fx-border-radius: 3;
 }
+.pane-border {
+    -fx-border-color: #90B8F8;
+    -fx-border-radius: 3;
+}
