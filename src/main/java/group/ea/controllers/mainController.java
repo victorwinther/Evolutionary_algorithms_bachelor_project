@@ -413,7 +413,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                         newSchedule.setUpdateRule(updateRule);
                         newSchedule.setOptional(optionalValues);
                     }
-                    if (scheduleParameters.get("algorithm").equals("(u+y) EA")){
+
+                    if (scheduleParameters.get("algorithm").equals("(u+y) EA") || scheduleParameters.get("algorithm").equals("(u+y) EA TSP") ){
                         newSchedule.setMu(Integer.parseInt(scheduleParameters.get("mu")));
                         newSchedule.setLambda(Integer.parseInt(scheduleParameters.get("lambda")));
                     }
