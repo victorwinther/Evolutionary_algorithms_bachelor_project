@@ -142,7 +142,7 @@ public class Schedule implements Cloneable {
                 this.searchSpace = new BitString(this.dimension);
                 break;
             case "Permutations":
-                this.searchSpace = new TSPParser("src/main/java/group/ea/problem/TSP/problems/" + tspProblem + ".txt");
+                this.searchSpace = new TSPParser("src/main/resources/problems/" + tspProblem + ".txt");
                 break;
         }
 
