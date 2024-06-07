@@ -604,7 +604,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                         hypercubeCheck.setDisable(true);
 
                     } else {
-                        phermoneTrail.setDisable(false);
+                       // phermoneTrail.setDisable(false);
                     }
                     startAllEvolutions(currentSchedule);
                     runNr++;
@@ -788,6 +788,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             sliderSpeed.setMinorTickCount(10);
             sliderSpeed.setShowTickMarks(true);
             sliderSpeed.setShowTickLabels(true);
+        }
+        if(s.getAlgorithm() instanceof ACO || s.getAlgorithm() instanceof ELITIST || s.getAlgorithm() instanceof MMAS){
             phermoneTrail.setDisable(false);
         }
         startButton.setDisable(false);
@@ -968,13 +970,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             tspIntialize();
         }
 
-
-
         Solution solution = new Solution((TSPParser) currentSchedule.getSearchSpace());
         firstSolution(solution);
-
-
-
         speed = inverseLogTransform(sliderSpeed.getValue(), 0.1, 50);
 
 
