@@ -807,6 +807,15 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         }
         startButton.setDisable(false);
         sliderSpeed.setDisable(false);
+        batchNumberLabel.setText(String.valueOf(schedules.size()));
+
+        timesRunLabel.setText(""+timesRun);
+        if(currentSchedule.getTSP()){
+            String name = currentSchedule.getAlgorithm().get_sl().get_tsp().getLastPartOfFilename();
+            dimensionLabel.setText(name);
+        } else {
+            dimensionLabel.setText("" + currentSchedule.getDimension());
+        }
 
 
         searchspaceLabel.setText(s.getSearchSpaceString());
