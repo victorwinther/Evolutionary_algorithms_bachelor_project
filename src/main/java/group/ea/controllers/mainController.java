@@ -1641,7 +1641,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         String bitString = data.getBitString();
 
 
-        System.out.println("Generation: " + generation);
         int fitness = data.getFitness();
         Optional<Double> temp = data.getTemp();
 
