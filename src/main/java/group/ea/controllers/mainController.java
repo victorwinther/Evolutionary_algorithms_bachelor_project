@@ -193,8 +193,13 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         stage.setScene(scene);
         stage.show();
 
-       Schedule.getSchedules().clear();
+        Schedule.getSchedules().clear();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        File initialDirectory = new File("src/main/resources/predefinedSchedules");
+        if (initialDirectory.exists() && initialDirectory.isDirectory()) {
+            fileChooser.setInitialDirectory(initialDirectory);
+        }
+
         Map<String, String> scheduleParameters = new HashMap<>();
         addParametersToMap(scheduleParameters);
 

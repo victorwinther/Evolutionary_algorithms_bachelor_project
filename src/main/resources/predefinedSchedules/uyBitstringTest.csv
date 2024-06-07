@@ -1,0 +1,10 @@
+Searchspace, Bit strings
+Problem, OneMax
+Algorithm, (u+y) EA
+batch
+id, 1; Dimension, 500; u, 10; y, 10; Optimal, true
+id, 2; Dimension, 500; u, 10; y, 100; Optimal, true
+id, 3; Dimension, 500; u, 50; y, 10; Optimal, true
+id, 4; Dimension, 500; u, 50; y, 100; Optimal, true
+id, 5; Dimension, 500; u, 100; y, 10; Optimal, true
+id, 6; Dimension, 500; u, 100; y, 100; Optimal, true

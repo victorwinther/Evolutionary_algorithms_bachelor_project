@@ -1,0 +1,8 @@
+Searchspace, Permutations
+Problem, TSP
+Algorithm, ACO
+batch
+id, 1; TSP problem, berlin52; Colony size, 100; Alpha, 1; Beta, 2; Update rule, AS-update; Local search, false; Optimal, true
+id, 2; TSP problem, berlin52; Colony size, 100; Alpha, 1; Beta, 2; Update rule, AS-update; Local search, true; Optimal, true
+id, 3; TSP problem, berlin52; Colony size, 100; Alpha, 2; Beta, 1; Update rule, AS-update; Local search, false; Optimal, true
+id, 4; TSP problem, berlin52; Colony size, 100; Alpha, 1; Beta, 2; Update rule, AS-update; Local search, true; Optimal, true
