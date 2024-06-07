@@ -11,6 +11,7 @@ public abstract class SearchSpace {
     public SearchSpace() {
 
     }
+    public int returnLength(){return length;}
 
     public abstract String init();
 

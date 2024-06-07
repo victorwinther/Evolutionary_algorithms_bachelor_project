@@ -19,14 +19,16 @@ import java.util.Optional;
 public class PermutationSA extends  Algorithm {
 
     Solution _slClone;
-    double initTemp = 10000;
-    double tempReduction = 0.9995;
+    double initTemp;
+    double tempReduction;
 
 
     public PermutationSA(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
         _sl = (Solution) problem;
         bestFitness = _sl.computeFitness();
+        initTemp = Math.pow(searchSpace.returnLength(),3);
+        tempReduction = 1-(1/500.0*searchSpace.returnLength());
         currentTemp = initTemp;
         System.out.print("Construct done");
     }

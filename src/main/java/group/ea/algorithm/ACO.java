@@ -52,8 +52,7 @@ public class ACO extends Algorithm {
 
 
 
-
-        if (generation > getMaxGenerations()-2) {
+        if (generation > getMaxGenerations() - 2 || bestAnt.getCost() < 7545) {
 
             //System.out.println("done");
             //System.out.println("Best " + bestAnt.getCost());
@@ -62,7 +61,7 @@ public class ACO extends Algorithm {
 
             antToSolution(bestAnt);
             //System.out.println("Fitness in solution before" + _cloneSl.computeFitness());
-            if (_localSearch) {
+            if (_localSearch || bestAnt.getCost() > 7545) {
                 localSearch();
             }
 
@@ -74,7 +73,8 @@ public class ACO extends Algorithm {
             tspdata.setTimeElapsed(timer.getCurrentTimer());
             tspdata.setFunctionEvaluations(functionEvaluations);
             System.out.println("Generation when stopped: " + generation);
-            //tspdata.isStopped();
+            tspdata.isStopped();
+            stoppingMet = true;
             listener.receiveUpdate(tspdata);
         }
 
@@ -226,31 +226,28 @@ public class ACO extends Algorithm {
 
     //at first we try to find the best city with the nearest neighbour algorithm
     public int nnChooseBestCity(int step, Ant a){
-        int index;
-        int next;
-        int temp;
-        double valueBest;
-        double help;
-        next = dimension;
+        int index, choice, temp;
+        double best, help;
+        choice = dimension;
         index = a.getTrailOfAnt()[step - 1];
-        valueBest = -1;
+        best = -1;
         antToSolution(a);
         localSearch();
         for (int i = 0; i < _depth; i++) {
             temp = _cloneSl.getSolution().get(index -(_depth/2) + i).getId() % dimension;
             if (!a.visitedCity(i)) {
                 help = Math.pow(pheromone[index][temp], alpha) * Math.pow(1.0 / graph[index][temp], beta);
-                if (help > valueBest) {
-                    valueBest = help;
-                    next = i;
+                if (help > best) {
+                    best = help;
+                    choice = i;
                 }
             }
         }
-        if(next == dimension || valueBest == -1){
+        if(choice == dimension || best == -1){
             return chooseNextBestCity(step, a);
         }
         else {
-            return next;
+            return choice;
         }
 
     }
@@ -258,18 +255,18 @@ public class ACO extends Algorithm {
     //If the nearest neighbour algorithm fails, we have to find the best city with the standard algorithm
     public int chooseNextBestCity(int step, Ant a){
         int index = a.getTrailOfAnt(step - 1);
-        int next = dimension;
-        double valueBest = -1;
+        int choice = dimension;
+        double best = -1;
         for(int i = 0; i < dimension; i++){
             if(!a.visitedCity(i)){
                 double help = Math.pow(pheromone[index][i], alpha) * Math.pow(1.0 / graph[index][i], beta);
-                if(help > valueBest){
-                    valueBest = help;
-                    next = i;
+                if(help > best){
+                    best = help;
+                    choice = i;
                 }
             }
         }
-        return next;
+        return choice;
     }
 
     public void setupStructure() {

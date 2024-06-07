@@ -9,16 +9,19 @@ import java.util.Optional;
 public class SA extends Algorithm {
 
 
-    double initTemp = 2;
-    double tempReduction = 0.99;
+    double initTemp;
+    double tempReduction;
     double currentTemp;
 
 
     public SA(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
         bestFitness = (int) problem.computeFitness(bitString);
+        //initTemp = Math.pow(searchSpace.length, 3);
+        //tempReduction = 1.0 - (1.0/Math.pow(searchSpace.length, 2));
+        initTemp = 1;
+        tempReduction = 0.99;
         currentTemp = initTemp;
-
     }
 
     @Override
@@ -28,9 +31,11 @@ public class SA extends Algorithm {
 
     @Override
     public void performSingleUpdate(int generation) {
-        if(generation == 0 ){
-            Data firstData = new Data(bitString, generation, bestFitness, true, Optional.empty(),false);
-            listener.receiveBitstringUpdate(firstData);
+        if(graphicsOn){
+            if(generation == 0){
+                Data firstData = new Data(bitString, 0, bestFitness, true, Optional.empty(),false);
+                listener.receiveBitstringUpdate(firstData);
+            }
         }
         String offspring = mutate(bitString);
         int offspringFitness = (int) problem.computeFitness(offspring);
@@ -45,6 +50,7 @@ public class SA extends Algorithm {
             Data data = new Data(bitString, generation, bestFitness, true, Optional.of(currentTemp),false);
             data.setTimeElapsed(timer.getCurrentTimer());
             data.setFunctionEvaluations(functionEvaluations);
+            listener.receiveBitstringUpdate(data);
         } else if (offspringFitness == bestFitness) {
             bitString = offspring;
         } else {
@@ -58,6 +64,7 @@ public class SA extends Algorithm {
             }
         }
         currentTemp *= tempReduction;
+
     }
 
     private String mutate(String parent) {
@@ -65,6 +72,14 @@ public class SA extends Algorithm {
         char[] chars = parent.toCharArray();
         chars[mutateIndex] = chars[mutateIndex] == '0' ? '1' : '0';
         return new String(chars);
+    }
+    @Override
+    public void setInitTemp(double temp){
+        initTemp = temp;
+    }
+    @Override
+    public void setTempReduction(double temp){
+        tempReduction = temp;
     }
 
 }

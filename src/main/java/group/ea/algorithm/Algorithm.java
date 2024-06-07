@@ -98,7 +98,7 @@ public abstract class Algorithm {
                 return maxGenCriterion.getMaxGenerations();
             }
         }
-        return 1000000;
+        return 100000;
     }
 
     public abstract void performSingleUpdate(int generation);
@@ -181,6 +181,13 @@ public abstract class Algorithm {
 
     public void setUpdateRule(String rule){}
     public void setLocalSearch(boolean search){}
+
+    public void setInitTemp(double temp){
+
+    }
+    public void setTempReduction(double temp){
+
+    }
 
 
 
