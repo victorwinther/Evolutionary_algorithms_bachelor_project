@@ -1,7 +1,6 @@
 package group.ea.algorithm;
 
 
-
 import group.ea.problem.TSP.City;
 import group.ea.problem.TSP.Solution;
 import group.ea.helperClasses.Data;
@@ -16,7 +15,7 @@ import java.util.Optional;
 
 //TODO
 //MERGE THIS AND NORMAL SA
-public class PermutationSA extends  Algorithm {
+public class PermutationSA extends Algorithm {
 
     Solution _slClone;
     double initTemp;
@@ -27,8 +26,8 @@ public class PermutationSA extends  Algorithm {
         super(searchSpace, problem);
         _sl = (Solution) problem;
         bestFitness = _sl.computeFitness();
-        initTemp = Math.pow(searchSpace.returnLength(),3);
-        tempReduction = 1-(1/500.0*searchSpace.returnLength());
+        initTemp = Math.pow(searchSpace.returnLength(), 3);
+        tempReduction = 1 - (1 / 500.0 * searchSpace.returnLength());
         currentTemp = initTemp;
         System.out.print("Construct done");
     }
@@ -52,12 +51,11 @@ public class PermutationSA extends  Algorithm {
         System.out.println(offspringFitness + " " + bestFitness);
 
 
-
         if (offspringFitness < bestFitness) {
             functionEvaluations++;
             _slClone = new Solution(_sl.get_tsp());
             _slClone.deepCopy(_sl);
-            TSPDATA tspdata = new TSPDATA(_slClone,_slClone.getSolution(),generation-1,offspringFitness,currentTemp,"SA");
+            TSPDATA tspdata = new TSPDATA(_slClone, _slClone.getSolution(), generation - 1, offspringFitness, currentTemp, "SA");
             tspdata.setTimeElapsed(timer.getCurrentTimer());
             tspdata.setFunctionEvaluations(functionEvaluations);
             listener.receiveUpdate(tspdata);
@@ -69,9 +67,10 @@ public class PermutationSA extends  Algorithm {
         currentTemp *= tempReduction;
 
     }
-    public void copyCreateCopy(Solution from){
+
+    public void copyCreateCopy(Solution from) {
         _slClone = new Solution();
-        for(City c : from.getSolution()){
+        for (City c : from.getSolution()) {
             _slClone.getSolution().add(c);
         }
         _slClone.set_tsp(from.get_tsp());

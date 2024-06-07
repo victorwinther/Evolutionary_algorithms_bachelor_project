@@ -17,7 +17,7 @@ public class MMAS extends ACO {
         Q = maxPheremone;
     }
 
-    public double getValue(){
+    public double getValue() {
         _cloneSl = new Solution(_sl.get_tsp());
 
         localSearch();
@@ -31,9 +31,9 @@ public class MMAS extends ACO {
         limitPheromones();
     }
 
-    private void limitPheromones(){
-        for (int i = 0; i  < (dimension); i++){
-            for (int j = 0; j < (dimension); j++){
+    private void limitPheromones() {
+        for (int i = 0; i < (dimension); i++) {
+            for (int j = 0; j < (dimension); j++) {
                 if (pheromone[i][j] > maxPheremone) {
                     pheromone[i][j] = maxPheremone;
                     pheromone[j][i] = maxPheremone;

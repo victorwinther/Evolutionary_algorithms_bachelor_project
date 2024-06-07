@@ -88,7 +88,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private CheckBox graphSelector, textSelector, hypercubeCheck, phermoneTrail;
 
     @FXML
-    private Label searchspaceLabel,problemLabel, algorithmLabel,criteriasLabel,timeLabel,mutationLabel, selectionLabel,crossoverLabel;
+    private Label searchspaceLabel, problemLabel, algorithmLabel, criteriasLabel, timeLabel, mutationLabel, selectionLabel, crossoverLabel;
 
     Label minIterationsLabel = new Label();
     Label maxFuncEvalLabel = new Label();
@@ -106,11 +106,11 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     private HashMap<String, String> blueprintChoices = new HashMap<>();
     private boolean hypercubeSelected;
     @FXML
-    private Button startButton,nextAlgorithm;
+    private Button startButton, nextAlgorithm;
     private boolean isAnimationPaused = false;// Starts paused
-   List<StoppingCriterion> stoppingCriteria;
-   public int skipIterations;
-   public boolean fullspeed = false;
+    List<StoppingCriterion> stoppingCriteria;
+    public int skipIterations;
+    public boolean fullspeed = false;
     private ArrayList<Schedule> schedules;
     Schedule currentSchedule;
     int maxIterationsLabel = 0;
@@ -129,7 +129,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private TableView<RowData> extractKeyFeaturesTable;
     @FXML
-    private TableColumn<RowData,String> tableIterations, tableFuncEval,tableFitness,tableOptimalFitness,tableRuntime;
+    private TableColumn<RowData, String> tableIterations, tableFuncEval, tableFitness, tableOptimalFitness, tableRuntime;
     /*@FXML
     private Pane tspVisualization;
 
@@ -165,7 +165,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     @FXML
     void createBlueprintHandler(ActionEvent event) throws IOException {
-        if(timeline != null) {
+        if (timeline != null) {
             timeline.stop();
         }
         Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/createSchedulePage.fxml")));
@@ -257,7 +257,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 for (Map.Entry<String, String[]> entry : dataMap.entrySet()) {
                     sb.append(entry.getKey()).append("=").append(Arrays.toString(entry.getValue())).append(", ");
                 }
-                System.out.println( sb.toString());
+                System.out.println(sb.toString());
                 System.out.println("Batch entries:");
                 for (Map.Entry<String, Map<String, String>> entry : batchMap.entrySet()) {
                     System.out.println("ID: " + entry.getKey());
@@ -269,38 +269,34 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 scheduleParameters.put("searchspace", dataMap.get("Searchspace")[0]);
                 scheduleParameters.put("problem", dataMap.get("Problem")[0]);
 
-                if (dataMap.get("Algorithm")[0].equals("(u+y) EA")){
-                    if (dataMap.get("Problem")[0].equals("TSP")){
+                if (dataMap.get("Algorithm")[0].equals("(u+y) EA")) {
+                    if (dataMap.get("Problem")[0].equals("TSP")) {
                         scheduleParameters.put("algorithm", "(u+y) EA TSP");
-                    }
-                    else {
+                    } else {
                         scheduleParameters.put("algorithm", "(u+y) EA");
                     }
-                }
-                else {
+                } else {
                     scheduleParameters.put("algorithm", dataMap.get("Algorithm")[0]);
                 }
 
-                if (dataMap.containsKey("Dimension")){
+                if (dataMap.containsKey("Dimension")) {
                     scheduleParameters.put("dimension", dataMap.get("Dimension")[0]);
                 }
 
                 if (dataMap.containsKey("Stopping criterias")) {
-                    while (dataMap.get("Stopping criterias").length > 0){
+                    while (dataMap.get("Stopping criterias").length > 0) {
                         String[] stoppingCriterias = dataMap.get("Stopping criterias");
                         String readCrit = stoppingCriterias[0];
                         String readVal = "";
-                        if (!(dataMap.get("Stopping criterias").length == 1)){
+                        if (!(dataMap.get("Stopping criterias").length == 1)) {
                             readVal = stoppingCriterias[1];
                         }
 
-                        if (readCrit.equals("Iteration bound")){
+                        if (readCrit.equals("Iteration bound")) {
                             scheduleParameters.put("iterationbound", readVal);
-                        }
-                        else if (readCrit.equals("Fitness bound")){
+                        } else if (readCrit.equals("Fitness bound")) {
                             scheduleParameters.put("fitnessbound", readVal);
-                        }
-                        else if (readCrit.equals("Optimum reached")){
+                        } else if (readCrit.equals("Optimum reached")) {
                             scheduleParameters.put("optimalbound", "true");
                         }
                         dataMap.put("Stopping criterias", removeElementFromArray(dataMap.get("Stopping criterias"), readCrit));
@@ -309,9 +305,9 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
                 }
 
-                if (dataMap.containsKey("Special parameters")){
+                if (dataMap.containsKey("Special parameters")) {
                     String[] special_parameters = dataMap.get("Special parameters");
-                    if (dataMap.get("Algorithm")[0].equals("ACO MMAS") || dataMap.get("Algorithm")[0].equals("ACO Elitist") || dataMap.get("Algorithm")[0].equals("ACO")){
+                    if (dataMap.get("Algorithm")[0].equals("ACO MMAS") || dataMap.get("Algorithm")[0].equals("ACO Elitist") || dataMap.get("Algorithm")[0].equals("ACO")) {
                         String colonySize = special_parameters[0];
                         String alpha = special_parameters[1];
                         String beta = special_parameters[2];
@@ -323,8 +319,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                         scheduleParameters.put("beta", beta);
                         scheduleParameters.put("updaterule", updateRule);
                         scheduleParameters.put("localsearch", localSearch);
-                    }
-                    else if (dataMap.get("Algorithm")[0].equals("(u+y) EA")){
+                    } else if (dataMap.get("Algorithm")[0].equals("(u+y) EA")) {
                         String mu = special_parameters[0];
                         String lambda = special_parameters[1];
 
@@ -334,30 +329,30 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 }
 
 
-                if (isBatch){
-                    for (String scheduleid : batchMap.keySet()){
+                if (isBatch) {
+                    for (String scheduleid : batchMap.keySet()) {
                         Schedule batchSchedule = new Schedule();
                         batchSchedule.setSearchSpaceString(scheduleParameters.get("searchspace"));
                         batchSchedule.setProblemString(scheduleParameters.get("problem"));
                         batchSchedule.setAlgorithmString(scheduleParameters.get("algorithm"));
 
-                        if (batchMap.get(scheduleid).containsKey("Dimension")){
+                        if (batchMap.get(scheduleid).containsKey("Dimension")) {
                             batchSchedule.setDimension(Integer.parseInt(batchMap.get(scheduleid).get("Dimension")));
                         }
-                        if (batchMap.get(scheduleid).containsKey("I. Iterations")){
+                        if (batchMap.get(scheduleid).containsKey("I. Iterations")) {
                             batchSchedule.setIterationBound(Integer.parseInt(batchMap.get(scheduleid).get("I. Iterations")));
                         }
-                        if (batchMap.get(scheduleid).containsKey("F. Iterations")){
+                        if (batchMap.get(scheduleid).containsKey("F. Iterations")) {
                             batchSchedule.setFitnessBound(Integer.parseInt(batchMap.get(scheduleid).get("F. Iterations")));
                         }
-                        if (batchMap.get(scheduleid).containsKey("Optimal")){
+                        if (batchMap.get(scheduleid).containsKey("Optimal")) {
                             batchSchedule.setOptimumReached(true);
                         }
-                        if (batchMap.get(scheduleid).containsKey("TSP problem")){
+                        if (batchMap.get(scheduleid).containsKey("TSP problem")) {
                             batchSchedule.setTSPProblem(batchMap.get(scheduleid).get("TSP problem"));
                         }
 
-                        if (scheduleParameters.get("algorithm").equals("ACO MMAS") || scheduleParameters.get("algorithm").equals("ACO Elitist") || scheduleParameters.get("algorithm").equals("ACO")){
+                        if (scheduleParameters.get("algorithm").equals("ACO MMAS") || scheduleParameters.get("algorithm").equals("ACO Elitist") || scheduleParameters.get("algorithm").equals("ACO")) {
                             String colonySize = batchMap.get(scheduleid).get("Colony size");
                             String alpha = batchMap.get(scheduleid).get("Alpha");
                             String beta = batchMap.get(scheduleid).get("Beta");
@@ -369,7 +364,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                             batchSchedule.setUpdateRule(updateRule);
                             batchSchedule.setOptional(optionalValues);
                         }
-                        if (scheduleParameters.get("algorithm").equals("(u+y) EA")){
+                        if (scheduleParameters.get("algorithm").equals("(u+y) EA")) {
                             batchSchedule.setMu(Integer.parseInt(batchMap.get(scheduleid).get("u")));
                             batchSchedule.setLambda(Integer.parseInt(batchMap.get(scheduleid).get("y")));
                         }
@@ -385,28 +380,28 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     newSchedule.setProblemString(scheduleParameters.get("problem"));
                     newSchedule.setAlgorithmString(scheduleParameters.get("algorithm"));
 
-                    if (dataMap.get("Problem")[0].equals("TSP")){
+                    if (dataMap.get("Problem")[0].equals("TSP")) {
                         String tspProblem = dataMap.get("TSP problem")[0];
 
                         scheduleParameters.put("tspproblem", tspProblem);
                     }
 
-                    if (!scheduleParameters.get("dimension").isEmpty()){
+                    if (!scheduleParameters.get("dimension").isEmpty()) {
                         newSchedule.setDimension(Integer.parseInt(scheduleParameters.get("dimension")));
                     }
-                    if (!scheduleParameters.get("iterationbound").isEmpty()){
+                    if (!scheduleParameters.get("iterationbound").isEmpty()) {
                         newSchedule.setIterationBound(Integer.parseInt(scheduleParameters.get("iterationbound")));
                     }
-                    if (!scheduleParameters.get("fitnessbound").isEmpty()){
+                    if (!scheduleParameters.get("fitnessbound").isEmpty()) {
                         newSchedule.setFitnessBound(Integer.parseInt(scheduleParameters.get("fitnessbound")));
                     }
-                    if (!scheduleParameters.get("optimalbound").isEmpty()){
+                    if (!scheduleParameters.get("optimalbound").isEmpty()) {
                         newSchedule.setOptimumReached(true);
                     }
-                    if (!scheduleParameters.get("tspproblem").isEmpty()){
+                    if (!scheduleParameters.get("tspproblem").isEmpty()) {
                         newSchedule.setTSPProblem(scheduleParameters.get("tspproblem"));
                     }
-                    if (scheduleParameters.get("algorithm").equals("ACO MMAS") || scheduleParameters.get("algorithm").equals("ACO Elitist") || scheduleParameters.get("algorithm").equals("ACO")){
+                    if (scheduleParameters.get("algorithm").equals("ACO MMAS") || scheduleParameters.get("algorithm").equals("ACO Elitist") || scheduleParameters.get("algorithm").equals("ACO")) {
                         String colonySize = scheduleParameters.get("colonysize");
                         String alpha = scheduleParameters.get("alpha");
                         String beta = scheduleParameters.get("beta");
@@ -419,7 +414,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                         newSchedule.setOptional(optionalValues);
                     }
 
-                    if (scheduleParameters.get("algorithm").equals("(u+y) EA") || scheduleParameters.get("algorithm").equals("(u+y) EA TSP") ){
+                    if (scheduleParameters.get("algorithm").equals("(u+y) EA") || scheduleParameters.get("algorithm").equals("(u+y) EA TSP")) {
                         newSchedule.setMu(Integer.parseInt(scheduleParameters.get("mu")));
                         newSchedule.setLambda(Integer.parseInt(scheduleParameters.get("lambda")));
                     }
@@ -435,10 +430,9 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         }
 
 
-
     }
 
-    private void addParametersToMap(Map<String, String> map){
+    private void addParametersToMap(Map<String, String> map) {
         map.put("searchspace", "");
         map.put("problem", "");
         map.put("algorithm", "");
@@ -506,6 +500,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/" + page + ".fxml")));
         mainBorderPane.setCenter(root);
     }
+
     private ExecutorService executor = Executors.newFixedThreadPool(4); // Adjust based on needs
 
     public void executeSchedules(List<Schedule> schedules) {
@@ -513,10 +508,11 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             executor.submit(() -> {
                 schedule.setUpAlgorithm();
                 schedule.run();
-                
+
             });
         }
     }
+
     @FXML
     private void startAllEvolutions(Schedule schedule) {
         prepareUIBeforeAlgorithmRuns(schedule);
@@ -534,7 +530,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
 
     }
-    private void updateStatistics(Schedule schedule){
+
+    private void updateStatistics(Schedule schedule) {
         schedule.setFinishedIterations(schedule.getAlgorithm().getGeneration());
 
     }
@@ -573,13 +570,15 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             if (!flowPane.getChildren().contains(hypercubenPane)) {
                 flowPane.getChildren().add(hypercubenPane);
             }
-            booleanHypercubeVisualization = new BooleanHypercubeVisualization(s.getSearchSpace(), s.getProblem(), this, hypercubenPane,runNr);
+            booleanHypercubeVisualization = new BooleanHypercubeVisualization(s.getSearchSpace(), s.getProblem(), this, hypercubenPane, runNr);
         }
 
 
     }
+
     int runNr;
-    public void clearData(){
+
+    public void clearData() {
         if (queueSchedule != null) {
             queueSchedule.clear();
         }
@@ -606,35 +605,36 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         runNr = 0;
         firstTime = true;
     }
+
     @FXML
     public void nextAlgorithm() {
-                firstTime = true;
-                System.out.println("Current schedule changed");
-                if(runNr < queueSchedule.size()) {
-                    currentSchedule = queueSchedule.get(runNr);
-                    System.out.println(currentSchedule);
-                    System.out.println(queueSchedule.toString());
-                    if(currentSchedule.getTSP()){
-                        graphSelector.setDisable(true);
-                        textSelector.setDisable(true);
-                        hypercubeCheck.setDisable(true);
+        firstTime = true;
+        System.out.println("Current schedule changed");
+        if (runNr < queueSchedule.size()) {
+            currentSchedule = queueSchedule.get(runNr);
+            System.out.println(currentSchedule);
+            System.out.println(queueSchedule.toString());
+            if (currentSchedule.getTSP()) {
+                graphSelector.setDisable(true);
+                textSelector.setDisable(true);
+                hypercubeCheck.setDisable(true);
 
-                    } else {
-                       // phermoneTrail.setDisable(false);
-                    }
-                    startAllEvolutions(currentSchedule);
-                    runNr++;
-                    startButton.setDisable(true);
-                    nextAlgorithm.setDisable(true);
-                } else {
-                    nextAlgorithm.setDisable(true);
-                    runNr = 0;
-                    System.out.println("All schedules done");
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setHeaderText(null);
-                    alert.setContentText("All schedules done");
-                    alert.showAndWait();
-                }
+            } else {
+                // phermoneTrail.setDisable(false);
+            }
+            startAllEvolutions(currentSchedule);
+            runNr++;
+            startButton.setDisable(true);
+            nextAlgorithm.setDisable(true);
+        } else {
+            nextAlgorithm.setDisable(true);
+            runNr = 0;
+            System.out.println("All schedules done");
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+            alert.setContentText("All schedules done");
+            alert.showAndWait();
+        }
     }
 
     @FXML
@@ -656,11 +656,11 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         nextAlgorithm();
 
 
-       // executeSchedules(queueSchedule);
+        // executeSchedules(queueSchedule);
     }
 
     private void updateUIPostAlgorithm(Schedule schedule) {
-            updateUIStats();
+        updateUIStats();
     }
 
     int sum = 0;
@@ -670,12 +670,13 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     int maxFit = 0;
     int avgFit = 0;
     int minFit = 1000000000;
+
     private void updateUIStats() {
 
         batchNumberLabel.setText(String.valueOf(schedules.size()));
 
-        timesRunLabel.setText(""+timesRun);
-        if(currentSchedule.getTSP()){
+        timesRunLabel.setText("" + timesRun);
+        if (currentSchedule.getTSP()) {
             String name = currentSchedule.getAlgorithm().get_sl().get_tsp().getLastPartOfFilename();
             dimensionLabel.setText(name);
         } else {
@@ -684,39 +685,39 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
         int iter = currentSchedule.getAlgorithm().getGeneration();
         sum += iter;
-        if(iter > maxIterationsLabel) {
+        if (iter > maxIterationsLabel) {
             maxIterationsLabel = iter;
-            maxIterationsLabels.setText(""+maxIterationsLabel);
+            maxIterationsLabels.setText("" + maxIterationsLabel);
         }
 
 
-        averageIterationsLabel.setText(""+sum/timesRun);
-        if(iter < minIt) {
+        averageIterationsLabel.setText("" + sum / timesRun);
+        if (iter < minIt) {
             minIt = iter;
-            minIterationsLabel.setText(""+minIt);
+            minIterationsLabel.setText("" + minIt);
         }
-        if(maxFunc < currentSchedule.getAlgorithm().getFunctionEvaluations()) {
+        if (maxFunc < currentSchedule.getAlgorithm().getFunctionEvaluations()) {
             maxFunc = currentSchedule.getAlgorithm().getFunctionEvaluations();
-            maxFuncEvalLabel.setText(""+maxFunc);
+            maxFuncEvalLabel.setText("" + maxFunc);
         }
-        if(minFunc > currentSchedule.getAlgorithm().getFunctionEvaluations()) {
+        if (minFunc > currentSchedule.getAlgorithm().getFunctionEvaluations()) {
             minFunc = currentSchedule.getAlgorithm().getFunctionEvaluations();
-            minFuncEvalLabel.setText(""+minFunc);
+            minFuncEvalLabel.setText("" + minFunc);
         }
-        if(maxFit < currentSchedule.getAlgorithm().getFitness()) {
+        if (maxFit < currentSchedule.getAlgorithm().getFitness()) {
             maxFit = currentSchedule.getAlgorithm().getFitness();
-            maxFitnessLabel.setText(""+maxFit);
+            maxFitnessLabel.setText("" + maxFit);
         }
         avgFit += currentSchedule.getAlgorithm().getFitness();
-        averageFitnessLabel.setText(""+avgFit/timesRun);
-        if(minFit > currentSchedule.getAlgorithm().getFitness()) {
+        averageFitnessLabel.setText("" + avgFit / timesRun);
+        if (minFit > currentSchedule.getAlgorithm().getFitness()) {
             minFit = currentSchedule.getAlgorithm().getFitness();
-            minFitnessLabel.setText(""+minFit);
+            minFitnessLabel.setText("" + minFit);
         }
-
 
 
     }
+
     Circle lastCircle = null;
 
 
@@ -724,7 +725,9 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         Alert alert = new Alert(Alert.AlertType.ERROR, "Error running algorithm: " + th.getMessage(), ButtonType.OK);
         alert.showAndWait();
     }
+
     int chartNr;
+
     public void initializeChart() {
         xAxis.setLabel("Generation");
         yAxis.setLabel("Fitness");
@@ -777,6 +780,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     public boolean isHypercubeSelected() {
         return hypercubeSelected;
     }
+
     ArrayList<Schedule> queueSchedule = new ArrayList<>();
 
     public void recieveArray(ArrayList<Schedule> schedules) {
@@ -784,7 +788,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         currentSchedule = schedules.get(0);
         Schedule s = currentSchedule;
         queueSchedule.clear();
-        if(!s.getTSP()){
+        if (!s.getTSP()) {
             graphSelector.setDisable(false);
             textSelector.setDisable(false);
             hypercubeCheck.setDisable(false);
@@ -808,15 +812,15 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             sliderSpeed.setShowTickMarks(true);
             sliderSpeed.setShowTickLabels(true);
         }
-        if(s.getAlgorithm() instanceof ACO || s.getAlgorithm() instanceof ELITIST || s.getAlgorithm() instanceof MMAS){
+        if (s.getAlgorithm() instanceof ACO || s.getAlgorithm() instanceof ELITIST || s.getAlgorithm() instanceof MMAS) {
             phermoneTrail.setDisable(false);
         }
         startButton.setDisable(false);
         sliderSpeed.setDisable(false);
         batchNumberLabel.setText(String.valueOf(schedules.size()));
 
-        timesRunLabel.setText(""+timesRun);
-        if(currentSchedule.getTSP()){
+        timesRunLabel.setText("" + timesRun);
+        if (currentSchedule.getTSP()) {
             String name = currentSchedule.getAlgorithm().get_sl().get_tsp().getLastPartOfFilename();
             dimensionLabel.setText(name);
         } else {
@@ -836,8 +840,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             Schedule newSchedule = schedules.get(j);
             for (int k = 0; k < newSchedule.getRuns(); k++) {
                 System.out.println("added runs from runscount");
-            queueSchedule.add(newSchedule);
-           // newSchedule.getAlgorithm().sendListener(this);
+                queueSchedule.add(newSchedule);
+                // newSchedule.getAlgorithm().sendListener(this);
             }
         }
 
@@ -855,8 +859,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     @FXML
     private void pauseGraphics() {
-       // isAnimationPaused = true;
-       // pauseVisualization();
+        // isAnimationPaused = true;
+        // pauseVisualization();
     }
 
     @FXML
@@ -870,7 +874,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     public void stopGraphics() {
         //wait 5 sec
         resetVisualization();
-        if(updateBitStringQueue != null) {
+        if (updateBitStringQueue != null) {
             updateBitStringQueue.clear();
         }
         if (updateQueue != null) {
@@ -890,12 +894,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         statsBatch.add(averageIterationsLabel, 1, 1);
 
 
-        statsBatch.add(minIterationsLabel,1,2);
-        statsBatch.add(maxFuncEvalLabel,1,3);
-        statsBatch.add(minFuncEvalLabel,1,4);
-        statsBatch.add(maxFitnessLabel,1,5);
-        statsBatch.add(averageFitnessLabel,1,6);
-        statsBatch.add(minFitnessLabel,1,7);
+        statsBatch.add(minIterationsLabel, 1, 2);
+        statsBatch.add(maxFuncEvalLabel, 1, 3);
+        statsBatch.add(minFuncEvalLabel, 1, 4);
+        statsBatch.add(maxFitnessLabel, 1, 5);
+        statsBatch.add(averageFitnessLabel, 1, 6);
+        statsBatch.add(minFitnessLabel, 1, 7);
 
 
         batchInfo.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 14;");
@@ -911,7 +915,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         maxFitnessLabel.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 14;");
         averageFitnessLabel.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 14;");
         minFitnessLabel.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 14;");
-
 
 
         Schedule schedule = new Schedule();
@@ -939,8 +942,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         schedule3.setDimension(100);
 
 
-
-
         queueSchedule.add(schedule);
         queueSchedule.add(schedule2);
         queueSchedule.add(schedule3);
@@ -960,6 +961,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     public boolean isGraphSelected() {
         return graphSelector.isSelected();
     }
+
     @FXML
     private ScatterChart<Number, Number> scatterChart;
     @FXML
@@ -967,14 +969,14 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @FXML
     private ScrollPane scrollPaneMain;
 
-    public void tspIntialize(){
+    public void tspIntialize() {
 
         sliderSpeed.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (timeline != null) {
                 timeline.stop(); // Stop the timeline to reset the key frame duration
                 double transformedValue = inverseLogTransform(newValue.doubleValue(), 0.1, 50);
                 KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / transformedValue), event -> {
-                   // System.out.println("Keyframe 1 running");
+                    // System.out.println("Keyframe 1 running");
                     processQueue();
                 });
                 timeline.getKeyFrames().setAll(keyFrame); // Set the new key frame with the updated speed
@@ -993,9 +995,10 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         }*/
         this.currentSolution = initialSolution;
         this.nextSolution = initialSolution;// Copy initial solution
-       // this.changedEdges = new HashSet<>();
+        // this.changedEdges = new HashSet<>();
         //resetVisualization();
     }
+
     @FXML
     private void startVisualization() {
         if (timeline == null) {
@@ -1011,7 +1014,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(1 / speed), event -> {
             processQueue();
-           //System.out.println("Keyframe 2 running");
+            //System.out.println("Keyframe 2 running");
 
         });
 
@@ -1080,6 +1083,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     double xPush = 35;
 
     StackPane stackPane = new StackPane();
+
     @Override
     public void firstSolution(Solution solution) {
 
@@ -1099,8 +1103,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             }
 
         }
-        xAxis = new NumberAxis(0, maxXFirst, maxXFirst/10);
-        yAxis = new NumberAxis(0, maxYFirst, maxYFirst/10);
+        xAxis = new NumberAxis(0, maxXFirst, maxXFirst / 10);
+        yAxis = new NumberAxis(0, maxYFirst, maxYFirst / 10);
         yAxis.setTickLabelRotation(90);
 
         scatterChart = new ScatterChart<>(xAxis, yAxis);
@@ -1108,7 +1112,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         scatterChart.setMinSize(600, 400);
         scatterChart.setMaxSize(600, 400);
         scatterChart.setLegendVisible(false);
-
 
 
         stackPane.getChildren().addAll(scatterChart, tspVisualization);
@@ -1140,7 +1143,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         for (int i = 0; i < numPoints; i++) {
             int x = firstSolution.getXSolution(i);
             int y = maxY - firstSolution.getYSolution(i);
-            Circle circle = new Circle(xPush+x / xScaling, y / yScaling, 3, Color.RED);
+            Circle circle = new Circle(xPush + x / xScaling, y / yScaling, 3, Color.RED);
             tspVisualization.getChildren().add(circle);
             //series.getData().add(new XYChart.Data<>(x, y));
         }
@@ -1152,7 +1155,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             int y1 = maxY - firstSolution.getYSolution(i);
             int x2 = firstSolution.getXSolution((i + 1) % numPoints);
             int y2 = maxY - firstSolution.getYSolution((i + 1) % numPoints);
-            Line line = new Line(xPush+x1 / xScaling, y1 / yScaling, xPush+x2 / xScaling, y2 / yScaling);
+            Line line = new Line(xPush + x1 / xScaling, y1 / yScaling, xPush + x2 / xScaling, y2 / yScaling);
             edgeMap.put(new Edge(x1, y1, x2, y2), line);
             tspVisualization.getChildren().add(line);
             //System.out.println("Adding line "+ new Edge(x1, y1, x2, y2));
@@ -1167,7 +1170,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         for (Line line : edgeMap.values()) {
             tspVisualization.getChildren().remove(line);
         }
-        for (Line line : edgeMap2.values()){
+        for (Line line : edgeMap2.values()) {
             tspVisualization.getChildren().remove(line);
         }
         edgeMap2.clear();
@@ -1191,124 +1194,123 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             //System.out.println("Adding line " + new Edge(x1, y1, x2, y2));
         }
     }
+
     private void updateVisualization() {
         Task<Void> task = new Task<Void>() {
             @Override
-            protected
-            Void call() throws Exception {
+            protected Void call() throws Exception {
 
-        // Clear previous visualization
-        speed = sliderSpeed.getValue();
-        //removed edges
-        int x1 = (int) currentSolution.X1.getX();
-        int y1 = maxY - (int) currentSolution.X1.getY();
-        int x2 = (int) currentSolution.X2.getX();
-        int y2 = maxY - (int) currentSolution.X2.getY();
-        int x3 = (int) currentSolution.X3.getX();
-        int y3 = maxY - (int) currentSolution.X3.getY();
-        int x4 = (int) currentSolution.X4.getX();
-        int y4 = maxY - (int) currentSolution.X4.getY();
-        List<Edge> newEdges = new ArrayList<>();
+                // Clear previous visualization
+                speed = sliderSpeed.getValue();
+                //removed edges
+                int x1 = (int) currentSolution.X1.getX();
+                int y1 = maxY - (int) currentSolution.X1.getY();
+                int x2 = (int) currentSolution.X2.getX();
+                int y2 = maxY - (int) currentSolution.X2.getY();
+                int x3 = (int) currentSolution.X3.getX();
+                int y3 = maxY - (int) currentSolution.X3.getY();
+                int x4 = (int) currentSolution.X4.getX();
+                int y4 = maxY - (int) currentSolution.X4.getY();
+                List<Edge> newEdges = new ArrayList<>();
 
-        Edge edge1 = new Edge(x1, y1, x2, y2);
-        Edge edge2 = new Edge(x2, y2, x1, y1);
-        Edge edge3 = new Edge(x3, y3, x4, y4);
-        Edge edge4 = new Edge(x4, y4, x3, y3);
+                Edge edge1 = new Edge(x1, y1, x2, y2);
+                Edge edge2 = new Edge(x2, y2, x1, y1);
+                Edge edge3 = new Edge(x3, y3, x4, y4);
+                Edge edge4 = new Edge(x4, y4, x3, y3);
 
-        Line line1 = edgeMap.get(edge1);
-        Line line2 = edgeMap.get(edge2);
-        Line line3 = edgeMap.get(edge3);
-        Line line4 = edgeMap.get(edge4);
+                Line line1 = edgeMap.get(edge1);
+                Line line2 = edgeMap.get(edge2);
+                Line line3 = edgeMap.get(edge3);
+                Line line4 = edgeMap.get(edge4);
 
-        if (line1 != null) {
-            Platform.runLater(() -> tspVisualization.getChildren().remove(line1));
+                if (line1 != null) {
+                    Platform.runLater(() -> tspVisualization.getChildren().remove(line1));
 
-            edgeMap.remove(edge1);
-            edgesDeleted++;
-        }
+                    edgeMap.remove(edge1);
+                    edgesDeleted++;
+                }
 
-        if (line2 != null) {
-            Platform.runLater(() -> tspVisualization.getChildren().remove(line2));
+                if (line2 != null) {
+                    Platform.runLater(() -> tspVisualization.getChildren().remove(line2));
 
-            edgeMap.remove(edge2);
-            edgesDeleted++;
-        }
-        if (line3 != null) {
-            Platform.runLater(() -> tspVisualization.getChildren().remove(line3));
+                    edgeMap.remove(edge2);
+                    edgesDeleted++;
+                }
+                if (line3 != null) {
+                    Platform.runLater(() -> tspVisualization.getChildren().remove(line3));
 
-            edgeMap.remove(edge3);
-            edgesDeleted++;
-        }
-        if (line4 != null) {
-            Platform.runLater(() -> tspVisualization.getChildren().remove(line4));
-            edgeMap.remove(edge4);
-            edgesDeleted++;
-        }
-        if(line1 == null && line2 == null || line3 == null && line4 == null){
-            if(line1 == null) {
-                System.out.println("Line1 not found for edge: " + new Edge(x1, y1, x2, y2));
-            }
-            if(line2 == null) {
-                System.out.println("Line2 not found for edge: " + new Edge(x2, y2, x1, y1));
-            }
-            if(line3 == null) {
-                System.out.println("Line3 not found for edge: " + new Edge(x3, y3, x4, y4));
-            }
-            if(line4 == null) {
-                System.out.println("Line4 not found for edge: " + new Edge(x4, y4, x3, y3));
-            }
-            System.out.println(currentSolution.opt3 + " 3 opt");
-            System.out.println("Line4 not found for edge: " + new Edge(x4, y4, x3, y3));
-            System.out.println("deleted 1 and 2"+ new Edge(x1,y1,x2,y2) + " "+ new Edge(x3,y3,x4,y4));
+                    edgeMap.remove(edge3);
+                    edgesDeleted++;
+                }
+                if (line4 != null) {
+                    Platform.runLater(() -> tspVisualization.getChildren().remove(line4));
+                    edgeMap.remove(edge4);
+                    edgesDeleted++;
+                }
+                if (line1 == null && line2 == null || line3 == null && line4 == null) {
+                    if (line1 == null) {
+                        System.out.println("Line1 not found for edge: " + new Edge(x1, y1, x2, y2));
+                    }
+                    if (line2 == null) {
+                        System.out.println("Line2 not found for edge: " + new Edge(x2, y2, x1, y1));
+                    }
+                    if (line3 == null) {
+                        System.out.println("Line3 not found for edge: " + new Edge(x3, y3, x4, y4));
+                    }
+                    if (line4 == null) {
+                        System.out.println("Line4 not found for edge: " + new Edge(x4, y4, x3, y3));
+                    }
+                    System.out.println(currentSolution.opt3 + " 3 opt");
+                    System.out.println("Line4 not found for edge: " + new Edge(x4, y4, x3, y3));
+                    System.out.println("deleted 1 and 2" + new Edge(x1, y1, x2, y2) + " " + new Edge(x3, y3, x4, y4));
 
-            printEdgeMapDetails();
-        }
-
+                    printEdgeMapDetails();
+                }
 
 
-        if (currentSolution.opt3) {
-            // X -> X+1  Y -> Y+1 Z -> Z + 1
-            int x5 = (int) currentSolution.X5.getX();
-            int y5 = maxY - (int) currentSolution.X5.getY();
-            int x6 = (int) currentSolution.X6.getX();
-            int y6 = maxY - (int) currentSolution.X6.getY();
+                if (currentSolution.opt3) {
+                    // X -> X+1  Y -> Y+1 Z -> Z + 1
+                    int x5 = (int) currentSolution.X5.getX();
+                    int y5 = maxY - (int) currentSolution.X5.getY();
+                    int x6 = (int) currentSolution.X6.getX();
+                    int y6 = maxY - (int) currentSolution.X6.getY();
 
-            Edge edge5 = new Edge(x5, y5, x6, y6);
-            Edge edge6 = new Edge(x6, y6, x5, y5);
-            Line line5 = edgeMap.get(edge5);
-            Line line6 = edgeMap.get(edge6);
+                    Edge edge5 = new Edge(x5, y5, x6, y6);
+                    Edge edge6 = new Edge(x6, y6, x5, y5);
+                    Line line5 = edgeMap.get(edge5);
+                    Line line6 = edgeMap.get(edge6);
 
-            if (line5 != null) {
-                Platform.runLater(() -> tspVisualization.getChildren().remove(line5));
+                    if (line5 != null) {
+                        Platform.runLater(() -> tspVisualization.getChildren().remove(line5));
 
 
-                edgeMap.remove(new Edge(x5, y5, x6, y6));
-                edgesDeleted++;
-            }
-            if (line6 != null) {
-                Platform.runLater(() -> tspVisualization.getChildren().remove(line6));
+                        edgeMap.remove(new Edge(x5, y5, x6, y6));
+                        edgesDeleted++;
+                    }
+                    if (line6 != null) {
+                        Platform.runLater(() -> tspVisualization.getChildren().remove(line6));
 
-                edgeMap.remove(new Edge(x6, y6, x5, y5));
-                edgesDeleted++;
-            }
-            if(line5 == null && line6 == null){
-                System.out.println("Line6 not found for edge: " +new Edge(x5, y5, x6, y6));
-                System.out.println("deleted 1 and 2"+ new Edge(x1,y1,x2,y2) + " "+ new Edge(x3,y3,x4,y4));
+                        edgeMap.remove(new Edge(x6, y6, x5, y5));
+                        edgesDeleted++;
+                    }
+                    if (line5 == null && line6 == null) {
+                        System.out.println("Line6 not found for edge: " + new Edge(x5, y5, x6, y6));
+                        System.out.println("deleted 1 and 2" + new Edge(x1, y1, x2, y2) + " " + new Edge(x3, y3, x4, y4));
 
-                printEdgeMapDetails();
-            }
+                        printEdgeMapDetails();
+                    }
 
-            switch (currentSolution.optCase) {
-                //x1x2, z1z2, y1,y2
-                //x1x2, x3x4 ,x5x6
-                // X1  Y Z
-                // I J K
-                case 1:
-                    // i -> k and i + 1 -> k + 1 and remain j -> j +1
-                    newEdges.add(new Edge(x1, y1, x5, y5));
-                    newEdges.add(new Edge(x2, y2, x6, y6));
-                    newEdges.add(new Edge(x3, y3, x4, y4));
-                    //new edges added:
+                    switch (currentSolution.optCase) {
+                        //x1x2, z1z2, y1,y2
+                        //x1x2, x3x4 ,x5x6
+                        // X1  Y Z
+                        // I J K
+                        case 1:
+                            // i -> k and i + 1 -> k + 1 and remain j -> j +1
+                            newEdges.add(new Edge(x1, y1, x5, y5));
+                            newEdges.add(new Edge(x2, y2, x6, y6));
+                            newEdges.add(new Edge(x3, y3, x4, y4));
+                            //new edges added:
                     /*
                     System.out.println("Case 1");
                     System.out.println("x1: " + x1 + " y1: " + y1 + " x5: " + x5 + " y5: " + y5);
@@ -1317,12 +1319,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
                      */
 
-                    break;
-                case 2:
-                    // j -> k and j + 1 -> k + 1 and remain i-> i +1
-                    newEdges.add(new Edge(x3, y3, x5, y5));
-                    newEdges.add(new Edge(x4, y4, x6, y6));
-                    newEdges.add(new Edge(x1, y1, x2, y2));
+                            break;
+                        case 2:
+                            // j -> k and j + 1 -> k + 1 and remain i-> i +1
+                            newEdges.add(new Edge(x3, y3, x5, y5));
+                            newEdges.add(new Edge(x4, y4, x6, y6));
+                            newEdges.add(new Edge(x1, y1, x2, y2));
                     /*
                     System.out.println("Case 2");
                     System.out.println("x3: " + x3 + " y3: " + y3 + " x5: " + x5 + " y5: " + y5);
@@ -1330,12 +1332,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     System.out.println("x1: " + x1 + " y1: " + y1 + " x2: " + x2 + " y2: " + y2);
 
                      */
-                    break;
-                case 3:
-                    // i -> j and i + 1 -> j +1 and remain k -> k +1
-                    newEdges.add(new Edge(x1, y1, x3, y3));
-                    newEdges.add(new Edge(x2, y2, x4, y4));
-                    newEdges.add(new Edge(x5, y5, x6, y6));
+                            break;
+                        case 3:
+                            // i -> j and i + 1 -> j +1 and remain k -> k +1
+                            newEdges.add(new Edge(x1, y1, x3, y3));
+                            newEdges.add(new Edge(x2, y2, x4, y4));
+                            newEdges.add(new Edge(x5, y5, x6, y6));
                     /*
                     System.out.println("Case 3");
                     System.out.println("x1: " + x1 + " y1: " + y1 + " x3: " + x3 + " y3: " + y3);
@@ -1343,13 +1345,13 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     System.out.println("x5: " + x5 + " y5: " + y5 + " x6: " + x6 + " y6: " + y6);
                     */
 
-                    break;
-                case 4:
-                    // i -> j and i + 1 -> k
-                    // k +1 -> j +1
-                    newEdges.add(new Edge(x1, y1, x3, y3));
-                    newEdges.add(new Edge(x2, y2, x5, y5));
-                    newEdges.add(new Edge(x6, y6, x4, y4));
+                            break;
+                        case 4:
+                            // i -> j and i + 1 -> k
+                            // k +1 -> j +1
+                            newEdges.add(new Edge(x1, y1, x3, y3));
+                            newEdges.add(new Edge(x2, y2, x5, y5));
+                            newEdges.add(new Edge(x6, y6, x4, y4));
                     /*
                     System.out.println("Case 4");
                     System.out.println("x1: " + x1 + " y1: " + y1 + " x3: " + x3 + " y3: " + y3);
@@ -1357,11 +1359,11 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     System.out.println("x6: " + x6 + " y6: " + y6 + " x4: " + x4 + " y4: " + y4);
 
                      */
-                    break;
-                case 5:
-                    newEdges.add(new Edge(x1, y1, x5, y5));
-                    newEdges.add(new Edge(x2, y2, x4, y4));
-                    newEdges.add(new Edge(x3, y3, x6, y6));
+                            break;
+                        case 5:
+                            newEdges.add(new Edge(x1, y1, x5, y5));
+                            newEdges.add(new Edge(x2, y2, x4, y4));
+                            newEdges.add(new Edge(x3, y3, x6, y6));
                     /*
                     System.out.println("Case 5");
                     System.out.println("x1: " + x1 + " y1: " + y1 + " x5: " + x5 + " y5: " + y5);
@@ -1369,11 +1371,11 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     System.out.println("x3: " + x3 + " y3: " + y3 + " x6: " + x6 + " y6: " + y6);
 
                      */
-                    break;
-                case 6:
-                    newEdges.add(new Edge(x1, y1, x4, y4));
-                    newEdges.add(new Edge(x2, y2, x6, y6));
-                    newEdges.add(new Edge(x3, y3, x5, y5));
+                            break;
+                        case 6:
+                            newEdges.add(new Edge(x1, y1, x4, y4));
+                            newEdges.add(new Edge(x2, y2, x6, y6));
+                            newEdges.add(new Edge(x3, y3, x5, y5));
                     /*
                     System.out.println("Case 6");
                     System.out.println("x1: " + x1 + " y1: " + y1 + " x4: " + x4 + " y4: " + y4);
@@ -1382,11 +1384,11 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
                      */
 
-                    break;
-                case 7:
-                    newEdges.add(new Edge(x1, y1, x4, y4));
-                    newEdges.add(new Edge(x2, y2, x5, y5));
-                    newEdges.add(new Edge(x3, y3, x6, y6));
+                            break;
+                        case 7:
+                            newEdges.add(new Edge(x1, y1, x4, y4));
+                            newEdges.add(new Edge(x2, y2, x5, y5));
+                            newEdges.add(new Edge(x3, y3, x6, y6));
                     /*
                     System.out.println("Case 7");
                     System.out.println("x1: " + x1 + " y1: " + y1 + " x4: " + x4 + " y4: " + y4);
@@ -1394,49 +1396,53 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     System.out.println("x3: " + x3 + " y3: " + y3 + " x6: " + x6 + " y6: " + y6);
 
                      */
-                    break;
-                default:
-                    break;
+                            break;
+                        default:
+                            break;
 
-            }
+                    }
 
-        }else {
+                } else {
 
-            //draw the new edges
-            Line newLine1 = new Line(xPush + x1 / xScaling, y1 / yScaling, xPush + x3 / xScaling, y3 / yScaling);
-            Line newLine2 = new Line(xPush + x2 / xScaling, y2 / yScaling, xPush + x4 / xScaling, y4 / yScaling);
-            edgesAdded++;
-            edgesAdded++;
+                    //draw the new edges
+                    Line newLine1 = new Line(xPush + x1 / xScaling, y1 / yScaling, xPush + x3 / xScaling, y3 / yScaling);
+                    Line newLine2 = new Line(xPush + x2 / xScaling, y2 / yScaling, xPush + x4 / xScaling, y4 / yScaling);
+                    edgesAdded++;
+                    edgesAdded++;
 
-            newLine1.setStroke(Color.GREEN);
-            newLine2.setStroke(Color.GREEN);
-            Platform.runLater(() -> { tspVisualization.getChildren().add(newLine1);} );
-            Platform.runLater(() -> { tspVisualization.getChildren().add(newLine2);} );
-            edgeMap.put(new Edge(x1, y1, x3, y3), newLine1);
-            edgeMap.put(new Edge(x2, y2, x4, y4), newLine2);
-        }
+                    newLine1.setStroke(Color.GREEN);
+                    newLine2.setStroke(Color.GREEN);
+                    Platform.runLater(() -> {
+                        tspVisualization.getChildren().add(newLine1);
+                    });
+                    Platform.runLater(() -> {
+                        tspVisualization.getChildren().add(newLine2);
+                    });
+                    edgeMap.put(new Edge(x1, y1, x3, y3), newLine1);
+                    edgeMap.put(new Edge(x2, y2, x4, y4), newLine2);
+                }
                 Platform.runLater(() -> {
-        for (Edge edge : newEdges) {
-            Line newLine = new Line(xPush + edge.x1 / xScaling, edge.y1 / yScaling, xPush +edge.x2 / xScaling, edge.y2 / yScaling);
-            newLine.setStroke(Color.GREEN);
-            tspVisualization.getChildren().add(newLine);
-            edgeMap.put(edge, newLine);
-            edgesAdded++;
-        }
+                    for (Edge edge : newEdges) {
+                        Line newLine = new Line(xPush + edge.x1 / xScaling, edge.y1 / yScaling, xPush + edge.x2 / xScaling, edge.y2 / yScaling);
+                        newLine.setStroke(Color.GREEN);
+                        tspVisualization.getChildren().add(newLine);
+                        edgeMap.put(edge, newLine);
+                        edgesAdded++;
+                    }
 
 
+                });
 
-            });
+                return null;
+            }
+        };
 
-            return null;
-        }
-    };
+        // Run the task in a background thread
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
 
-    // Run the task in a background thread
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
-}
     private void printEdgeMapDetails() {
         System.out.println("Current edges in edgeMap:");
         for (Map.Entry<Edge, Line> entry : edgeMap.entrySet()) {
@@ -1452,10 +1458,11 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     }
 
     @Override
-    public void receiveUpdate(TSPDATA solution){
+    public void receiveUpdate(TSPDATA solution) {
         System.out.println("Added solution");
-            updateQueue.add(solution);
+        updateQueue.add(solution);
     }
+
     boolean firstTime = true;
     boolean ACO = true;
 
@@ -1464,27 +1471,26 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         if (!updateQueue.isEmpty()) {
             TSPDATA nextSolution = updateQueue.poll();
             Platform.runLater(() -> {
-            System.out.println("Next TSP data: " + nextSolution.getGeneration());
-            tableIterations.setCellValueFactory(new PropertyValueFactory<>("iteration"));
-            tableFitness.setCellValueFactory(new PropertyValueFactory<>("fitness"));
-            tableFuncEval.setCellValueFactory(new PropertyValueFactory<>("funcEval"));
-            tableOptimalFitness.setCellValueFactory(new PropertyValueFactory<>("optimalFitness"));
-            tableRuntime.setCellValueFactory(new PropertyValueFactory<>("runtime"));
+                System.out.println("Next TSP data: " + nextSolution.getGeneration());
+                tableIterations.setCellValueFactory(new PropertyValueFactory<>("iteration"));
+                tableFitness.setCellValueFactory(new PropertyValueFactory<>("fitness"));
+                tableFuncEval.setCellValueFactory(new PropertyValueFactory<>("funcEval"));
+                tableOptimalFitness.setCellValueFactory(new PropertyValueFactory<>("optimalFitness"));
+                tableRuntime.setCellValueFactory(new PropertyValueFactory<>("runtime"));
 
-            RowData rowData = new RowData(
-                    Integer.toString(nextSolution.getGeneration()),
-                    Integer.toString(nextSolution.getFitness()),
-                    Integer.toString(nextSolution.getFunctionEvaluations()),
-                    Integer.toString(nextSolution.getOptimum()),
-                    Long.toString(nextSolution.getTimeElapsed())
-            );
+                RowData rowData = new RowData(
+                        Integer.toString(nextSolution.getGeneration()),
+                        Integer.toString(nextSolution.getFitness()),
+                        Integer.toString(nextSolution.getFunctionEvaluations()),
+                        Integer.toString(nextSolution.getOptimum()),
+                        Long.toString(nextSolution.getTimeElapsed())
+                );
 
-            ObservableList<RowData> data = FXCollections.observableArrayList();
-            data.add(rowData);
+                ObservableList<RowData> data = FXCollections.observableArrayList();
+                data.add(rowData);
 
-            extractKeyFeaturesTable.setItems(data);
-            extractKeyFeaturesTable.refresh();
-
+                extractKeyFeaturesTable.setItems(data);
+                extractKeyFeaturesTable.refresh();
 
 
                 Platform.runLater(() -> {
@@ -1499,31 +1505,32 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     }
                 });
 
-            if (nextSolution.isStopped()) {
-                nextAlgorithm.setDisable(false);
-                timeline.stop();
-                pauseButton.setDisable(true);
-                stopButton.setDisable(true);
-                if (firstTime) {
-                    updateUIPostAlgorithm(currentSchedule);
+                if (nextSolution.isStopped()) {
+                    nextAlgorithm.setDisable(false);
+                    timeline.stop();
+                    pauseButton.setDisable(true);
+                    stopButton.setDisable(true);
+                    if (firstTime) {
+                        updateUIPostAlgorithm(currentSchedule);
+                    }
+                    firstTime = false;
+                    System.out.println("stopped it");
+                    if (nextSolution.generation >= 999999) {
+                        Platform.runLater(() -> {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setHeaderText(null);
+                            alert.setContentText("Optimum not reached");
+                            alert.showAndWait();
+                        });
+                    }
                 }
-                firstTime = false;
-                System.out.println("stopped it");
-                if (nextSolution.generation >= 999999){
-                    Platform.runLater(() -> {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setHeaderText(null);
-                    alert.setContentText("Optimum not reached");
-                    alert.showAndWait();
-                    });
-                }
-            }
             });
 
 
         }
 
     }
+
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
@@ -1531,6 +1538,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
     @FXML
     private void startVisualizationBitString() {
         if (isPaused) {
@@ -1540,8 +1548,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             startButton.setDisable(true);
             return;
         }
-
-
 
 
         // Check if the timeline has already been created
@@ -1577,7 +1583,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         currentSchedule.getAlgorithm().sendListener(this);
 
 
-
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -1590,12 +1595,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         thread.start();
 
 
-
         startButton.setDisable(true);
         pauseButton.setDisable(false);
         stopButton.setDisable(false);
 
     }
+
     public double logTransform(double value, double min, double max) {
         return Math.log(value / min) / Math.log(max / min);
     }
@@ -1603,11 +1608,13 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     public double inverseLogTransform(double value, double min, double max) {
         return min * Math.pow(max / min, value);
     }
+
     private final Queue<Data> updateBitStringQueue = new LinkedList<Data>();
+
     @Override
     public void receiveBitstringUpdate(Data data) {
-            updateBitStringQueue.add(data);
-            System.out.println("Added data");
+        updateBitStringQueue.add(data);
+        System.out.println("Added data");
     }
 
     private void processBitStringQueue() {
@@ -1641,11 +1648,10 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             extractKeyFeaturesTable.refresh();
 
 
-
-            if(nextData.getImproved()) {
+            if (nextData.getImproved()) {
                 runGraphics2(nextData);
             }
-            if(nextData.isStop()) {
+            if (nextData.isStop()) {
                 nextAlgorithm.setDisable(false);
                 done = true;
                 timeline.stop();
@@ -1656,6 +1662,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             }
         }
     }
+
     public class RowData {
         private final SimpleStringProperty iteration;
         private final SimpleStringProperty fitness;
@@ -1691,7 +1698,9 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             return runtime.get();
         }
     }
+
     boolean done = false;
+
     public void runGraphics2(Data data) {
 
         int generation = data.getGeneration();
@@ -1707,7 +1716,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         generationSlider.setSnapToTicks(true);
         generationSlider.adjustValue(i);
         */
-            // Create a Task for the background processing
+        // Create a Task for the background processing
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -1805,6 +1814,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             result = 31 * result + y2;
             return result;
         }
+
         @Override
         public String toString() {
             return "Edge{" +
@@ -1815,9 +1825,11 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     '}';
         }
     }
+
     double[][] normalizedPheromone;
+
     @Override
-    public void recievePheromone(double[][] pheromone){
+    public void recievePheromone(double[][] pheromone) {
         double maxPheromone = findMax(pheromone);
         // Normalize the pheromone matrix
         int rows = pheromone.length;
@@ -1832,6 +1844,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
 
     }
+
     private void drawLinesWithPheromones(Solution solution, double[][] pheromone) {
         double maxPheromone = findMax(pheromone);
         // Normalize the pheromone matrix
@@ -1846,7 +1859,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         }
 
 
-        if(normalizedPheromone == null){
+        if (normalizedPheromone == null) {
             return;
         }
         int dimension = solution.getDimension();
@@ -1870,15 +1883,16 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     //line.setStroke(Color.hsb(0, 1.0, pheromoneValue)); // Set color based on pheromone value
                     line.setStroke(Color.hsb(0, 1.0, 1.0)); // Set color based on pheromone value
                     edgeMap2.put(new Edge(x1, y1, x2, y2), line);
-                   tspVisualization.getChildren().add(line);
+                    tspVisualization.getChildren().add(line);
                 }
             }
         }
         System.out.println(edgeMap2.size());
     }
+
     private final Map<Edge, Line> edgeMap2 = new HashMap<Edge, Line>();
-    public double findMax(double mat[][])
-    {
+
+    public double findMax(double mat[][]) {
         //mat length
         int N = mat.length;
         int M = mat[0].length;

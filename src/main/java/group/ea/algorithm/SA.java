@@ -31,9 +31,9 @@ public class SA extends Algorithm {
 
     @Override
     public void performSingleUpdate(int generation) {
-        if(graphicsOn){
-            if(generation == 0){
-                Data firstData = new Data(bitString, 0, bestFitness, true, Optional.empty(),false);
+        if (graphicsOn) {
+            if (generation == 0) {
+                Data firstData = new Data(bitString, 0, bestFitness, true, Optional.empty(), false);
                 listener.receiveBitstringUpdate(firstData);
             }
         }
@@ -47,7 +47,7 @@ public class SA extends Algorithm {
         if (offspringFitness > bestFitness) {
             bitString = offspring;
             bestFitness = offspringFitness;
-            Data data = new Data(bitString, generation, bestFitness, true, Optional.of(currentTemp),false);
+            Data data = new Data(bitString, generation, bestFitness, true, Optional.of(currentTemp), false);
             data.setTimeElapsed(timer.getCurrentTimer());
             data.setFunctionEvaluations(functionEvaluations);
             listener.receiveBitstringUpdate(data);
@@ -73,12 +73,14 @@ public class SA extends Algorithm {
         chars[mutateIndex] = chars[mutateIndex] == '0' ? '1' : '0';
         return new String(chars);
     }
+
     @Override
-    public void setInitTemp(double temp){
+    public void setInitTemp(double temp) {
         initTemp = temp;
     }
+
     @Override
-    public void setTempReduction(double temp){
+    public void setTempReduction(double temp) {
         tempReduction = temp;
     }
 

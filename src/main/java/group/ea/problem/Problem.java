@@ -9,7 +9,8 @@ public abstract class Problem {
 
     public abstract double computeFitness(String string);
 
-    void init() {}
+    void init() {
+    }
 
 }
 

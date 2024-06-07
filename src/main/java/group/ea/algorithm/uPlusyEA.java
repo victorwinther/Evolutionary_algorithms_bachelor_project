@@ -9,9 +9,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.*;
-public class uPlusyEA extends Algorithm{
+
+public class uPlusyEA extends Algorithm {
     ArrayList<String> population = new ArrayList<>();
     Random rand = new Random();
+
     public uPlusyEA(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
     }
@@ -21,7 +23,7 @@ public class uPlusyEA extends Algorithm{
     public void performSingleUpdate(int gen) {
         int n = searchSpace.length;
         generation = 0;
-        Data firstData = new Data(population.get(0), generation, bestFitness, true, Optional.empty(),false);
+        Data firstData = new Data(population.get(0), generation, bestFitness, true, Optional.empty(), false);
         listener.receiveBitstringUpdate(firstData);
         //System.out.println("Performing single update og lambda værdi = " + lambda);
         while (!checkStoppingCriteria()) {
@@ -42,9 +44,9 @@ public class uPlusyEA extends Algorithm{
             int oldFitness = bestFitness;
 
             bestFitness = (int) problem.computeFitness(population.get(0));
-            functionEvaluations+=lambda;
-            if(bestFitness > oldFitness){
-                Data data = new Data(bitString, generation, bestFitness, true, Optional.empty(),false);
+            functionEvaluations += lambda;
+            if (bestFitness > oldFitness) {
+                Data data = new Data(bitString, generation, bestFitness, true, Optional.empty(), false);
                 data.setTimeElapsed(timer.getCurrentTimer());
                 data.setFunctionEvaluations(functionEvaluations);
                 listener.receiveBitstringUpdate(data);
@@ -60,7 +62,6 @@ public class uPlusyEA extends Algorithm{
         newPopulation.sort(Comparator.comparingDouble(problem::computeFitness).reversed());
         return new ArrayList<>(newPopulation.subList(0, mu));
     }
-
 
 
     @Override

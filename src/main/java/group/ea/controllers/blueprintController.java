@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -60,10 +61,10 @@ public class blueprintController implements Initializable {
 
 
     private Stage stage;
-    public HashMap<String,String> blueprintChoices = new HashMap<>();
+    public HashMap<String, String> blueprintChoices = new HashMap<>();
 
 
-    public void initialize(URL arg0, ResourceBundle arg1){
+    public void initialize(URL arg0, ResourceBundle arg1) {
         //initialize components
         TSPSelector.setVisible(false);
         tspProblemLbl.setVisible(false);
@@ -113,18 +114,18 @@ public class blueprintController implements Initializable {
     }
 
     private void updateCategories() {
-        for (ComboBox<String> comboBox : allComboBoxes){
+        for (ComboBox<String> comboBox : allComboBoxes) {
             String orgVal = comboBox.getValue();
             String category = getComboBoxCategory(comboBox);
 
             comboBox.getItems().removeAll(dependencies);
 
-            for (String item : categoryOptions.get(category)){
+            for (String item : categoryOptions.get(category)) {
                 if (!dependencies.contains(item) && !comboBox.getItems().contains(item)) {
                     comboBox.getItems().add(item);
                 }
             }
-            if (dependencies.contains(orgVal)){
+            if (dependencies.contains(orgVal)) {
                 comboBox.setValue(null);
             }
         }
@@ -144,7 +145,7 @@ public class blueprintController implements Initializable {
     private void addCategoryOptions() {
         categoryOptions.put("searchSpace", Arrays.asList("Bit strings", "Permutations"));
         categoryOptions.put("problem", Arrays.asList("OneMax", "LeadingOnes", "TSP"));
-        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA","(u+y) EA", "RLS", "(1+1) EA TSP", "Simulated Annealing","ACO", "ACO MMAS", "ACO Elitist", "Simulated Annealing TSP"));
+        categoryOptions.put("algorithm", Arrays.asList("(1+1) EA", "(u+y) EA", "RLS", "(1+1) EA TSP", "Simulated Annealing", "ACO", "ACO MMAS", "ACO Elitist", "Simulated Annealing TSP"));
         categoryOptions.put("tsp problems", Arrays.asList("berlin52", "bier127", "a280"));
         categoryOptions.put("updateRule", Arrays.asList("AS-update", "Iteration Best (IB)", "best-so-far(BS)"));
     }
@@ -153,15 +154,15 @@ public class blueprintController implements Initializable {
         batchParameters.put("ACO", List.of("Colony size", "Alpha", "Beta", "Update rule", "Local search"));
         batchParameters.put("ACO MMAS", List.of("Colony size", "Alpha", "Beta", "Update rule", "Local search"));
         batchParameters.put("ACO Elitist", List.of("Colony size", "Alpha", "Beta", "Update rule", "Local search"));
-        batchParameters.put("(u+y) EA", List.of("u","y"));
+        batchParameters.put("(u+y) EA", List.of("u", "y"));
         batchParameters.put("Fitness bound", List.of("F. Iterations"));
         batchParameters.put("Iteration bound", List.of("I. Iterations"));
         batchParameters.put("Optimum reached", List.of("Optimal"));
-        batchParameters.put("TSP",List.of("TSP problem"));
-        batchParameters.put("Bit strings",List.of("Dimension"));
+        batchParameters.put("TSP", List.of("TSP problem"));
+        batchParameters.put("Bit strings", List.of("Dimension"));
     }
 
-    private void addDescriptions(){
+    private void addDescriptions() {
         descriptions.put("Bit strings", "The search space consisting of bit strings i.e. the set {0,1}^n, where n is the dimension.");
         descriptions.put("Permutations", "Represents all permutations in the symmetric group S_{dimension}. That are all permutations of the elements {1,...,dimension}.");
 
@@ -208,46 +209,45 @@ public class blueprintController implements Initializable {
             writer.write("Algorithm, ");
             writer.write(algorithmSelector.getValue() + "\n");
 
-            if (searchspaceSelector.getValue().equals("Bit strings") && batchData.isEmpty()){
+            if (searchspaceSelector.getValue().equals("Bit strings") && batchData.isEmpty()) {
                 writer.write("Dimension, ");
                 writer.write(dimensionTxtField.getText() + "\n");
             }
 
-            if (batchData.isEmpty()){
+            if (batchData.isEmpty()) {
                 writer.write("Stopping criterias, ");
-                for (int i = 0; i < allCheckboxes.size(); i++){
+                for (int i = 0; i < allCheckboxes.size(); i++) {
                     CheckBox cb = allCheckboxes.get(i);
-                    if (cb.isSelected()){
-                        if (cb.getText().equals("Optimum reached")){
+                    if (cb.isSelected()) {
+                        if (cb.getText().equals("Optimum reached")) {
                             writer.write(cb.getText() + ", ");
                         } else {
                             writer.write(cb.getText() + ", ");
-                            writer.write(allTextFields.get(i-1).getText() + ", ");
+                            writer.write(allTextFields.get(i - 1).getText() + ", ");
                         }
 
                     }
                 }
-                writer.write( "\n");
-                if (specialTxtField1.isVisible()){
+                writer.write("\n");
+                if (specialTxtField1.isVisible()) {
                     writer.write("Special parameters, ");
                     for (TextField txtField : allSpecialTxtFields) {
                         if (txtField.isVisible()) {
                             writer.write(txtField.getText() + ", ");
                         }
                     }
-                    writer.write( "\n");
+                    writer.write("\n");
                 }
-                if (problemSelector.getValue().equals("TSP")){
+                if (problemSelector.getValue().equals("TSP")) {
                     writer.write("TSP problem, ");
                     writer.write(TSPSelector.getValue() + "\n");
                 }
-                if (algorithmSelector.getValue().equals("ACO MMAS") || algorithmSelector.getValue().equals("ACO Elitist") || algorithmSelector.getValue().equals("ACO")){
+                if (algorithmSelector.getValue().equals("ACO MMAS") || algorithmSelector.getValue().equals("ACO Elitist") || algorithmSelector.getValue().equals("ACO")) {
                     writer.write("ACO update rule, ");
                     writer.write(updateRuleSelector.getValue() + "\n");
                     writer.write("local search, " + localSearchCheckbox.isSelected() + "\n");
                 }
-            }
-            else {
+            } else {
                 // Write batch table data to the file
                 writer.write("batch\n");
                 for (String schedule : batchData) {
@@ -279,11 +279,11 @@ public class blueprintController implements Initializable {
         return comboBox.getValue() != null ? comboBox.getValue().toString() : "";
     }
 
-    private String getCheckBoxValue(CheckBox checkBox){
+    private String getCheckBoxValue(CheckBox checkBox) {
         return checkBox.isSelected() ? checkBox.getText() : "";
     }
 
-    private void hideSpecialFields(){
+    private void hideSpecialFields() {
         specialLbl1.setVisible(false);
         specialLbl2.setVisible(false);
         specialLbl3.setVisible(false);
@@ -300,10 +300,10 @@ public class blueprintController implements Initializable {
         optimalSetting.setVisible(false);
     }
 
-    private void checkSpecialParameters(String selectedAlgo){
+    private void checkSpecialParameters(String selectedAlgo) {
         hideSpecialFields();
         System.out.println(selectedAlgo);
-        if (selectedAlgo.equals("ACO MMAS") || selectedAlgo.equals("ACO Elitist") || selectedAlgo.equals("ACO")){
+        if (selectedAlgo.equals("ACO MMAS") || selectedAlgo.equals("ACO Elitist") || selectedAlgo.equals("ACO")) {
             specialLbl1.setText("Colony size");
             specialLbl2.setText("Alpha");
             specialLbl3.setText("Beta");
@@ -327,7 +327,7 @@ public class blueprintController implements Initializable {
             updateRuleLbl.setVisible(false);
             localSearchCheckbox.setVisible(false);
         }
-        if (selectedAlgo.equals("(u+y) EA")){
+        if (selectedAlgo.equals("(u+y) EA")) {
             specialLbl1.setText(("u"));
             specialLbl2.setText("y");
             specialLbl1.setVisible(true);
@@ -342,7 +342,7 @@ public class blueprintController implements Initializable {
     }
 
     @FXML
-    void checkboxHandler(ActionEvent event){
+    void checkboxHandler(ActionEvent event) {
         CheckBox checkbox = (CheckBox) event.getSource();
 
         if (descriptions.containsKey(checkbox.getText())) {
@@ -351,7 +351,7 @@ public class blueprintController implements Initializable {
 
         // Check which checkbox is clicked
         if (checkbox.getText().equals("Fitness bound")) {
-            if (!checkbox.isSelected()){
+            if (!checkbox.isSelected()) {
                 fitnessTxtField.setDisable(true);
                 fitnessTxtField.clear();
             } else {
@@ -359,7 +359,7 @@ public class blueprintController implements Initializable {
             }
 
         } else if (checkbox.getText().equals("Iteration bound")) {
-            if (!checkbox.isSelected()){
+            if (!checkbox.isSelected()) {
                 iterationTxtField.setDisable(true);
                 iterationTxtField.clear();
             } else {
@@ -373,19 +373,17 @@ public class blueprintController implements Initializable {
     }
 
     @FXML
-    void optimalSettingsHandler(ActionEvent event){
-        if (optimalSetting.isSelected()){
-            if (Objects.equals(algorithmSelector.getValue(), "ACO Elitist") || Objects.equals(algorithmSelector.getValue(), "ACO") || Objects.equals(algorithmSelector.getValue(), "ACO MMAS")){
+    void optimalSettingsHandler(ActionEvent event) {
+        if (optimalSetting.isSelected()) {
+            if (Objects.equals(algorithmSelector.getValue(), "ACO Elitist") || Objects.equals(algorithmSelector.getValue(), "ACO") || Objects.equals(algorithmSelector.getValue(), "ACO MMAS")) {
                 specialTxtField1.setText("100");
                 specialTxtField2.setText("1");
                 specialTxtField3.setText("2");
-            }
-            else if (Objects.equals(algorithmSelector.getValue(), "(u+y) EA")){
+            } else if (Objects.equals(algorithmSelector.getValue(), "(u+y) EA")) {
                 specialTxtField1.setText("5");
                 specialTxtField2.setText("3");
             }
-        }
-        else {
+        } else {
             specialTxtField1.clear();
             specialTxtField2.clear();
             specialTxtField3.clear();
@@ -396,13 +394,13 @@ public class blueprintController implements Initializable {
     }
 
     @FXML
-    void selectionHandler(ActionEvent event){
+    void selectionHandler(ActionEvent event) {
         ComboBox<?> selector = (ComboBox<?>) event.getSource();
         try {
             String selectorValue = selector.getSelectionModel().getSelectedItem().toString();
 
             //update depending on combobox selection
-            if (selector == algorithmSelector){
+            if (selector == algorithmSelector) {
                 checkSpecialParameters(selectorValue);
             }
 
@@ -418,7 +416,7 @@ public class blueprintController implements Initializable {
                 dimensionTxtField.setDisable(false);
 
                 if (selector.getValue().equals("Bit strings")) {
-                    dependencies.addAll(Arrays.asList("TSP", "(1+1) EA TSP", "Simulated Annealing TSP","ACO", "ACO MMAS", "ACO Elitist"));
+                    dependencies.addAll(Arrays.asList("TSP", "(1+1) EA TSP", "Simulated Annealing TSP", "ACO", "ACO MMAS", "ACO Elitist"));
                     dependencies.removeAll(Arrays.asList("OneMax", "LeadingOnes", "(1+1) EA", "RLS", "Simulated Annealing"));
                 } else if (selector.getValue().equals("Permutations")) {
                     dependencies.removeAll(Arrays.asList("TSP", "(1+1) EA TSP", "Simulated Annealing TSP", "ACO", "ACO MMAS", "ACO Elitist"));
@@ -429,7 +427,7 @@ public class blueprintController implements Initializable {
                 updateCategories();
             }
 
-            if (problemSelector.getValue().equals("TSP")){
+            if (problemSelector.getValue().equals("TSP")) {
                 TSPSelector.setVisible(true);
                 tspProblemLbl.setVisible(true);
             } else {
@@ -448,8 +446,7 @@ public class blueprintController implements Initializable {
     void createNewBatch(ActionEvent event) {
         if (checkParametersFilled()) {
             showAlert("Please fill out missing information");
-        }
-        else {
+        } else {
             // Increment the id counter
             idCount = idCount + 1;
 
@@ -486,12 +483,12 @@ public class blueprintController implements Initializable {
     }
 
 
-    public void addSchedule(){
+    public void addSchedule() {
         Schedule newSchedule = new Schedule();
 
         try {
             int dimension = Integer.parseInt(dimensionTxtField.getText());
-            if(dimension > 10000){
+            if (dimension > 10000) {
                 showAlert("Dimension must be less than 10000");
                 return;
             }
@@ -503,15 +500,13 @@ public class blueprintController implements Initializable {
 
         }
 
-        if (algorithmSelector.getValue().equals("(u+y) EA")){
-            if (problemSelector.getValue().equals("TSP")){
+        if (algorithmSelector.getValue().equals("(u+y) EA")) {
+            if (problemSelector.getValue().equals("TSP")) {
                 newSchedule.setAlgorithmString("(u+y) EA TSP");
-            }
-            else {
+            } else {
                 newSchedule.setAlgorithmString("(u+y) EA");
             }
-        }
-        else {
+        } else {
             newSchedule.setAlgorithmString(algorithmSelector.getValue());
         }
 
@@ -529,7 +524,7 @@ public class blueprintController implements Initializable {
                 return;
             }
         }
-        if (TSPSelector.isVisible()){
+        if (TSPSelector.isVisible()) {
             newSchedule.setTSPProblem(TSPSelector.getValue());
         }
 
@@ -539,12 +534,12 @@ public class blueprintController implements Initializable {
                 newSchedule.setIterationBound(iterationBound);
             } catch (Exception e) {
                 showAlert("Enter only integers for iteration bound");
-                return ;
+                return;
             }
 
         }
-        if (algorithmSelector.getValue().equals("ACO MMAS") || algorithmSelector.getValue().equals("ACO Elitist") || algorithmSelector.getValue().equals("ACO")){
-            try{
+        if (algorithmSelector.getValue().equals("ACO MMAS") || algorithmSelector.getValue().equals("ACO Elitist") || algorithmSelector.getValue().equals("ACO")) {
+            try {
                 String colonySize = specialTxtField1.getText();
                 String alpha = specialTxtField2.getText();
                 String beta = specialTxtField3.getText();
@@ -557,7 +552,7 @@ public class blueprintController implements Initializable {
                 newSchedule.setOptional(optionalValues);
             } catch (Exception e) {
                 showAlert("Enter only integers for iteration bound");
-                return ;
+                return;
             }
 
 
@@ -577,7 +572,7 @@ public class blueprintController implements Initializable {
         newSchedule.setUpAlgorithm();
     }
 
-    private boolean checkParametersFilled(){
+    private boolean checkParametersFilled() {
         return (!iterationTxtField.isDisabled() && iterationTxtField.getText().isEmpty()) ||
                 (!dimensionTxtField.isDisabled() && dimensionTxtField.getText().isEmpty()) ||
                 (!fitnessTxtField.isDisabled() && fitnessTxtField.getText().isEmpty()) ||
@@ -590,7 +585,7 @@ public class blueprintController implements Initializable {
                 (updateRuleSelector.getValue() == null) ||
                 (searchspaceSelector.getValue() == null) ||
                 (problemSelector.getValue() == null) ||
-                (algorithmSelector.getValue() == null) ;
+                (algorithmSelector.getValue() == null);
     }
 
     private void applyIntegerTextFormatter(TextField textField) {
@@ -603,46 +598,34 @@ public class blueprintController implements Initializable {
     }
 
 
-    private String batchTableInitialValue(String category, String id){
+    private String batchTableInitialValue(String category, String id) {
         String res = "";
 
-        if (category.equals("id")){
+        if (category.equals("id")) {
             res = id;
-        }
-        else if (category.equals("Dimension") && !dimensionTxtField.isDisable()){
+        } else if (category.equals("Dimension") && !dimensionTxtField.isDisable()) {
             res = dimensionTxtField.getText();
-        }
-        else if(category.equals("F. Iterations") && !fitnessTxtField.isDisable()){
+        } else if (category.equals("F. Iterations") && !fitnessTxtField.isDisable()) {
             res = fitnessTxtField.getText();
-        }
-        else if(category.equals("I. Iterations") && !iterationTxtField.isDisable()){
+        } else if (category.equals("I. Iterations") && !iterationTxtField.isDisable()) {
             res = iterationTxtField.getText();
-        }
-        else if(category.equals("Colony size")){
+        } else if (category.equals("Colony size")) {
             res = specialTxtField1.getText();
-        }
-        else if(category.equals("Alpha")){
+        } else if (category.equals("Alpha")) {
             res = specialTxtField2.getText();
-        }
-        else if(category.equals("Beta")){
+        } else if (category.equals("Beta")) {
             res = specialTxtField3.getText();
-        }
-        else if(category.equals("u")){
+        } else if (category.equals("u")) {
             res = specialTxtField1.getText();
-        }
-        else if(category.equals("y")){
+        } else if (category.equals("y")) {
             res = specialTxtField2.getText();
-        }
-        else if(category.equals("TSP problem")){
+        } else if (category.equals("TSP problem")) {
             res = TSPSelector.getValue();
-        }
-        else if(category.equals("Update rule")){
+        } else if (category.equals("Update rule")) {
             res = updateRuleSelector.getValue();
-        }
-        else if(category.equals("Local search")){
+        } else if (category.equals("Local search")) {
             res = String.valueOf(localSearchCheckbox.isSelected());
-        }
-        else if(category.equals("Optimal")){
+        } else if (category.equals("Optimal")) {
             res = "true";
         }
 
@@ -651,13 +634,13 @@ public class blueprintController implements Initializable {
 
 
     @FXML
-    void removeBatch(ActionEvent event){
+    void removeBatch(ActionEvent event) {
         String selectedItem = batchList.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             batchList.getItems().remove(selectedItem);
             batchData.removeIf(s -> s.equals(selectedItem));
         }
-        if (batchData.isEmpty()){
+        if (batchData.isEmpty()) {
             searchspaceSelector.setDisable(false);
             problemSelector.setDisable(false);
             algorithmSelector.setDisable(false);
@@ -666,10 +649,9 @@ public class blueprintController implements Initializable {
 
     @FXML
     void saveHandler(ActionEvent event) {
-        if (checkParametersFilled()){
+        if (checkParametersFilled()) {
             showAlert("Please fill out missing information");
-        }
-        else{
+        } else {
             File file = fileChooser.showSaveDialog(stage);
             if (file != null) {
                 saveDataToFile(file);
@@ -682,40 +664,41 @@ public class blueprintController implements Initializable {
     void returnHome(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
         Scene scene = new Scene(root);
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
         Platform.runLater(root::requestFocus);
         //scene.getStylesheets().add("chart-styles.css");
         stage.setScene(scene);
-        stage.show();}
+        stage.show();
+    }
 
     @FXML
     void startMainPage(ActionEvent event) throws IOException {
         // Load the home page FXML file
         //make an array where you fill it with the chosen combobox values
         //make a hashmap of string
-        if(batchData.isEmpty()){
-             addSchedule();
+        if (batchData.isEmpty()) {
+            addSchedule();
         }
 
-            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
-            Parent root = loader.load();
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
+        Parent root = loader.load();
 
-            // Here you would get the controller if you need to call methods on it
-            mainController controller = loader.getController();
-            controller.recieveArray(Schedule.getSchedules()); // Call methods on the controller if needed
+        // Here you would get the controller if you need to call methods on it
+        mainController controller = loader.getController();
+        controller.recieveArray(Schedule.getSchedules()); // Call methods on the controller if needed
 
-            // Set the scene to the home page
-            Scene scene = new Scene(root);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        // Set the scene to the home page
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-            // Optional: If you need the home page to gain focus or perform additional setup
-            Platform.runLater(() -> {
-                root.requestFocus();
-                // Any additional setup can go here
-            });
+        // Optional: If you need the home page to gain focus or perform additional setup
+        Platform.runLater(() -> {
+            root.requestFocus();
+            // Any additional setup can go here
+        });
 
-            stage.setScene(scene);
-            stage.show();
-        }
+        stage.setScene(scene);
+        stage.show();
+    }
 }

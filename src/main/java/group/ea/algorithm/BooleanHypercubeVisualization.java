@@ -26,7 +26,7 @@ public class BooleanHypercubeVisualization {
     private int runNumber;
     // Calculate the y-coordinate based on the number of 1-bits
 
-    public BooleanHypercubeVisualization(SearchSpace searchSpace, Problem problem, mainController controller, Pane hypercubenPane,int runNumber) {
+    public BooleanHypercubeVisualization(SearchSpace searchSpace, Problem problem, mainController controller, Pane hypercubenPane, int runNumber) {
         this.searchSpace = searchSpace;
         this.problem = problem;
         _mainController = controller;
@@ -41,10 +41,11 @@ public class BooleanHypercubeVisualization {
         drawSearchSpace();
 
     }
+
     private void addRunNumber(int runNumber) {
         hypercubePane.getChildren().clear();
         this.runNumber = runNumber;
-        Label runLabel = new Label("Run " + (runNumber+1));
+        Label runLabel = new Label("Run " + (runNumber + 1));
         runLabel.setLayoutX(10);
         runLabel.setLayoutY(10);
         hypercubePane.getChildren().add(runLabel);

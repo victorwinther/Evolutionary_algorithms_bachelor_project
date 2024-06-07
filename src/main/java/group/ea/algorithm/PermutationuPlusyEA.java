@@ -23,7 +23,7 @@ public class PermutationuPlusyEA extends Algorithm {
 
     @Override
     public void initialize() {
-        if(mu > 0) {
+        if (mu > 0) {
             for (int i = 0; i < mu; i++) {
                 Solution solution = new Solution((TSPParser) searchSpace);
                 solution.shuffle(500);
@@ -66,7 +66,7 @@ public class PermutationuPlusyEA extends Algorithm {
             bestFitness = _sl.computeFitness();
 
             //System.out.println(bestFitness);
-            if(graphicsOn) {
+            if (graphicsOn) {
 
                 if (oldBestFitness > bestFitness) {
                     TSPDATA tspdata = new TSPDATA(_sl, _sl.getSolution(), generation, bestFitness, _sl.getImprovement, "(u+y)EA");
@@ -91,7 +91,7 @@ public class PermutationuPlusyEA extends Algorithm {
         }
 */
 
-            newPopulation.sort(Comparator.comparingDouble(Solution::computeFitness));
+        newPopulation.sort(Comparator.comparingDouble(Solution::computeFitness));
 /*
             System.out.println("New population after sort ");
             for (Solution s : newPopulation) {
@@ -100,9 +100,9 @@ public class PermutationuPlusyEA extends Algorithm {
 
 
 */
-            return new ArrayList<>(newPopulation.subList(0, mu));
-        }
+        return new ArrayList<>(newPopulation.subList(0, mu));
     }
+}
 
 
 

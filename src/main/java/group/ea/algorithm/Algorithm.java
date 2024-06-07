@@ -45,9 +45,11 @@ public abstract class Algorithm {
     public SearchSpace getSearchSpace() {
         return searchSpace;
     }
-    public Problem getProblem(){
+
+    public Problem getProblem() {
         return problem;
     }
+
     SearchSpace searchSpace;
     protected boolean stoppingMet = false;
     protected ArrayList<String> solutionList;
@@ -69,6 +71,7 @@ public abstract class Algorithm {
     protected int maxGeneration = 998;
 
     protected AlgorithmUpdateListener listener;
+
     public Algorithm(SearchSpace searchSpace, Problem problem) {
         this.searchSpace = searchSpace;
         bitLength = searchSpace.length;
@@ -91,6 +94,7 @@ public abstract class Algorithm {
         }
         return false;
     }
+
     public int getMaxGenerations() {
         for (StoppingCriterion criterion : stoppingCriteria) {
             if (criterion instanceof MaxGenerationsCriterion) {
@@ -106,47 +110,47 @@ public abstract class Algorithm {
     public abstract void initialize();
 
     public void runAlgorithm() {
-            timer.startTimer("Time elapsed");
-            while (!checkStoppingCriteria() && !stoppingMet) {
-                if (!paused) {
+        timer.startTimer("Time elapsed");
+        while (!checkStoppingCriteria() && !stoppingMet) {
+            if (!paused) {
                 performSingleUpdate(generation);
                 generation++;
-                }
-                if (stopped) {
-                    break;
-                }
             }
-
-            if (searchSpace instanceof BitString) {
-                Data firstData = new Data(bitString, generation, bestFitness, true, Optional.empty(), true);
-                firstData.setFunctionEvaluations(functionEvaluations);
-                firstData.setTimeElapsed(timer.getCurrentTimer());
-                listener.receiveBitstringUpdate(firstData);
-            } else if ((this instanceof ACO)) {
-                ACO acoInstance = (ACO) this;
-                TSPDATA tspdata = new TSPDATA(_cloneSl, _cloneSl.getSolution(), generation, (int) acoInstance.bestAnt.getCost(), functionEvaluations, "ACO", true);
-                tspdata.setPhermone(acoInstance.getPheromone());
-                tspdata.setTimeElapsed(timer.getCurrentTimer());
-                tspdata.improved();
-                listener.receiveUpdate(tspdata);
-            } else{
-                System.out.println("stopped in algo");
-                TSPDATA tspdata = new TSPDATA(_sl, _sl.getSolution(), generation, bestFitness, functionEvaluations, "(1+1)EA", true);
-                tspdata.setTimeElapsed(timer.getCurrentTimer());
-                tspdata.improved();
-                listener.receiveUpdate(tspdata);
-
+            if (stopped) {
+                break;
             }
-
-            Solution.setGeneration(0);
-            stoppingMet = true;
         }
 
+        if (searchSpace instanceof BitString) {
+            Data firstData = new Data(bitString, generation, bestFitness, true, Optional.empty(), true);
+            firstData.setFunctionEvaluations(functionEvaluations);
+            firstData.setTimeElapsed(timer.getCurrentTimer());
+            listener.receiveBitstringUpdate(firstData);
+        } else if ((this instanceof ACO)) {
+            ACO acoInstance = (ACO) this;
+            TSPDATA tspdata = new TSPDATA(_cloneSl, _cloneSl.getSolution(), generation, (int) acoInstance.bestAnt.getCost(), functionEvaluations, "ACO", true);
+            tspdata.setPhermone(acoInstance.getPheromone());
+            tspdata.setTimeElapsed(timer.getCurrentTimer());
+            tspdata.improved();
+            listener.receiveUpdate(tspdata);
+        } else {
+            System.out.println("stopped in algo");
+            TSPDATA tspdata = new TSPDATA(_sl, _sl.getSolution(), generation, bestFitness, functionEvaluations, "(1+1)EA", true);
+            tspdata.setTimeElapsed(timer.getCurrentTimer());
+            tspdata.improved();
+            listener.receiveUpdate(tspdata);
+
+        }
+
+        Solution.setGeneration(0);
+        stoppingMet = true;
+    }
 
 
     public void clearAndContinue(int i, int newI) {
 
     }
+
     public int getBitStringLength() {
         return bitLength;
     }
@@ -162,6 +166,7 @@ public abstract class Algorithm {
     public int getCurrentTemp() {
         return (int) currentTemp;
     }
+
     public Solution get_sl() {
         return _sl;
     }
@@ -170,25 +175,31 @@ public abstract class Algorithm {
         this.listener = controller;
         //System.out.println("Listener set" + listener + " Controller sent= "+ controller);
     }
-    public  void setValues(int a, double b, double r){
+
+    public void setValues(int a, double b, double r) {
     }
-    public void setMu(int a){
+
+    public void setMu(int a) {
         mu = a;
     }
-    public void setLambda(int a){
+
+    public void setLambda(int a) {
         lambda = a;
     }
 
-    public void setUpdateRule(String rule){}
-    public void setLocalSearch(boolean search){}
-
-    public void setInitTemp(double temp){
-
-    }
-    public void setTempReduction(double temp){
-
+    public void setUpdateRule(String rule) {
     }
 
+    public void setLocalSearch(boolean search) {
+    }
+
+    public void setInitTemp(double temp) {
+
+    }
+
+    public void setTempReduction(double temp) {
+
+    }
 
 
     public void pause() {
@@ -196,7 +207,7 @@ public abstract class Algorithm {
     }
 
     public void resume() {
-            paused = false;
+        paused = false;
 
     }
 

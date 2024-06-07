@@ -3,7 +3,7 @@ package group.ea.searchspace;
 public class BitString extends SearchSpace {
     private String bitString;
 
-    public BitString(int length){
+    public BitString(int length) {
         super(length);
         this.bitString = new String();
         name = "Bitstring";
@@ -20,6 +20,8 @@ public class BitString extends SearchSpace {
         return bitString;
     }
 
-    public int getLength() {return length;}
+    public int getLength() {
+        return length;
+    }
 
 }

@@ -47,8 +47,13 @@ public class Schedule implements Cloneable {
         return numberOfRuns;
     }
 
-    public void setMu(int mu) {this.mu = mu;}
-    public void setLambda(int lambda) {this.lambda = lambda;}
+    public void setMu(int mu) {
+        this.mu = mu;
+    }
+
+    public void setLambda(int lambda) {
+        this.lambda = lambda;
+    }
 
     public void addSchedule(Schedule schedule) {
         schedules.add(schedule);
@@ -86,7 +91,9 @@ public class Schedule implements Cloneable {
         return algorithmString;
     }
 
-    public void setAlgorithmString(String algorithmString) {this.algorithmString = algorithmString;}
+    public void setAlgorithmString(String algorithmString) {
+        this.algorithmString = algorithmString;
+    }
 
     public String getSearchSpaceString() {
         return searchSpaceString;
@@ -127,13 +134,18 @@ public class Schedule implements Cloneable {
     public void setTSP(boolean b) {
         tspBool = b;
     }
-    public String getCriterias(){
+
+    public String getCriterias() {
         return criterias;
     }
+
     public boolean getTSP() {
         return tspBool;
     }
-    public void setTSPProblem(String problem){this.tspProblem = problem;}
+
+    public void setTSPProblem(String problem) {
+        this.tspProblem = problem;
+    }
 
     public void setUpAlgorithm() {
         criterias = "";
@@ -224,7 +236,7 @@ public class Schedule implements Cloneable {
         }
         if (fitnessBound != 0) {
             System.out.println("Fitness bound: " + getFitnessBound());
-           this.algorithm.addStoppingCriterion(new MaxFitnessCriterion(getFitnessBound()));
+            this.algorithm.addStoppingCriterion(new MaxFitnessCriterion(getFitnessBound()));
             criterias += " Fitness";
         }
         if (iterationBound != 0) {
@@ -234,6 +246,7 @@ public class Schedule implements Cloneable {
         addSchedule(this);
 
     }
+
     public void run() {
         if (this.algorithm != null) {
             this.algorithm.runAlgorithm();
@@ -256,14 +269,15 @@ public class Schedule implements Cloneable {
         this.finishedIterations = finishedIterations;
     }
 
-    public void setOptional(String[] set){
+    public void setOptional(String[] set) {
         this.optionalValues = set;
     }
 
-    public void setUpdateRule(String rule){
+    public void setUpdateRule(String rule) {
         this.updateRule = rule;
     }
-    public void setLocalSearch(boolean search){
+
+    public void setLocalSearch(boolean search) {
         this.localSearch = search;
     }
 

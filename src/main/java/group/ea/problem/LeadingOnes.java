@@ -15,8 +15,7 @@ public class LeadingOnes extends Problem {
         for (int i = 0; i < string.length(); i++) {
             if (string.charAt(i) == '1') {
                 count++;
-            }
-            else{
+            } else {
                 break;
             }
         }
