@@ -280,9 +280,8 @@
                      <children>
                         <CheckBox fx:id="graphSelector" disable="true" mnemonicParsing="false" onAction="#graphListener" prefHeight="18.0" prefWidth="129.0" selected="true" stylesheets="@../../../css/styling.css" text="Graph" textFill="WHITE" />
                         <CheckBox fx:id="textSelector" disable="true" mnemonicParsing="false" prefHeight="26.0" prefWidth="106.0" stylesheets="@../../../css/styling.css" text="Bit strings" textFill="WHITE" GridPane.rowIndex="1" />
-                        <CheckBox fx:id="hypercubeCheck" disable="true" mnemonicParsing="false" onAction="#hypercubeListener" prefHeight="20.0" prefWidth="146.0" stylesheets="@../../../css/styling.css" text="Boolean Hypercube" textFill="WHITE" GridPane.rowIndex="2" />
+                        <CheckBox fx:id="hypercubeCheck" disable="true" mnemonicParsing="false" onAction="#hypercubeListener" prefHeight="20.0" prefWidth="146.0" stylesheets="@../../../css/styling.css" text="Boolean Hypercube" textFill="WHITE" GridPane.columnIndex="1" />
                         <CheckBox fx:id="phermoneTrail" disable="true" mnemonicParsing="false" prefHeight="20.0" prefWidth="177.0" stylesheets="@../../../css/styling.css" text="Phermone trail" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <CheckBox fx:id="onlyImprovement" mnemonicParsing="false" prefHeight="26.0" prefWidth="137.0" selected="true" stylesheets="@../../../css/styling.css" text="Only improvement" textFill="WHITE" GridPane.columnIndex="1" />
                      </children>
                      <VBox.margin>
                         <Insets right="5.0" />

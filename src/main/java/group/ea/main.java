@@ -169,15 +169,18 @@ public class main extends Application {
                     newSchedule.setSearchSpaceString("Bit strings");
                     newSchedule.setDimension(length);
                     newSchedule.setProblemString("OneMax");
-                    newSchedule.setAlgorithmString("RLS");
+                    newSchedule.setAlgorithmString("Simulated Annealing");
                     newSchedule.setOptimumReached(true);
                     newSchedule.setUpAlgorithm();
+                    newSchedule.getAlgorithm().setInitTemp(length*3);
+                    newSchedule.getAlgorithm().setTempReduction(5);
                     newSchedule.getAlgorithm().runAlgorithm();
                     int iterations = newSchedule.getAlgorithm().getGeneration();
                     totalIterations = totalIterations + iterations;
+
                 }
                 dataPoints.add(new DataPoint(length, totalIterations / runsPerObservation));
-                saveDataToCSV("RLS_experiment.csv", dataPoints);
+                saveDataToCSV("SA_experiment_Temp0.csv", dataPoints);
                 System.out.println("Done with length " + length);
             }
 

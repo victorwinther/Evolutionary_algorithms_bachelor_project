@@ -23,6 +23,10 @@ public class TSPParser extends SearchSpace {
         onFileSelected();
     }
 
+    public int returnLength(){
+        return dimension;
+    }
+
     private void onFileSelected() {
         openTSPFile();
     }

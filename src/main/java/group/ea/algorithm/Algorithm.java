@@ -182,6 +182,13 @@ public abstract class Algorithm {
     public void setUpdateRule(String rule){}
     public void setLocalSearch(boolean search){}
 
+    public void setInitTemp(double temp){
+
+    }
+    public void setTempReduction(double temp){
+
+    }
+
 
 
     public void pause() {
