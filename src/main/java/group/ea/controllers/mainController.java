@@ -1400,7 +1400,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
     @Override
     public void receiveUpdate(TSPDATA solution) {
-        System.out.println("Added solution");
         updateQueue.add(solution);
     }
 
@@ -1411,7 +1410,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         if (!updateQueue.isEmpty()) {
             TSPDATA nextSolution = updateQueue.poll();
             Platform.runLater(() -> {
-                System.out.println("Next TSP data: " + nextSolution.getGeneration());
                 tableIterations.setCellValueFactory(new PropertyValueFactory<>("iteration"));
                 tableFitness.setCellValueFactory(new PropertyValueFactory<>("fitness"));
                 tableFuncEval.setCellValueFactory(new PropertyValueFactory<>("funcEval"));

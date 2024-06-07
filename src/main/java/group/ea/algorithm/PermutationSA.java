@@ -26,8 +26,8 @@ public class PermutationSA extends Algorithm {
         super(searchSpace, problem);
         _sl = (Solution) problem;
         bestFitness = _sl.computeFitness();
-        initTemp = Math.pow(searchSpace.returnLength(), 3);
-        tempReduction = 1 - (1 / 500.0 * searchSpace.returnLength());
+        initTemp = Math.pow(searchSpace.returnLength(), 1);
+        tempReduction = 1 - (1 / (145.0 * Math.pow(searchSpace.returnLength(), 2)));
         currentTemp = initTemp;
         System.out.print("Construct done");
     }
@@ -48,7 +48,6 @@ public class PermutationSA extends Algorithm {
         _sl.twoOptMutate();
         int offspringFitness = _sl.computeFitness();
 
-        System.out.println(offspringFitness + " " + bestFitness);
 
 
         if (offspringFitness < bestFitness) {
