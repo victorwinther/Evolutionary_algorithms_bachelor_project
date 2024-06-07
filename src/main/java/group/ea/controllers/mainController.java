@@ -263,8 +263,18 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
                 scheduleParameters.put("searchspace", dataMap.get("Searchspace")[0]);
                 scheduleParameters.put("problem", dataMap.get("Problem")[0]);
-                scheduleParameters.put("algorithm", dataMap.get("Algorithm")[0]);
 
+                if (dataMap.get("Algorithm")[0].equals("(u+y) EA")){
+                    if (dataMap.get("Problem")[0].equals("TSP")){
+                        scheduleParameters.put("algorithm", "(u+y) EA TSP");
+                    }
+                    else {
+                        scheduleParameters.put("algorithm", "(u+y) EA");
+                    }
+                }
+                else {
+                    scheduleParameters.put("algorithm", dataMap.get("Algorithm")[0]);
+                }
 
                 if (dataMap.containsKey("Dimension")){
                     scheduleParameters.put("dimension", dataMap.get("Dimension")[0]);
@@ -343,11 +353,11 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                         }
 
                         if (scheduleParameters.get("algorithm").equals("ACO MMAS") || scheduleParameters.get("algorithm").equals("ACO Elitist") || scheduleParameters.get("algorithm").equals("ACO")){
-                            String colonySize = scheduleParameters.get("colonysize");
-                            String alpha = scheduleParameters.get("alpha");
-                            String beta = scheduleParameters.get("beta");
-                            String updateRule = scheduleParameters.get("updaterule");
-                            String localSearch = scheduleParameters.get("localsearch");
+                            String colonySize = batchMap.get(scheduleid).get("Colony size");
+                            String alpha = batchMap.get(scheduleid).get("Alpha");
+                            String beta = batchMap.get(scheduleid).get("Beta");
+                            String updateRule = batchMap.get(scheduleid).get("Update rule");
+                            String localSearch = batchMap.get(scheduleid).get("Local search");
                             String[] optionalValues = new String[]{colonySize, alpha, beta};
 
                             batchSchedule.setLocalSearch(localSearch.equals("true"));
