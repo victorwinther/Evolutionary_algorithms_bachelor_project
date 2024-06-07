@@ -53,7 +53,7 @@ public class ACO extends Algorithm {
 
 
 
-        if (generation > getMaxGenerations()-2 || bestAnt.getCost() < 7545) {
+        if (generation > getMaxGenerations() - 2 || bestAnt.getCost() < 7545) {
 
             //System.out.println("done");
             //System.out.println("Best " + bestAnt.getCost());
