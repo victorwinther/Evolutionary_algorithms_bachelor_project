@@ -195,7 +195,7 @@ public class Schedule implements Cloneable {
                 algorithm.addStoppingCriterion(new TempStopping());
                 break;
             case "ACO":
-                this.algorithm = new ELITIST(this.searchSpace, this.problem);
+                this.algorithm = new ACO(this.searchSpace, this.problem);
                 this.algorithm.setLocalSearch(localSearch);
                 this.algorithm.setValues(Integer.parseInt(optionalValues[0]), Double.parseDouble(optionalValues[1]), Double.parseDouble(optionalValues[2]));
                 break;

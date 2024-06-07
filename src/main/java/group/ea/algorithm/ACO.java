@@ -53,7 +53,7 @@ public class ACO extends Algorithm {
 
 
 
-        if (generation > getMaxGenerations()-2) {
+        if (generation > getMaxGenerations()-2 || bestAnt.getCost() < 7545) {
 
             //System.out.println("done");
             //System.out.println("Best " + bestAnt.getCost());
@@ -62,7 +62,7 @@ public class ACO extends Algorithm {
 
             antToSolution(bestAnt);
             //System.out.println("Fitness in solution before" + _cloneSl.computeFitness());
-            if (_localSearch) {
+            if (_localSearch || bestAnt.getCost() > 7545) {
                 localSearch();
             }
 
@@ -75,6 +75,7 @@ public class ACO extends Algorithm {
             tspdata.setFunctionEvaluations(functionEvaluations);
             System.out.println("Generation when stopped: " + generation);
             tspdata.isStopped();
+            stoppingMet = true;
             listener.receiveUpdate(tspdata);
         }
 
