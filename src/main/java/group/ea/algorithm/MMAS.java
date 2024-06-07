@@ -12,7 +12,8 @@ public class MMAS extends ACO {
     public MMAS(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
         maxPheremone = 1.0 / ((evaporation * getValue()));
-        minPheremone = maxPheremone / (2.0 * dimension);
+        minPheremone = maxPheremone / (2000.0 * dimension);
+
         Q = maxPheremone;
     }
 

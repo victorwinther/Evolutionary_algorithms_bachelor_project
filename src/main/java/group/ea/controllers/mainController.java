@@ -1830,10 +1830,10 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
 
                     // Create a new line with the appropriate thickness
                     Line line = new Line(xPush + x1 / xScaling, y1 / yScaling, xPush + x2 / xScaling, y2 / yScaling);
-                    line.setStrokeWidth(pheromoneValue ); // Scale thickness as needed
+                    line.setStrokeWidth(pheromoneValue * 0.5); // Scale thickness as needed
 
                     // Optionally, set the opacity or color based on pheromone value
-                    line.setOpacity(0.1); // Set opacity based on pheromone value
+                    line.setOpacity(0.9); // Set opacity based on pheromone value
                     //line.setStroke(Color.hsb(0, 1.0, pheromoneValue)); // Set color based on pheromone value
                     line.setStroke(Color.hsb(0, 1.0, 1.0)); // Set color based on pheromone value
                     edgeMap2.put(new Edge(x1, y1, x2, y2), line);
