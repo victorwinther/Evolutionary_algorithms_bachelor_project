@@ -1550,14 +1550,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     @Override
     public void receiveBitstringUpdate(Data data) {
         updateBitStringQueue.add(data);
-        System.out.println("Added data");
     }
 
     private void processBitStringQueue() {
         done = false;
         if (!updateBitStringQueue.isEmpty()) {
             Data nextData = updateBitStringQueue.poll();
-            System.out.println("Next data: " + nextData.getGeneration());
             tableIterations.setCellValueFactory(new PropertyValueFactory<>("iteration"));
             tableFitness.setCellValueFactory(new PropertyValueFactory<>("fitness"));
             tableFuncEval.setCellValueFactory(new PropertyValueFactory<>("funcEval"));
