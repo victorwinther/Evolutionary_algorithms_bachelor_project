@@ -413,7 +413,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                         newSchedule.setUpdateRule(updateRule);
                         newSchedule.setOptional(optionalValues);
                     }
-                    if (scheduleParameters.get("algorithm").equals("(u+y) EA")){
+
+                    if (scheduleParameters.get("algorithm").equals("(u+y) EA") || scheduleParameters.get("algorithm").equals("(u+y) EA TSP") ){
                         newSchedule.setMu(Integer.parseInt(scheduleParameters.get("mu")));
                         newSchedule.setLambda(Integer.parseInt(scheduleParameters.get("lambda")));
                     }
@@ -614,15 +615,20 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                         hypercubeCheck.setDisable(true);
 
                     } else {
-                        phermoneTrail.setDisable(false);
+                       // phermoneTrail.setDisable(false);
                     }
                     startAllEvolutions(currentSchedule);
                     runNr++;
                     startButton.setDisable(true);
+                    nextAlgorithm.setDisable(true);
                 } else {
                     nextAlgorithm.setDisable(true);
                     runNr = 0;
                     System.out.println("All schedules done");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText(null);
+                    alert.setContentText("All schedules done");
+                    alert.showAndWait();
                 }
     }
 
@@ -631,6 +637,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         graphSelector.setDisable(!graphSelector.isSelected());
         textSelector.setDisable(!textSelector.isSelected());
         hypercubeCheck.setDisable(!hypercubeCheck.isSelected());
+        nextAlgorithm.setDisable(true);
 
         if (isPaused) {
             timeline.play();
@@ -641,9 +648,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             return;
         }
         System.out.println("Starting evolution, queue size: " + queueSchedule.size());
-        if(queueSchedule.size() > 1) {
-            nextAlgorithm.setDisable(false);
-        }
         nextAlgorithm();
 
 
@@ -798,10 +802,21 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             sliderSpeed.setMinorTickCount(10);
             sliderSpeed.setShowTickMarks(true);
             sliderSpeed.setShowTickLabels(true);
+        }
+        if(s.getAlgorithm() instanceof ACO || s.getAlgorithm() instanceof ELITIST || s.getAlgorithm() instanceof MMAS){
             phermoneTrail.setDisable(false);
         }
         startButton.setDisable(false);
         sliderSpeed.setDisable(false);
+        batchNumberLabel.setText(String.valueOf(schedules.size()));
+
+        timesRunLabel.setText(""+timesRun);
+        if(currentSchedule.getTSP()){
+            String name = currentSchedule.getAlgorithm().get_sl().get_tsp().getLastPartOfFilename();
+            dimensionLabel.setText(name);
+        } else {
+            dimensionLabel.setText("" + currentSchedule.getDimension());
+        }
 
 
         searchspaceLabel.setText(s.getSearchSpaceString());
@@ -850,6 +865,12 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
     public void stopGraphics() {
         //wait 5 sec
         resetVisualization();
+        if(updateBitStringQueue != null) {
+            updateBitStringQueue.clear();
+        }
+        if (updateQueue != null) {
+            updateQueue.clear();
+        }
         isRunning = false; // Set running state to false to stop the algorithm
     }
 
@@ -978,13 +999,8 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             tspIntialize();
         }
 
-
-
         Solution solution = new Solution((TSPParser) currentSchedule.getSearchSpace());
         firstSolution(solution);
-
-
-
         speed = inverseLogTransform(sliderSpeed.getValue(), 0.1, 50);
 
 
@@ -1479,6 +1495,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 });
 
             if (nextSolution.isStopped()) {
+                nextAlgorithm.setDisable(false);
                 timeline.stop();
                 pauseButton.setDisable(true);
                 stopButton.setDisable(true);
@@ -1487,7 +1504,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 }
                 firstTime = false;
                 System.out.println("stopped it");
-                if (nextSolution.generation >= 9999999){
+                if (nextSolution.generation >= 999999){
                     Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setHeaderText(null);
@@ -1624,6 +1641,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 runGraphics2(nextData);
             }
             if(nextData.isStop()) {
+                nextAlgorithm.setDisable(false);
                 done = true;
                 timeline.stop();
                 pauseButton.setDisable(true);

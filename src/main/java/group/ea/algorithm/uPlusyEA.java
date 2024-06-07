@@ -42,7 +42,7 @@ public class uPlusyEA extends Algorithm{
             int oldFitness = bestFitness;
 
             bestFitness = (int) problem.computeFitness(population.get(0));
-            functionEvaluations+=mu;
+            functionEvaluations+=lambda;
             if(bestFitness > oldFitness){
                 Data data = new Data(bitString, generation, bestFitness, true, Optional.empty(),false);
                 data.setTimeElapsed(timer.getCurrentTimer());
@@ -70,6 +70,7 @@ public class uPlusyEA extends Algorithm{
             for (int i = 0; i < mu; i++) {
                 bitString = searchSpace.init();
                 population.add(bitString);
+                functionEvaluations++;
             }
         }
     }

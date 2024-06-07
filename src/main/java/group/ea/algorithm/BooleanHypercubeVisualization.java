@@ -44,7 +44,7 @@ public class BooleanHypercubeVisualization {
     private void addRunNumber(int runNumber) {
         hypercubePane.getChildren().clear();
         this.runNumber = runNumber;
-        Label runLabel = new Label("Run " + runNumber);
+        Label runLabel = new Label("Run " + (runNumber+1));
         runLabel.setLayoutX(10);
         runLabel.setLayoutY(10);
         hypercubePane.getChildren().add(runLabel);

@@ -381,8 +381,8 @@ public class blueprintController implements Initializable {
                 specialTxtField3.setText("2");
             }
             else if (Objects.equals(algorithmSelector.getValue(), "(u+y) EA")){
-                specialTxtField1.setText("15");
-                specialTxtField2.setText("10");
+                specialTxtField1.setText("5");
+                specialTxtField2.setText("3");
             }
         }
         else {
@@ -491,6 +491,10 @@ public class blueprintController implements Initializable {
 
         try {
             int dimension = Integer.parseInt(dimensionTxtField.getText());
+            if(dimension > 10000){
+                showAlert("Dimension must be less than 10000");
+                return;
+            }
             newSchedule.setDimension(dimension);
             newSchedule.setSearchSpaceString(searchspaceSelector.getValue());
         } catch (Exception e) {

@@ -28,6 +28,7 @@ public class PermutationuPlusyEA extends Algorithm {
                 Solution solution = new Solution((TSPParser) searchSpace);
                 solution.shuffle(500);
                 population.add(solution);
+                functionEvaluations++;
             }
         }
     }
@@ -58,7 +59,7 @@ public class PermutationuPlusyEA extends Algorithm {
                 }
                 population.add(parent);
             }
-            functionEvaluations += mu;
+            functionEvaluations += lambda;
             population = selectFittest(population, mu);
             _sl = population.getFirst();
             int oldBestFitness = bestFitness;
