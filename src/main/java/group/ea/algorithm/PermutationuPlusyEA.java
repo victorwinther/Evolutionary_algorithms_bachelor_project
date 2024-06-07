@@ -23,6 +23,7 @@ public class PermutationuPlusyEA extends Algorithm {
 
     @Override
     public void initialize() {
+        System.out.println("initialized + mu " + mu + " " + lambda);
         if(mu > 0) {
             for (int i = 0; i < mu; i++) {
                 Solution solution = new Solution((TSPParser) searchSpace);

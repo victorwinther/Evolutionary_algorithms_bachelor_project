@@ -32,9 +32,7 @@ public class RLS extends Algorithm {
             data.setTimeElapsed(timer.getCurrentTimer());
             data.setFunctionEvaluations(functionEvaluations);
             listener.receiveBitstringUpdate(data);
-
         }
-
     }
     private String mutate(String parent) {
         int mutateIndex = (int) (Math.random() * parent.length());
