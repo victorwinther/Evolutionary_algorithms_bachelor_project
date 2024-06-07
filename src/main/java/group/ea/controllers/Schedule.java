@@ -10,6 +10,7 @@ import group.ea.problem.Problem;
 import group.ea.searchspace.BitString;
 import group.ea.searchspace.SearchSpace;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class Schedule implements Cloneable {
@@ -142,7 +143,7 @@ public class Schedule implements Cloneable {
                 this.searchSpace = new BitString(this.dimension);
                 break;
             case "Permutations":
-                this.searchSpace = new TSPParser("src/main/resources/problems/" + tspProblem + ".txt");
+                this.searchSpace = new TSPParser(tspProblem + ".txt");
                 break;
         }
 

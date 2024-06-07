@@ -38,8 +38,7 @@ public class TSPParser extends SearchSpace {
     }
 
     private void openTSPFile() {
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/problems/" + filename), StandardCharsets.UTF_8)) ) {
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();

@@ -9,6 +9,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,6 +41,19 @@ public class main extends Application {
     }
 
     public static void main(String[] args) {
+
+        File folder = new File("./ea.jar/");
+        File[] listOfFiles = folder.listFiles();
+        if(listOfFiles != null) {
+            for (int i = 0; i < listOfFiles.length; i++) {
+                if (listOfFiles[i].isFile()) {
+                    System.out.println("File " + listOfFiles[i].getName());
+                } else if (listOfFiles[i].isDirectory()) {
+                    System.out.println("Directory " + listOfFiles[i].getName());
+                }
+            }
+        }
+
         //runExperiment();
         //runExperiment3();
         launch(args);
