@@ -184,6 +184,7 @@ public class Schedule implements Cloneable {
                 this.algorithm = new PermutationOnePlusOneEA(this.searchSpace, this.problem);
                 break;
             case "(u+y) EA TSP":
+                System.out.println("korrekt jakob");
                 PermutationuPlusyEA permEA = new PermutationuPlusyEA(this.searchSpace, this.problem);
                 permEA.setMu(this.mu);
                 permEA.setLambda(this.lambda);

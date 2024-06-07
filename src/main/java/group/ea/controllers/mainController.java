@@ -609,10 +609,15 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                     startAllEvolutions(currentSchedule);
                     runNr++;
                     startButton.setDisable(true);
+                    nextAlgorithm.setDisable(true);
                 } else {
                     nextAlgorithm.setDisable(true);
                     runNr = 0;
                     System.out.println("All schedules done");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText(null);
+                    alert.setContentText("All schedules done");
+                    alert.showAndWait();
                 }
     }
 
@@ -621,6 +626,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         graphSelector.setDisable(!graphSelector.isSelected());
         textSelector.setDisable(!textSelector.isSelected());
         hypercubeCheck.setDisable(!hypercubeCheck.isSelected());
+        nextAlgorithm.setDisable(true);
 
         if (isPaused) {
             timeline.play();
@@ -631,9 +637,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
             return;
         }
         System.out.println("Starting evolution, queue size: " + queueSchedule.size());
-        if(queueSchedule.size() > 1) {
-            nextAlgorithm.setDisable(false);
-        }
         nextAlgorithm();
 
 
@@ -1466,6 +1469,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 });
 
             if (nextSolution.isStopped()) {
+                nextAlgorithm.setDisable(false);
                 timeline.stop();
                 pauseButton.setDisable(true);
                 stopButton.setDisable(true);
@@ -1474,7 +1478,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 }
                 firstTime = false;
                 System.out.println("stopped it");
-                if (nextSolution.generation >= 9999999){
+                if (nextSolution.generation >= 999999){
                     Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setHeaderText(null);
@@ -1611,6 +1615,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                 runGraphics2(nextData);
             }
             if(nextData.isStop()) {
+                nextAlgorithm.setDisable(false);
                 done = true;
                 timeline.stop();
                 pauseButton.setDisable(true);

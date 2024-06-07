@@ -98,7 +98,7 @@ public abstract class Algorithm {
                 return maxGenCriterion.getMaxGenerations();
             }
         }
-        throw new IllegalStateException("MaxGenerationsCriterion not found in stopping criteria.");
+        return 1000000;
     }
 
     public abstract void performSingleUpdate(int generation);
