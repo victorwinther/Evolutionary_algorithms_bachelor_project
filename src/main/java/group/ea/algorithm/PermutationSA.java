@@ -28,7 +28,7 @@ public class PermutationSA extends  Algorithm {
         _sl = (Solution) problem;
         bestFitness = _sl.computeFitness();
         initTemp = Math.pow(searchSpace.returnLength(),3);
-        tempReduction = 1-(1/Math.pow(searchSpace.returnLength(),2));
+        tempReduction = 1-(1/500.0*searchSpace.returnLength());
         currentTemp = initTemp;
         System.out.print("Construct done");
     }
