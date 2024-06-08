@@ -1,10 +1,7 @@
 package group.ea.problem.TSP;
 import group.ea.searchspace.SearchSpace;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,7 +35,11 @@ public class TSPParser extends SearchSpace {
     }
 
     private void openTSPFile() {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/problems/" + filename), StandardCharsets.UTF_8)) ) {
+        InputStream resourceStream = getClass().getResourceAsStream("/problems/" + filename);
+        if (resourceStream == null) {
+            System.out.println("Resource not found: /problems/" + filename);
+        }
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/problems/" + filename))) ) {
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
@@ -53,6 +54,7 @@ public class TSPParser extends SearchSpace {
                 }
             }
         } catch (IOException e) {
+            System.err.println("Error reading file: " + filename);
             e.printStackTrace();
         }
     }
