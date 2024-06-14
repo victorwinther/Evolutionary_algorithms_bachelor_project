@@ -23,11 +23,12 @@ public class PermutationuPlusyEA extends Algorithm {
 
     @Override
     public void initialize() {
-        if(mu > 0) {
+        if (mu > 0) {
             for (int i = 0; i < mu; i++) {
                 Solution solution = new Solution((TSPParser) searchSpace);
                 solution.shuffle(500);
                 population.add(solution);
+                functionEvaluations++;
             }
         }
     }
@@ -46,26 +47,20 @@ public class PermutationuPlusyEA extends Algorithm {
                 double tempChance = Math.random();
 
                 if (tempChance < chance) {
-                    //_sl.twoOptMutate2();
-                    //_sl.ls3Opt();
                     parent.twoOptMutate();
-                    threeOpt = false;
 
                 } else {
-                    //_sl.ls3Opt();
                     parent.random3Opt();
-                    threeOpt = true;
                 }
                 population.add(parent);
             }
-            functionEvaluations += mu;
+            functionEvaluations += lambda;
             population = selectFittest(population, mu);
             _sl = population.getFirst();
             int oldBestFitness = bestFitness;
             bestFitness = _sl.computeFitness();
 
-            //System.out.println(bestFitness);
-            if(graphicsOn) {
+            if (graphicsOn) {
 
                 if (oldBestFitness > bestFitness) {
                     TSPDATA tspdata = new TSPDATA(_sl, _sl.getSolution(), generation, bestFitness, _sl.getImprovement, "(u+y)EA");
@@ -82,26 +77,12 @@ public class PermutationuPlusyEA extends Algorithm {
     }
 
     private ArrayList<Solution> selectFittest(List<Solution> newPopulation, int mu) {
-        // Use a lambda expression to call the computeFitness() method
-/*
-        System.out.println("New population before sort ");
-        for (Solution s : newPopulation) {
-            System.out.println(s.computeFitness() + " ");
-        }
-*/
 
-            newPopulation.sort(Comparator.comparingDouble(Solution::computeFitness));
-/*
-            System.out.println("New population after sort ");
-            for (Solution s : newPopulation) {
-                System.out.println(s.computeFitness() + " ");
-            }
+        newPopulation.sort(Comparator.comparingDouble(Solution::computeFitness));
 
-
-*/
-            return new ArrayList<>(newPopulation.subList(0, mu));
-        }
+        return new ArrayList<>(newPopulation.subList(0, mu));
     }
+}
 
 
 

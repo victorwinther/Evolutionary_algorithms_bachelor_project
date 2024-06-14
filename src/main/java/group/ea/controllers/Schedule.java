@@ -10,6 +10,7 @@ import group.ea.problem.Problem;
 import group.ea.searchspace.BitString;
 import group.ea.searchspace.SearchSpace;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class Schedule implements Cloneable {
@@ -46,8 +47,13 @@ public class Schedule implements Cloneable {
         return numberOfRuns;
     }
 
-    public void setMu(int mu) {this.mu = mu;}
-    public void setLambda(int lambda) {this.lambda = lambda;}
+    public void setMu(int mu) {
+        this.mu = mu;
+    }
+
+    public void setLambda(int lambda) {
+        this.lambda = lambda;
+    }
 
     public void addSchedule(Schedule schedule) {
         schedules.add(schedule);
@@ -85,7 +91,9 @@ public class Schedule implements Cloneable {
         return algorithmString;
     }
 
-    public void setAlgorithmString(String algorithmString) {this.algorithmString = algorithmString;}
+    public void setAlgorithmString(String algorithmString) {
+        this.algorithmString = algorithmString;
+    }
 
     public String getSearchSpaceString() {
         return searchSpaceString;
@@ -126,13 +134,18 @@ public class Schedule implements Cloneable {
     public void setTSP(boolean b) {
         tspBool = b;
     }
-    public String getCriterias(){
+
+    public String getCriterias() {
         return criterias;
     }
+
     public boolean getTSP() {
         return tspBool;
     }
-    public void setTSPProblem(String problem){this.tspProblem = problem;}
+
+    public void setTSPProblem(String problem) {
+        this.tspProblem = problem;
+    }
 
     public void setUpAlgorithm() {
         criterias = "";
@@ -142,7 +155,7 @@ public class Schedule implements Cloneable {
                 this.searchSpace = new BitString(this.dimension);
                 break;
             case "Permutations":
-                this.searchSpace = new TSPParser("src/main/java/group/ea/problem/TSP/problems/" + tspProblem + ".txt");
+                this.searchSpace = new TSPParser(tspProblem + ".txt");
                 break;
         }
 
@@ -184,6 +197,7 @@ public class Schedule implements Cloneable {
                 this.algorithm = new PermutationOnePlusOneEA(this.searchSpace, this.problem);
                 break;
             case "(u+y) EA TSP":
+                System.out.println("korrekt jakob");
                 PermutationuPlusyEA permEA = new PermutationuPlusyEA(this.searchSpace, this.problem);
                 permEA.setMu(this.mu);
                 permEA.setLambda(this.lambda);
@@ -194,17 +208,23 @@ public class Schedule implements Cloneable {
                 this.algorithm = new PermutationSA(this.searchSpace, this.problem);
                 algorithm.addStoppingCriterion(new TempStopping());
                 break;
-            case "Ant Colony Optimization Elitist":
+            case "ACO":
+                this.algorithm = new ACO(this.searchSpace, this.problem);
+                this.algorithm.setLocalSearch(localSearch);
+                this.algorithm.setValues(Integer.parseInt(optionalValues[0]), Double.parseDouble(optionalValues[1]), Double.parseDouble(optionalValues[2]));
+                break;
+            case "ACO Elitist":
                 this.algorithm = new ELITIST(this.searchSpace, this.problem);
                 this.algorithm.setLocalSearch(localSearch);
                 this.algorithm.setValues(Integer.parseInt(optionalValues[0]), Double.parseDouble(optionalValues[1]), Double.parseDouble(optionalValues[2]));
                 break;
-            case "Ant Colony Optimization MMAS":
+            case "ACO MMAS":
                 this.algorithm = new MMAS(this.searchSpace, this.problem);
                 this.algorithm.setLocalSearch(localSearch);
                 this.algorithm.setValues(Integer.parseInt(optionalValues[0]), Double.parseDouble(optionalValues[1]), Double.parseDouble(optionalValues[2]));
                 break;
             default:
+                System.out.println(this.algorithmString);
                 this.algorithm = null;
                 break;
         }
@@ -216,7 +236,7 @@ public class Schedule implements Cloneable {
         }
         if (fitnessBound != 0) {
             System.out.println("Fitness bound: " + getFitnessBound());
-           this.algorithm.addStoppingCriterion(new MaxFitnessCriterion(getFitnessBound()));
+            this.algorithm.addStoppingCriterion(new MaxFitnessCriterion(getFitnessBound()));
             criterias += " Fitness";
         }
         if (iterationBound != 0) {
@@ -226,6 +246,7 @@ public class Schedule implements Cloneable {
         addSchedule(this);
 
     }
+
     public void run() {
         if (this.algorithm != null) {
             this.algorithm.runAlgorithm();
@@ -248,14 +269,15 @@ public class Schedule implements Cloneable {
         this.finishedIterations = finishedIterations;
     }
 
-    public void setOptional(String[] set){
+    public void setOptional(String[] set) {
         this.optionalValues = set;
     }
 
-    public void setUpdateRule(String rule){
+    public void setUpdateRule(String rule) {
         this.updateRule = rule;
     }
-    public void setLocalSearch(boolean search){
+
+    public void setLocalSearch(boolean search) {
         this.localSearch = search;
     }
 

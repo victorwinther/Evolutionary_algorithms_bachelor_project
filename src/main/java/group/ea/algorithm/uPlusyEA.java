@@ -9,9 +9,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.*;
-public class uPlusyEA extends Algorithm{
+
+public class uPlusyEA extends Algorithm {
     ArrayList<String> population = new ArrayList<>();
     Random rand = new Random();
+
     public uPlusyEA(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
     }
@@ -21,10 +23,10 @@ public class uPlusyEA extends Algorithm{
     public void performSingleUpdate(int gen) {
         int n = searchSpace.length;
         generation = 0;
-        Data firstData = new Data(population.get(0), generation, bestFitness, true, Optional.empty(),false);
+        Data firstData = new Data(population.get(0), generation, bestFitness, true, Optional.empty(), false);
         listener.receiveBitstringUpdate(firstData);
         //System.out.println("Performing single update og lambda værdi = " + lambda);
-        while (true) {
+        while (!checkStoppingCriteria()) {
             List<String> newPopulation = new ArrayList<>(population);
 
             for (int i = 0; i < lambda; i++) {
@@ -42,9 +44,9 @@ public class uPlusyEA extends Algorithm{
             int oldFitness = bestFitness;
 
             bestFitness = (int) problem.computeFitness(population.get(0));
-            functionEvaluations+=mu;
-            if(bestFitness > oldFitness){
-                Data data = new Data(bitString, generation, bestFitness, true, Optional.empty(),false);
+            functionEvaluations += lambda;
+            if (bestFitness > oldFitness) {
+                Data data = new Data(bitString, generation, bestFitness, true, Optional.empty(), false);
                 data.setTimeElapsed(timer.getCurrentTimer());
                 data.setFunctionEvaluations(functionEvaluations);
                 listener.receiveBitstringUpdate(data);
@@ -52,6 +54,7 @@ public class uPlusyEA extends Algorithm{
             generation++;
 
         }
+        generation--;
 
     }
 
@@ -61,7 +64,6 @@ public class uPlusyEA extends Algorithm{
     }
 
 
-
     @Override
     public void initialize() {
         System.out.println("Initializing u+lambda EA" + mu + " + " + lambda);
@@ -69,6 +71,7 @@ public class uPlusyEA extends Algorithm{
             for (int i = 0; i < mu; i++) {
                 bitString = searchSpace.init();
                 population.add(bitString);
+                functionEvaluations++;
             }
         }
     }

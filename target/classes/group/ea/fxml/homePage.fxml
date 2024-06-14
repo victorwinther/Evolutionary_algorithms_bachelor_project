@@ -20,200 +20,196 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="735.0" prefWidth="1071.0" style="-fx-background-color: #353941;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.mainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="735.0" minWidth="1071.0" prefHeight="735.0" prefWidth="1071.0" style="-fx-background-color: #353941;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.ea.controllers.mainController">
    <left>
-      <AnchorPane prefHeight="584.0" prefWidth="213.0" style="-fx-background-color: #26282B;" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="584.0" prefWidth="213.0" style="-fx-background-color: #26282B; -fx-border-color: #A9A9A9;" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="15.0" left="10.0" top="15.0" />
          </BorderPane.margin>
          <children>
-            <ScrollPane layoutX="-22.0" layoutY="16.0" prefHeight="590.0" prefWidth="288.0" style="-fx-background-color: #353941;" stylesheets="@../../../css/styling.css" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="7.0">
-               <content>
-                  <VBox fx:id="generalSettings" alignment="TOP_CENTER" prefHeight="589.0" prefWidth="197.0" style="-fx-background-color: #26282B;">
-                     <children>
-                        <Label maxWidth="1.7976931348623157E308" prefHeight="21.0" prefWidth="187.0" text="GENERAL SETTINGS" textFill="WHITE">
-                           <VBox.margin>
-                              <Insets left="10.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Label>
-                        <Separator opacity="0.5" prefWidth="294.0">
-                           <padding>
-                              <Insets left="5.0" right="20.0" />
-                           </padding>
-                           <VBox.margin>
-                              <Insets bottom="5.0" />
-                           </VBox.margin>
-                        </Separator>
-                        <GridPane fx:id="gridGeneralSettings" prefHeight="123.0" prefWidth="187.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="118.1370620727539" minWidth="10.0" prefWidth="99.22233581542969" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <Label fx:id="searchspaceLabel" prefHeight="17.0" prefWidth="97.0" text="Searchspace:" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="problemLabel" text="Problem:" textFill="#fffdfd" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="criteriasLabel" prefHeight="17.0" prefWidth="102.0" text="Stopping criteria:" textFill="#fffdfd" GridPane.rowIndex="3">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="algorithmLabel" text="Algorithm:" textFill="WHITE" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                           <VBox.margin>
-                              <Insets bottom="5.0" left="10.0" />
-                           </VBox.margin>
-                        </GridPane>
-                        <Label maxWidth="1.7976931348623157E308" prefHeight="19.0" prefWidth="187.0" text="BATCH INFORMATION" textFill="WHITE">
-                           <VBox.margin>
-                              <Insets left="10.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Label>
-                        <Separator opacity="0.5" prefWidth="200.0">
-                           <padding>
-                              <Insets left="5.0" right="20.0" />
-                           </padding>
-                           <VBox.margin>
-                              <Insets bottom="5.0" />
-                           </VBox.margin>
-                        </Separator>
-                        <GridPane fx:id="batchInfo" prefHeight="92.0" prefWidth="187.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.31816864013672" minWidth="10.0" prefWidth="90.3636474609375" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="96.6363525390625" minWidth="10.0" prefWidth="96.6363525390625" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <Label text="Batch size:" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label text="Run number:" textFill="WHITE" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                           <VBox.margin>
-                              <Insets bottom="5.0" left="10.0" />
-                           </VBox.margin>
-                        </GridPane>
-                        <Label maxWidth="1.7976931348623157E308" prefHeight="19.0" prefWidth="187.0" text="STATISTICS " textFill="WHITE">
-                           <VBox.margin>
-                              <Insets left="10.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Label>
-                        <Separator opacity="0.5" prefWidth="200.0">
-                           <padding>
-                              <Insets left="5.0" right="20.0" />
-                           </padding>
-                           <VBox.margin>
-                              <Insets bottom="5.0" />
-                           </VBox.margin>
-                        </Separator>
-                        <GridPane fx:id="statsBatch" prefHeight="264.0" prefWidth="187.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="126.0" minWidth="10.0" prefWidth="126.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="90.0" minWidth="10.0" prefWidth="63.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <children>
-                              <Label text="Max no. iterations" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label text="Avg no. iterations" textFill="WHITE" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label text="Min. no. iterations" textFill="WHITE" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label text="Max. func. eval." textFill="WHITE" GridPane.rowIndex="3">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label text="Min. func. eval." textFill="WHITE" GridPane.rowIndex="4">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label text="Max fitness" textFill="WHITE" GridPane.rowIndex="5">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label text="Average fitness" textFill="WHITE" GridPane.rowIndex="6">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label text="Min fitness" textFill="WHITE" GridPane.rowIndex="7">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                           <VBox.margin>
-                              <Insets left="10.0" />
-                           </VBox.margin>
-                        </GridPane>
-                     </children>
+            <VBox fx:id="generalSettings" alignment="TOP_CENTER" layoutX="13.0" layoutY="8.0" prefHeight="589.0" prefWidth="197.0" style="-fx-background-color: #26282B;">
+               <children>
+                  <Label maxWidth="1.7976931348623157E308" prefHeight="21.0" prefWidth="187.0" text="GENERAL SETTINGS" textFill="WHITE">
+                     <VBox.margin>
+                        <Insets left="10.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                  </Label>
+                  <Separator opacity="0.5" prefWidth="294.0">
                      <padding>
-                        <Insets top="10.0" />
+                        <Insets left="5.0" right="20.0" />
                      </padding>
-                  </VBox>
-               </content>
-            </ScrollPane>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </Separator>
+                  <GridPane fx:id="gridGeneralSettings" prefHeight="123.0" prefWidth="187.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="118.1370620727539" minWidth="10.0" prefWidth="99.22233581542969" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label fx:id="searchspaceLabel" prefHeight="17.0" prefWidth="97.0" text="Searchspace:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="problemLabel" text="Problem:" textFill="#fffdfd" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="criteriasLabel" prefHeight="17.0" prefWidth="102.0" text="Stopping criteria:" textFill="#fffdfd" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="algorithmLabel" text="Algorithm:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="10.0" />
+                     </VBox.margin>
+                  </GridPane>
+                  <Label maxWidth="1.7976931348623157E308" prefHeight="19.0" prefWidth="187.0" text="BATCH INFORMATION" textFill="WHITE">
+                     <VBox.margin>
+                        <Insets left="10.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                  </Label>
+                  <Separator opacity="0.5" prefWidth="200.0">
+                     <padding>
+                        <Insets left="5.0" right="20.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </Separator>
+                  <GridPane fx:id="batchInfo" prefHeight="92.0" prefWidth="187.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.31816864013672" minWidth="10.0" prefWidth="90.3636474609375" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="96.6363525390625" minWidth="10.0" prefWidth="96.6363525390625" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label text="Batch size:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label text="Run number:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label text="Dimension:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="10.0" />
+                     </VBox.margin>
+                  </GridPane>
+                  <Label maxWidth="1.7976931348623157E308" prefHeight="19.0" prefWidth="187.0" text="STATISTICS " textFill="WHITE">
+                     <VBox.margin>
+                        <Insets left="10.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                  </Label>
+                  <Separator opacity="0.5" prefWidth="200.0">
+                     <padding>
+                        <Insets left="5.0" right="20.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </Separator>
+                  <GridPane fx:id="statsBatch" prefHeight="264.0" prefWidth="187.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="126.0" minWidth="10.0" prefWidth="126.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="90.0" minWidth="10.0" prefWidth="63.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label text="Max no. iterations" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label text="Avg no. iterations" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label text="Min. no. iterations" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label text="Max. func. eval." textFill="WHITE" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label text="Min. func. eval." textFill="WHITE" GridPane.rowIndex="4">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label text="Max fitness" textFill="WHITE" GridPane.rowIndex="5">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label text="Average fitness" textFill="WHITE" GridPane.rowIndex="6">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label text="Min fitness" textFill="WHITE" GridPane.rowIndex="7">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="10.0" />
+                     </VBox.margin>
+                  </GridPane>
+               </children>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </VBox>
          </children>
       </AnchorPane>
    </left>
@@ -254,7 +250,7 @@
                   <StackPane>
                      <children>
 
-                        <Slider fx:id="sliderSpeed" blockIncrement="1.0" disable="true" majorTickUnit="1.0" max="10.0" min="0.1" showTickMarks="true" stylesheets="@../../../css/styling.css" value="1.0" />
+                        <Slider fx:id="sliderSpeed" blockIncrement="1.0" disable="true" majorTickUnit="1.0" max="10.0" min="0.1" showTickMarks="true" stylesheets="@../../../css/styling.css" value="5.0" />
 
                      </children>
                   </StackPane>
@@ -269,20 +265,20 @@
                <children>
                   <GridPane prefHeight="95.0" prefWidth="270.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.67095947265625" minWidth="10.0" prefWidth="135.5" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.67095947265625" minWidth="10.0" prefWidth="133.5" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.67095947265625" minWidth="10.0" prefWidth="108.5" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.67095947265625" minWidth="10.0" prefWidth="155.5" />
                      </columnConstraints>
                      <rowConstraints>
-                        <RowConstraints maxHeight="45.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                        <RowConstraints />
                         <RowConstraints maxHeight="45.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="45.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <CheckBox fx:id="graphSelector" disable="true" mnemonicParsing="false" onAction="#graphListener" prefHeight="18.0" prefWidth="129.0" selected="true" stylesheets="@../../../css/styling.css" text="Graph" textFill="WHITE" />
-                        <CheckBox fx:id="textSelector" disable="true" mnemonicParsing="false" prefHeight="26.0" prefWidth="106.0" stylesheets="@../../../css/styling.css" text="Bit strings" textFill="WHITE" GridPane.rowIndex="1" />
-                        <CheckBox fx:id="hypercubeCheck" disable="true" mnemonicParsing="false" onAction="#hypercubeListener" prefHeight="20.0" prefWidth="146.0" stylesheets="@../../../css/styling.css" text="Boolean Hypercube" textFill="WHITE" GridPane.rowIndex="2" />
-                        <CheckBox fx:id="phermoneTrail" disable="true" mnemonicParsing="false" prefHeight="20.0" prefWidth="177.0" stylesheets="@../../../css/styling.css" text="Phermone trail" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <CheckBox fx:id="onlyImprovement" mnemonicParsing="false" prefHeight="26.0" prefWidth="137.0" selected="true" stylesheets="@../../../css/styling.css" text="Only improvement" textFill="WHITE" GridPane.columnIndex="1" />
+                        <CheckBox fx:id="graphSelector" disable="true" mnemonicParsing="false" onAction="#graphListener" prefHeight="18.0" prefWidth="129.0" selected="true" stylesheets="@../../../css/styling.css" text="Graph" textFill="WHITE" GridPane.rowIndex="1" />
+                        <CheckBox fx:id="textSelector" disable="true" mnemonicParsing="false" prefHeight="26.0" prefWidth="106.0" stylesheets="@../../../css/styling.css" text="Bit strings" textFill="WHITE" GridPane.rowIndex="2" />
+                        <CheckBox fx:id="hypercubeCheck" disable="true" mnemonicParsing="false" onAction="#hypercubeListener" prefHeight="20.0" prefWidth="146.0" stylesheets="@../../../css/styling.css" text="Boolean Hypercube" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <CheckBox fx:id="phermoneTrail" disable="true" mnemonicParsing="false" prefHeight="20.0" prefWidth="177.0" stylesheets="@../../../css/styling.css" text="Phermone trail" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label text="Display options" textFill="WHITE" />
                      </children>
                      <VBox.margin>
                         <Insets right="5.0" />

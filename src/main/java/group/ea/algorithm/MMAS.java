@@ -12,13 +12,12 @@ public class MMAS extends ACO {
     public MMAS(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
         maxPheremone = 1.0 / ((evaporation * getValue()));
-        minPheremone = maxPheremone / (2.0 * dimension);
-        Q = maxPheremone;
-        _IBFlag = false;
+        minPheremone = maxPheremone / (2000.0 * dimension);
 
+        Q = maxPheremone;
     }
 
-    public double getValue(){
+    public double getValue() {
         _cloneSl = new Solution(_sl.get_tsp());
 
         localSearch();
@@ -32,9 +31,9 @@ public class MMAS extends ACO {
         limitPheromones();
     }
 
-    private void limitPheromones(){
-        for (int i = 0; i  < (dimension / 2); i++){
-            for (int j = 0; j < (dimension / 2); j++){
+    private void limitPheromones() {
+        for (int i = 0; i < (dimension); i++) {
+            for (int j = 0; j < (dimension); j++) {
                 if (pheromone[i][j] > maxPheremone) {
                     pheromone[i][j] = maxPheremone;
                     pheromone[j][i] = maxPheremone;

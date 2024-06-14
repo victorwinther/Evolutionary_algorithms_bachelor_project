@@ -15,7 +15,7 @@ public class PermutationOnePlusOneEA extends Algorithm {
 
 
     Solution _slClone;
-    
+
     public PermutationOnePlusOneEA(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
         _sl = (Solution) problem;
@@ -27,11 +27,10 @@ public class PermutationOnePlusOneEA extends Algorithm {
     public void initialize() {
 
     }
+
     @Override
     public void performSingleUpdate(int generation) {
-        if(generation == 0){
-           // listener.firstSolution(_sl);
-        }
+
         // Save the current solution
         // randomly at uniform
         boolean threeOpt = false;
@@ -39,12 +38,9 @@ public class PermutationOnePlusOneEA extends Algorithm {
         _sl.clearData();
 
         if (tempChance < chance) {
-            //_sl.twoOptMutate2();
-            //_sl.ls3Opt();
             _sl.twoOptMutate();
 
         } else {
-            //_sl.ls3Opt();
             _sl.random3Opt();
             threeOpt = true;
         }
@@ -55,12 +51,11 @@ public class PermutationOnePlusOneEA extends Algorithm {
             bestFitness = offspringFitness;
             _slClone = new Solution(_sl.get_tsp());
             _slClone.deepCopy(_sl);
-            TSPDATA tspdata = new TSPDATA(_slClone,new ArrayList<>(_slClone.getSolution()),generation,offspringFitness,_slClone.getImprovement,_slClone.A1,_slClone.A2,_slClone.A3,_slClone.A4,Optional.ofNullable(_slClone.A5),Optional.ofNullable(_slClone.A6),Optional.ofNullable(_slClone.optCase), threeOpt,"1+1EA");
+            TSPDATA tspdata = new TSPDATA(_slClone, new ArrayList<>(_slClone.getSolution()), generation, offspringFitness, _slClone.getImprovement, _slClone.A1, _slClone.A2, _slClone.A3, _slClone.A4, Optional.ofNullable(_slClone.A5), Optional.ofNullable(_slClone.A6), Optional.ofNullable(_slClone.optCase), threeOpt, "1+1EA");
             tspdata.setTimeElapsed(timer.getCurrentTimer());
-            tspdata.setFunctionEvaluations(functionEvaluations-1);
+            tspdata.setFunctionEvaluations(functionEvaluations - 1);
             listener.receiveUpdate(tspdata);
         } else {
-            //noImprovementCounter++;
             _sl.revert();
         }
 
@@ -68,10 +63,7 @@ public class PermutationOnePlusOneEA extends Algorithm {
         _sl.clearData();
 
 
-
-
         if (noImprovementCounter > RESTART_THRESHOLD) {
-            //System.out.println("Restarting the algorithm... in generation"+ generation + " with fitness: " + bestFitness );
             _sl.restart(); // Reinitialize the solution
             bestFitness = _sl.computeFitness();
             noImprovementCounter = 0; // Reset counter
@@ -79,16 +71,14 @@ public class PermutationOnePlusOneEA extends Algorithm {
 
     }
 
-    public void copyCreateCopy(Solution from){
+    public void copyCreateCopy(Solution from) {
         _slClone = new Solution();
-        for(City c : from.getSolution()){
+        for (City c : from.getSolution()) {
             _slClone.getSolution().add(c);
         }
         _slClone.set_tsp(from.get_tsp());
 
     }
-
-
 
 
 }

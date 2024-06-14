@@ -1,4 +1,5 @@
 package group.ea.helperClasses;
+
 import java.util.Optional;
 
 public class Data {
@@ -12,10 +13,9 @@ public class Data {
     private boolean stop;
 
 
-
     private int functionEvaluations = 0;
 
-    public Data(String bitString, int generation, int fitness, boolean yesNo, Optional<Double> temp,boolean stop) {
+    public Data(String bitString, int generation, int fitness, boolean yesNo, Optional<Double> temp, boolean stop) {
         this.bitString = bitString;
         this.generation = generation;
         this.fitness = fitness;
@@ -27,6 +27,7 @@ public class Data {
     public void setYesNo(boolean b) {
         yesNo = b;
     }
+
     @Override
     public String toString() {
         return "Data{" +
@@ -50,7 +51,7 @@ public class Data {
         fitness = newFitness;
     }
 
-    public boolean getImproved(){
+    public boolean getImproved() {
         return yesNo;
     }
 
@@ -77,12 +78,15 @@ public class Data {
     public void setStop(boolean stop) {
         this.stop = stop;
     }
+
     public long getTimeElapsed() {
         return timeElapsed;
     }
+
     public void setTimeElapsed(long timeElapsed) {
         this.timeElapsed = timeElapsed;
     }
+
     public int getFunctionEvaluations() {
         return functionEvaluations;
     }

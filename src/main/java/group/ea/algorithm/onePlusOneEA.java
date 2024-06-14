@@ -16,7 +16,7 @@ public class onePlusOneEA extends Algorithm {
     public void performSingleUpdate(int gen) {
         int n = bitString.length();
         generation = 0;
-        Data firstData = new Data(bitString, generation, bestFitness, true, Optional.empty(),false);
+        Data firstData = new Data(bitString, generation, bestFitness, true, Optional.empty(), false);
         listener.receiveBitstringUpdate(firstData);
         while (!checkStoppingCriteria()) {
             StringBuilder y = new StringBuilder(bitString);
@@ -33,7 +33,7 @@ public class onePlusOneEA extends Algorithm {
                 bitString = yString;
                 bestFitness = (int) yFitness;
 
-                Data data = new Data(bitString, generation, bestFitness, true, Optional.empty(),false);
+                Data data = new Data(bitString, generation, bestFitness, true, Optional.empty(), false);
                 data.setFunctionEvaluations(functionEvaluations);
                 data.setTimeElapsed(timer.getCurrentTimer());
                 listener.receiveBitstringUpdate(data);

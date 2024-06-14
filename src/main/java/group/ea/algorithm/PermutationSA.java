@@ -1,7 +1,6 @@
 package group.ea.algorithm;
 
 
-
 import group.ea.problem.TSP.City;
 import group.ea.problem.TSP.Solution;
 import group.ea.helperClasses.Data;
@@ -16,17 +15,19 @@ import java.util.Optional;
 
 //TODO
 //MERGE THIS AND NORMAL SA
-public class PermutationSA extends  Algorithm {
+public class PermutationSA extends Algorithm {
 
     Solution _slClone;
-    double initTemp = 10000;
-    double tempReduction = 0.9995;
+    double initTemp;
+    double tempReduction;
 
 
     public PermutationSA(SearchSpace searchSpace, Problem problem) {
         super(searchSpace, problem);
         _sl = (Solution) problem;
         bestFitness = _sl.computeFitness();
+        initTemp = Math.pow(searchSpace.returnLength(), 1);
+        tempReduction = 1 - (1 / (145.0 * Math.pow(searchSpace.returnLength(), 2)));
         currentTemp = initTemp;
         System.out.print("Construct done");
     }
@@ -47,15 +48,13 @@ public class PermutationSA extends  Algorithm {
         _sl.twoOptMutate();
         int offspringFitness = _sl.computeFitness();
 
-        System.out.println(offspringFitness + " " + bestFitness);
-
 
 
         if (offspringFitness < bestFitness) {
             functionEvaluations++;
             _slClone = new Solution(_sl.get_tsp());
             _slClone.deepCopy(_sl);
-            TSPDATA tspdata = new TSPDATA(_slClone,_slClone.getSolution(),generation-1,offspringFitness,currentTemp,"SA");
+            TSPDATA tspdata = new TSPDATA(_slClone, _slClone.getSolution(), generation - 1, offspringFitness, currentTemp, "SA");
             tspdata.setTimeElapsed(timer.getCurrentTimer());
             tspdata.setFunctionEvaluations(functionEvaluations);
             listener.receiveUpdate(tspdata);
@@ -67,12 +66,6 @@ public class PermutationSA extends  Algorithm {
         currentTemp *= tempReduction;
 
     }
-    public void copyCreateCopy(Solution from){
-        _slClone = new Solution();
-        for(City c : from.getSolution()){
-            _slClone.getSolution().add(c);
-        }
-        _slClone.set_tsp(from.get_tsp());
 
-    }
+
 }

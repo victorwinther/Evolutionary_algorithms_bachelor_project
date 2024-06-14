@@ -16,7 +16,7 @@ public class TSPDATA {
     public ArrayList<City> slSolution;
     public double improvement;
     private long timeElapsed = 0;
-    public City X1,X2,X3,X4,X5,X6;
+    public City X1, X2, X3, X4, X5, X6;
     private boolean stopped = false;
 
     public boolean opt3;
@@ -24,17 +24,15 @@ public class TSPDATA {
     public String name;
 
 
-
     private int functionEvaluations = 0;
 
-   // private static List<TspResultController> listeners = new ArrayList<>();
     static ArrayList<TSPDATA> allSolutions = new ArrayList<>();
     private double[][] pheromone;
 
 
     private boolean improved = false;
 
-    public TSPDATA (Solution solution, ArrayList<City> slSolution, int generation, int fitness, double improvement, City X1, City X2, City X3, City X4, Optional<City> A5, Optional<City> A6, Optional<Integer> optCase, boolean b, String name) {
+    public TSPDATA(Solution solution, ArrayList<City> slSolution, int generation, int fitness, double improvement, City X1, City X2, City X3, City X4, Optional<City> A5, Optional<City> A6, Optional<Integer> optCase, boolean b, String name) {
         this.solution = solution;
         this.generation = generation;
         this.fitness = fitness;
@@ -52,7 +50,7 @@ public class TSPDATA {
         this.name = name;
     }
 
-    public TSPDATA(Solution solution, ArrayList<City> slSolution, int generation, int fitness, double improvement, String name){
+    public TSPDATA(Solution solution, ArrayList<City> slSolution, int generation, int fitness, double improvement, String name) {
         this.solution = solution;
         this.generation = generation;
         this.fitness = fitness;
@@ -64,7 +62,7 @@ public class TSPDATA {
 
     }
 
-    public TSPDATA (Solution solution, ArrayList<City> slSolution, int generation, int fitness, int functionEvaluations, String name, boolean stopped) {
+    public TSPDATA(Solution solution, ArrayList<City> slSolution, int generation, int fitness, int functionEvaluations, String name, boolean stopped) {
         this.solution = solution;
         this.generation = generation;
         this.fitness = fitness;
@@ -83,12 +81,10 @@ public class TSPDATA {
     public void setPhermone(double[][] pheromone) {
         this.pheromone = pheromone;
     }
+
     public double[][] getPheromone() {
         return pheromone;
     }
-
-
-
 
 
     public Solution getSolution() {
@@ -135,19 +131,21 @@ public class TSPDATA {
     public void setFunctionEvaluations(int functionEvaluations) {
         this.functionEvaluations = functionEvaluations;
     }
+
     public int getFunctionEvaluations() {
         return functionEvaluations;
     }
+
     public int getOptimum() {
         String name = solution.get_tsp().getLastPartOfFilename();
         if (Objects.equals(name, "berlin52")) {
             return 7544;
         } else if (Objects.equals(name, "a280")) {
             return 2579;
-        } else if (Objects.equals(name, "bier127")){
+        } else if (Objects.equals(name, "bier127")) {
             return 118282;
         }
-    return 0;
+        return 0;
     }
 
     public void setStopped(boolean stopped) {
@@ -161,6 +159,7 @@ public class TSPDATA {
     public void improved() {
         this.improved = true;
     }
+
     public boolean isImproved() {
         return improved;
     }
