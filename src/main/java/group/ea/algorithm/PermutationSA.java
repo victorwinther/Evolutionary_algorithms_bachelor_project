@@ -29,7 +29,7 @@ public class PermutationSA extends Algorithm {
         initTemp = Math.pow(searchSpace.returnLength(), 1);
         tempReduction = 1 - (1 / (145.0 * Math.pow(searchSpace.returnLength(), 2)));
         currentTemp = initTemp;
-        System.out.print("Construct done");
+        //System.out.print("Construct done");
     }
 
     @Override
@@ -54,10 +54,10 @@ public class PermutationSA extends Algorithm {
         if (offspringFitness < bestFitness) {
             _slClone = new Solution(_sl.get_tsp());
             _slClone.deepCopy(_sl);
-            TSPDATA tspdata = new TSPDATA(_slClone, _slClone.getSolution(), generation, offspringFitness, currentTemp, "SA");
-            tspdata.setTimeElapsed(timer.getCurrentTimer());
-            tspdata.setFunctionEvaluations(functionEvaluations);
-            listener.receiveUpdate(tspdata);
+            //TSPDATA tspdata = new TSPDATA(_slClone, _slClone.getSolution(), generation, offspringFitness, currentTemp, "SA");
+            //tspdata.setTimeElapsed(timer.getCurrentTimer());
+            //tspdata.setFunctionEvaluations(functionEvaluations);
+            //listener.receiveUpdate(tspdata);
             bestFitness = offspringFitness;
 
         } else if (Math.exp((offspringFitness - bestFitness) / currentTemp) > Math.random()) {

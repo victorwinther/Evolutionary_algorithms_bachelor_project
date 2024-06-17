@@ -60,6 +60,11 @@ public abstract class Algorithm {
 
     protected int bestFitness;
     protected String bitString;
+
+    public Timer getTimer() {
+        return timer;
+    }
+
     protected Timer timer;
 
     int bitLength;
@@ -132,11 +137,11 @@ public abstract class Algorithm {
             tspdata.improved();
             listener.receiveUpdate(tspdata);
         } else {
-            System.out.println("stopped in algo");
+            //System.out.println("stopped in algo");
             TSPDATA tspdata = new TSPDATA(_sl, _sl.getSolution(), generation, bestFitness, functionEvaluations, "(1+1)EA", true);
             tspdata.setTimeElapsed(timer.getCurrentTimer());
             tspdata.improved();
-            listener.receiveUpdate(tspdata);
+            //listener.receiveUpdate(tspdata);
 
         }
 

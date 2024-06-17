@@ -42,8 +42,56 @@ public class main extends Application {
 
     public static void main(String[] args) {
 
-        launch(args);
+        //launch(args);
+        runExperimentTSP();
 
+    }
+    private static void runExperimentTSP() {
+        int iterations = 1;
+        int perfectCount = 0;
+        int[] iterationsLength = {1,2,3,4,5,10,50,100,1000,2000,5000,10000,20000,30000,40000,50000,60000,70000,80000,90000,100000}; // Example lengths
+        int runsPerObservation = 100;
+        Schedule newSchedule = new Schedule();
+
+        List<DataPoint> dataPoints = new ArrayList<>();
+
+                int optimumAverage = 0;
+                double cpuAverage = 0;
+                for (int length : iterationsLength) {
+                    int totalFitness = 0;
+                    perfectCount = 0;
+                    optimumAverage = 0;
+                    cpuAverage = 0;
+                    for (int run = 0; run < runsPerObservation; run++) {
+                        newSchedule = new Schedule();
+                        newSchedule.setTSPProblem("berlin52");
+                        newSchedule.setSearchSpaceString("Permutations");
+                        newSchedule.setProblemString("TSP");
+                        newSchedule.setAlgorithmString("(1+1) EA TSP");
+                        newSchedule.setIterationBound(length);
+                        newSchedule.setOptimumReached(true);
+                        newSchedule.setUpAlgorithm();
+                        newSchedule.getAlgorithm().runAlgorithm();
+                        int thisRunFitness = newSchedule.getAlgorithm().getFitness();
+                        cpuAverage += newSchedule.getAlgorithm().getTimer().getCurrentTimer();
+                        if (thisRunFitness == 7544) {
+                            perfectCount++;
+                            optimumAverage += newSchedule.getAlgorithm().getGeneration();
+                        }
+                        totalFitness += thisRunFitness;
+                    }
+                    dataPoints.add(new DataPoint(length, totalFitness / runsPerObservation));
+                    System.out.println("Done with length " + length + " CPU Average + " + cpuAverage / runsPerObservation);
+                    saveDataToCSV("TSP_SA.csv", dataPoints);
+                    //System.out.println("Done with length " + length + "mu and lambda value" + newSchedule.getAlgorithm().getMu() + " " + newSchedule.getAlgorithm().getLambda());
+                    System.out.println(perfectCount);
+                    if (perfectCount > 0) {
+                        System.out.println("Average iterations for perfect runs: " + optimumAverage / perfectCount);
+                    }
+
+        }
+
+        System.out.println("Experiment done");
     }
 
     public static void saveDataToCSV(String filename, List<DataPoint> dataPoints) {
