@@ -47,14 +47,14 @@ public class PermutationSA extends Algorithm {
         }
         _sl.twoOptMutate();
         int offspringFitness = _sl.computeFitness();
+        functionEvaluations++;
 
 
 
         if (offspringFitness < bestFitness) {
-            functionEvaluations++;
             _slClone = new Solution(_sl.get_tsp());
             _slClone.deepCopy(_sl);
-            TSPDATA tspdata = new TSPDATA(_slClone, _slClone.getSolution(), generation - 1, offspringFitness, currentTemp, "SA");
+            TSPDATA tspdata = new TSPDATA(_slClone, _slClone.getSolution(), generation, offspringFitness, currentTemp, "SA");
             tspdata.setTimeElapsed(timer.getCurrentTimer());
             tspdata.setFunctionEvaluations(functionEvaluations);
             listener.receiveUpdate(tspdata);

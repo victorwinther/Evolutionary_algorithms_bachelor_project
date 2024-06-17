@@ -14,16 +14,24 @@
         <junit.version>5.8.2</junit.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>openjfx-releases</id>
+            <url>https://openjfx.io/maven</url>
+        </repository>
+    </repositories>
+
+
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>18</version>
+            <version>21</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>18</version>
+            <version>21</version>
         </dependency>
 
         <dependency>
