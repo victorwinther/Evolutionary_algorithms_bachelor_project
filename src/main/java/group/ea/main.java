@@ -46,6 +46,20 @@ public class main extends Application {
 
     }
 
+    public static void saveDataToCSV(String filename, List<DataPoint> dataPoints) {
+        try (FileWriter writer = new FileWriter(filename)) {
+            writer.append("BitStringLength,Iterations\n");
+            for (DataPoint dataPoint : dataPoints) {
+                writer.append(dataPoint.getBitStringLength()).append(",")
+                        .append(dataPoint.getIterations()).append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
+
+
+
 
 
