@@ -39,12 +39,14 @@ public class PermutationSA extends Algorithm {
 
     @Override
     public void performSingleUpdate(int generation) {
+
         _sl.clearData();
         if (currentTemp < 1) {
             System.out.println("too cool");
             stoppingMet = true;
             return;
         }
+
         _sl.twoOptMutate();
         int offspringFitness = _sl.computeFitness();
         functionEvaluations++;
@@ -54,18 +56,15 @@ public class PermutationSA extends Algorithm {
         if (offspringFitness < bestFitness) {
             _slClone = new Solution(_sl.get_tsp());
             _slClone.deepCopy(_sl);
-            //TSPDATA tspdata = new TSPDATA(_slClone, _slClone.getSolution(), generation, offspringFitness, currentTemp, "SA");
-            //tspdata.setTimeElapsed(timer.getCurrentTimer());
-            //tspdata.setFunctionEvaluations(functionEvaluations);
-            //listener.receiveUpdate(tspdata);
+            TSPDATA tspdata = new TSPDATA(_slClone, _slClone.getSolution(), generation, offspringFitness, currentTemp, "SA");
+            tspdata.setTimeElapsed(timer.getCurrentTimer());
+            tspdata.setFunctionEvaluations(functionEvaluations);
+            listener.receiveUpdate(tspdata);
             bestFitness = offspringFitness;
 
         } else if (Math.exp((offspringFitness - bestFitness) / currentTemp) > Math.random()) {
             _sl.revert();
         }
         currentTemp *= tempReduction;
-
     }
-
-
 }

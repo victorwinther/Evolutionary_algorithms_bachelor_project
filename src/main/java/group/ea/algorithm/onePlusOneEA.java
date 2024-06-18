@@ -30,14 +30,14 @@ public class onePlusOneEA extends Algorithm {
             //double currentFitness = problem.computeFitness(bitString);
             functionEvaluations++;
             if (yFitness >= bestFitness) {
+                if(yFitness > bestFitness) {
+                    Data data = new Data(bitString, generation, bestFitness, true, Optional.empty(), false);
+                    data.setFunctionEvaluations(functionEvaluations);
+                    data.setTimeElapsed(timer.getCurrentTimer());
+                    listener.receiveBitstringUpdate(data);
+                }
                 bitString = yString;
                 bestFitness = (int) yFitness;
-
-                Data data = new Data(bitString, generation, bestFitness, true, Optional.empty(), false);
-                data.setFunctionEvaluations(functionEvaluations);
-                data.setTimeElapsed(timer.getCurrentTimer());
-                listener.receiveBitstringUpdate(data);
-
             }
             generation++;
         }

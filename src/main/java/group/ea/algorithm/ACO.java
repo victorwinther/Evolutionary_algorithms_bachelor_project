@@ -54,8 +54,8 @@ public class ACO extends Algorithm {
 
             //System.out.println("done");
             //System.out.println("Best " + bestAnt.getCost());
-            System.out.println("done");
-            System.out.println("Best " + bestAnt.getCost());
+           // System.out.println("done");
+            //System.out.println("Best " + bestAnt.getCost());
 
             antToSolution(bestAnt);
             //System.out.println("Fitness in solution before" + _cloneSl.computeFitness());
@@ -68,7 +68,7 @@ public class ACO extends Algorithm {
             tspdata.setPhermone(pheromone);
             tspdata.setTimeElapsed(timer.getCurrentTimer());
             tspdata.setFunctionEvaluations(functionEvaluations);
-            System.out.println("Generation when stopped: " + generation);
+            //System.out.println("Generation when stopped: " + generation);
             tspdata.isStopped();
             stoppingMet = true;
             listener.receiveUpdate(tspdata);
@@ -80,7 +80,7 @@ public class ACO extends Algorithm {
         updatePheromone();
 
         if (generation % 10 == 0 && generation < 150) {
-            System.out.println(bestAnt.getCost());
+           // System.out.println(bestAnt.getCost());
         }
     }
 
@@ -348,7 +348,7 @@ public class ACO extends Algorithm {
     }
 
     public void setValues(int colonySize, double alpha, double beta) {
-        System.out.println("Called " + colonySize + " " + alpha + " " + beta);
+       // System.out.println("Called " + colonySize + " " + alpha + " " + beta);
         setAlpha(alpha);
         setBeta(beta);
         setAnts(colonySize);

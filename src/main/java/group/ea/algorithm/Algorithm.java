@@ -141,7 +141,7 @@ public abstract class Algorithm {
             TSPDATA tspdata = new TSPDATA(_sl, _sl.getSolution(), generation, bestFitness, functionEvaluations, "(1+1)EA", true);
             tspdata.setTimeElapsed(timer.getCurrentTimer());
             tspdata.improved();
-            //listener.receiveUpdate(tspdata);
+            listener.receiveUpdate(tspdata);
 
         }
 

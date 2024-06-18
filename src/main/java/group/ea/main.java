@@ -42,14 +42,15 @@ public class main extends Application {
 
     public static void main(String[] args) {
 
-        //launch(args);
-        runExperimentTSP();
+        launch(args);
+        //runExperimentTSP();
+        //RUNACOTEST();
 
     }
     private static void runExperimentTSP() {
         int iterations = 1;
         int perfectCount = 0;
-        int[] iterationsLength = {1,2,3,4,5,10,50,100,1000,2000,5000,10000,20000,30000,40000,50000,60000,70000,80000,90000,100000}; // Example lengths
+        int[] iterationsLength = {50000,100000,500000,1000000}; // Example lengths
         int runsPerObservation = 100;
         Schedule newSchedule = new Schedule();
 
@@ -67,7 +68,7 @@ public class main extends Application {
                         newSchedule.setTSPProblem("berlin52");
                         newSchedule.setSearchSpaceString("Permutations");
                         newSchedule.setProblemString("TSP");
-                        newSchedule.setAlgorithmString("(1+1) EA TSP");
+                        newSchedule.setAlgorithmString("Simulated Annealing TSP");
                         newSchedule.setIterationBound(length);
                         newSchedule.setOptimumReached(true);
                         newSchedule.setUpAlgorithm();
@@ -105,6 +106,69 @@ public class main extends Application {
             e.printStackTrace();
         }
     }
+    private static void RUNACOTEST() {
+        System.out.println("INIT");
+        int perfectCount = 0;
+        int[] iterationsLength = {50,100}; // Example lengths
+        int runsPerObservation = 50;
+        double [] alfaValues = {1};
+        int [] betaValues = {2};
+        int [] amountOfAnts = {100};
+        Schedule newSchedule = new Schedule();
+        Timer timer = new Timer();
+
+        List<DataPoint> dataPoints = new ArrayList<>();
+        timer.startTimer("1, 20, 20, ls = 1");
+        for(int ants : amountOfAnts){
+            for(double alfa : alfaValues) {
+                for(double beta : betaValues){
+                    int optimumAverage = 0;
+                    double cpuAverage = 0;
+                    for (int length : iterationsLength) {
+                        cpuAverage = 0;
+                        int totalFitness = 0;
+                        perfectCount = 0;
+                        optimumAverage = 0;
+                        for (int run = 0; run < runsPerObservation; run++) {
+                            newSchedule= new Schedule();
+                            newSchedule.setTSPProblem("berlin52");
+                            newSchedule.setSearchSpaceString("Permutations");
+                            newSchedule.setProblemString("TSP");
+                            newSchedule.setOptional(new String[]{String.valueOf(ants), String.valueOf(alfa), String.valueOf(beta)});
+                            newSchedule.setAlgorithmString("ACO Elitist");
+                            newSchedule.setLocalSearch(true);
+                            newSchedule.setUpdateRule("best-so-far(BS)");
+                            newSchedule.setIterationBound(length);
+                            newSchedule.setOptimumReached(true);
+                            newSchedule.setUpAlgorithm();
+                            newSchedule.getAlgorithm().runAlgorithm();
+                            int thisRunFitness = newSchedule.getAlgorithm().getFitness();
+                            cpuAverage += newSchedule.getAlgorithm().getTimer().getCurrentTimer();
+                            if (thisRunFitness == 7544) {
+                                perfectCount++;
+                                optimumAverage += newSchedule.getAlgorithm().getGeneration();
+                            }
+                            totalFitness += thisRunFitness;
+                        }
+                        dataPoints.add(new DataPoint(length, totalFitness / runsPerObservation));
+                        saveDataToCSV("TSP_experimentACO.csv", dataPoints);
+                        System.out.println("Done with length " + length + "ANTS ALFA BETA and runs" + ants + " " + alfa + " " + beta + " " + runsPerObservation);
+                        System.out.println("Done with length " + length + " CPU Average + " + cpuAverage / runsPerObservation);
+                        System.out.println(perfectCount);
+                        timer.endTimer();
+                        if(perfectCount > 0){
+                            System.out.println("Average iterations for perfect runs: " + optimumAverage / perfectCount);
+                        }
+                    }
+                }
+
+            }
+        }
+
+        System.out.println("Experiment done");
+
+    }
+
 }
 
 

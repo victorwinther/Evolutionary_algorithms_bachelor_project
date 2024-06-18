@@ -2,6 +2,8 @@ package group.ea.StoppingCriterias;
 
 import group.ea.algorithm.Algorithm;
 
+import java.util.Objects;
+
 public class MaxFitnessCriterion implements StoppingCriterion {
     private int maxFitness;
 
@@ -12,7 +14,12 @@ public class MaxFitnessCriterion implements StoppingCriterion {
     @Override
     public boolean isMet(Algorithm algorithm) {
         if (algorithm.getProblem().name.equals("TSP")) {
-            return algorithm.getFitness() <= maxFitness;
+            if (algorithm.getGeneration() >= 1000000) {
+                System.out.println("Optimum not reached for 1000000");
+                return true;
+            } else {
+                return algorithm.getFitness() <= maxFitness;
+            }
         }
         return
                 algorithm.getFitness() >= maxFitness;

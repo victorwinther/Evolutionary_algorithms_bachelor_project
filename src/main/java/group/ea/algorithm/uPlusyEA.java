@@ -28,7 +28,6 @@ public class uPlusyEA extends Algorithm {
         //System.out.println("Performing single update og lambda værdi = " + lambda);
         while (!checkStoppingCriteria()) {
             List<String> newPopulation = new ArrayList<>(population);
-
             for (int i = 0; i < lambda; i++) {
                 String parent = population.get(rand.nextInt(mu));
                 String offspring = parent;
@@ -52,12 +51,10 @@ public class uPlusyEA extends Algorithm {
                 listener.receiveBitstringUpdate(data);
             }
             generation++;
-
         }
         generation--;
 
     }
-
     private ArrayList<String> selectFittest(List<String> newPopulation, int mu) {
         newPopulation.sort(Comparator.comparingDouble(problem::computeFitness).reversed());
         return new ArrayList<>(newPopulation.subList(0, mu));

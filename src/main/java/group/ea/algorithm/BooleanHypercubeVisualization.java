@@ -103,11 +103,9 @@ public class BooleanHypercubeVisualization {
                 path.getElements().add(new LineTo(adjustedX, adjustedY));
             }
         }
-
         path.setStroke(Color.BLACK);
         path.setStrokeWidth(2);
         path.setFill(null);
-
         return path;
     }
 

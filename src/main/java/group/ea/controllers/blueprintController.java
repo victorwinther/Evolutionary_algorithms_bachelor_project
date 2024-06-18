@@ -518,6 +518,26 @@ public class blueprintController implements Initializable {
         if (fitnessBound.isSelected()) {
             try {
                 int fitnessBound = Integer.parseInt(fitnessTxtField.getText());
+                if(problemSelector.getValue().equals("TSP")){
+                    if (TSPSelector.getValue().equals("berlin52")) {
+                        if(fitnessBound < 7544){
+                            showAlert("Fitness bound must be more than 7544");
+                            return;
+                        }
+                    }
+                    if (TSPSelector.getValue().equals("bier127")) {
+                        if (fitnessBound < 118282) {
+                            showAlert("Fitness bound must be more than 118282");
+                            return;
+                        }
+                    }
+                    if (TSPSelector.getValue().equals("a280")) {
+                        if (fitnessBound > 2579) {
+                            showAlert("Fitness bound must be more than 2579");
+                            return;
+                        }
+                    }
+                }
                 newSchedule.setFitnessBound(fitnessBound);
             } catch (Exception e) {
                 showAlert("Enter only integers for fitness bound");
