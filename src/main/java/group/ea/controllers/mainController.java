@@ -1046,7 +1046,6 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
         if (timeline != null) {
             currentSchedule.getAlgorithm().pause();
             timeline.pause();
-            System.out.println("paused");
             isPaused = true;
             startButton.setDisable(false);
             pauseButton.setDisable(true);
