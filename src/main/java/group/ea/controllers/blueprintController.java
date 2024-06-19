@@ -528,22 +528,27 @@ public class blueprintController implements Initializable {
                 int fitnessBound = Integer.parseInt(fitnessTxtField.getText());
                 if(problemSelector.getValue().equals("TSP")){
                     if (TSPSelector.getValue().equals("berlin52")) {
-                        if(fitnessBound < 7544){
-                            showAlert("Fitness bound must be more than 7544");
+                        if(fitnessBound < 7544 || fitnessBound > 22000){
+                            showAlert("Fitness bound must be more than 7544 and less than 22000");
                             return;
                         }
                     }
                     if (TSPSelector.getValue().equals("bier127")) {
-                        if (fitnessBound < 118282) {
-                            showAlert("Fitness bound must be more than 118282");
+                        if (fitnessBound < 118282 || fitnessBound > 420000) {
+                            showAlert("Fitness bound must be more than 118282 and less than 420000");
                             return;
                         }
                     }
                     if (TSPSelector.getValue().equals("a280")) {
-                        if (fitnessBound > 2579) {
-                            showAlert("Fitness bound must be more than 2579");
+                        if (fitnessBound < 2579 || fitnessBound > 19928) {
+                            showAlert("Fitness bound must be more than 2579 and less than 19928");
                             return;
                         }
+                    }
+                } else {
+                    if(fitnessBound > Integer.parseInt(dimensionTxtField.getText())){
+                        showAlert("Fitness bound must be less than dimension");
+                        return;
                     }
                 }
                 newSchedule.setFitnessBound(fitnessBound);
