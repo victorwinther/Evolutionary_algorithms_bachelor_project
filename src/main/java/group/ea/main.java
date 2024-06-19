@@ -43,17 +43,6 @@ public class main extends Application {
 
 
     public static void main(String[] args) {
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(System.out) {
-            @Override
-            public void println(String x) {
-                StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-                for (StackTraceElement element : stackTrace) {
-                    originalOut.println(element);
-                }
-                super.println(x);
-            }
-        });
 
         launch(args);
         //runExperimentTSP();

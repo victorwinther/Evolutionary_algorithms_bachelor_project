@@ -493,13 +493,16 @@ public class blueprintController implements Initializable {
                 return;
             }
             newSchedule.setDimension(dimension);
+            if(searchspaceSelector.getValue() != null){
+                newSchedule.setSearchSpaceString(searchspaceSelector.getValue());
+            }
             newSchedule.setSearchSpaceString(searchspaceSelector.getValue());
         } catch (Exception e) {
             showAlert("Enter only integers for dimension");
             return;
 
         }
-
+        try {
         if (algorithmSelector.getValue().equals("(u+y) EA")) {
             if (problemSelector.getValue().equals("TSP")) {
                 newSchedule.setAlgorithmString("(u+y) EA TSP");
@@ -507,8 +510,13 @@ public class blueprintController implements Initializable {
                 newSchedule.setAlgorithmString("(u+y) EA");
             }
         } else {
-            newSchedule.setAlgorithmString(algorithmSelector.getValue());
-        }
+                newSchedule.setAlgorithmString(algorithmSelector.getValue());
+            }
+        } catch (Exception e) {
+                showAlert("Select an algorithm");
+                return;
+            }
+
 
         newSchedule.setProblemString(problemSelector.getValue());
 
@@ -557,6 +565,10 @@ public class blueprintController implements Initializable {
                 return;
             }
 
+        }
+        if(!optimumReached.isSelected() && !fitnessBound.isSelected() && !iterationBound.isSelected()){
+            showAlert("Select a stopping criteria");
+            return;
         }
         if (algorithmSelector.getValue().equals("ACO MMAS") || algorithmSelector.getValue().equals("ACO Elitist") || algorithmSelector.getValue().equals("ACO")) {
             try {
@@ -698,7 +710,7 @@ public class blueprintController implements Initializable {
         //make an array where you fill it with the chosen combobox values
         //make a hashmap of string
         if (batchData.isEmpty()) {
-            addSchedule();
+                addSchedule();
         }
 
         FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(main.class.getResource("fxml/homePage.fxml")));
@@ -706,7 +718,12 @@ public class blueprintController implements Initializable {
 
         // Here you would get the controller if you need to call methods on it
         mainController controller = loader.getController();
-        controller.recieveArray(Schedule.getSchedules()); // Call methods on the controller if needed
+        if(!Schedule.getSchedules().isEmpty()){
+            controller.recieveArray(Schedule.getSchedules());
+        } else {
+            return;
+        }
+       // controller.recieveArray(Schedule.getSchedules()); // Call methods on the controller if needed
 
         // Set the scene to the home page
         Scene scene = new Scene(root);

@@ -9,7 +9,7 @@ public class OptimumReached implements StoppingCriterion {
     public boolean isMet(Algorithm algorithm) {
         if (algorithm.getProblem().name.equals("TSP")) {
             if (algorithm.getGeneration() >= 1000000) {
-                System.out.println("Optimum reached for 1000000");
+                System.out.println("Optimum not reached for 1000000 iterations");
                 return true;
             }
             String name = algorithm.get_sl().get_tsp().getLastPartOfFilename();

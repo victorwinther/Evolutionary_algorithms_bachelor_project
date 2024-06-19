@@ -1455,7 +1455,7 @@ public class mainController implements Initializable, AlgorithmUpdateListener {
                         Platform.runLater(() -> {
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setHeaderText(null);
-                            alert.setContentText("Optimum not reached");
+                            alert.setContentText("Max generations reached");
                             alert.showAndWait();
                         });
                     }
