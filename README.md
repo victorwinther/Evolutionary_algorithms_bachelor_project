@@ -20,17 +20,11 @@ The framework provides a modular platform to experiment with different algorithm
 Below are placeholders for visual representations of the framework. These images illustrate the modular architecture and the dynamic interface designed to visualize the optimization process.
 
 ![Framework Image 1 Placeholder](#)  
-*(Insert framework image 1 here)*
+![image](https://github.com/user-attachments/assets/8395527b-fe38-4b8e-b756-55b3767b9ac4)
+
 
 ![Framework Image 2 Placeholder](#)  
-*(Insert framework image 2 here)*
+![Uploading IMG_7194.jpeg…]()
 
-## Cloning the Repository
-To clone the repository, use the following instructions:
 
-### Cloning from GitHub
-1. Go to the repository's start page and click the "Code" button.
-2. Copy the URL using either HTTPS or SSH.
-3. Use the command:
-   ```bash
-   git clone <copied-link>
+
